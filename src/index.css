@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --color-canvas: #f6f4f0;
+  --color-ink: #1a1816;
+  --color-muted: #6b6560;
+  --color-accent: #8b3a2a;
+  --color-accent-soft: #e8d5cf;
+  --color-line: #ddd8d0;
+}
+
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+  }
+}
