@@ -2,27 +2,8 @@
   font-family: 'Fit';
   font-style: normal;
   font-weight: 400;
-  font-stretch: normal;
   font-display: swap;
   src: url('/fonts/youth/Fit-Normal-Testing.otf') format('opentype');
-}
-
-@font-face {
-  font-family: 'Fit';
-  font-style: normal;
-  font-weight: 400;
-  font-stretch: condensed;
-  font-display: swap;
-  src: url('/fonts/youth/Fit-Condensed-Testing.otf') format('opentype');
-}
-
-@font-face {
-  font-family: 'Fit';
-  font-style: normal;
-  font-weight: 400;
-  font-stretch: expanded;
-  font-display: swap;
-  src: url('/fonts/youth/Fit-ExtraWide-Testing.otf') format('opentype');
 }
 
 @import 'tailwindcss';
@@ -41,6 +22,7 @@
 @layer base {
   :root {
     --cursor-hand: url('/cursors/hand.png') 18 6, auto;
+    --body-tracking: 0.06em;
     --brand-cluster-nudge: 0.75rem;
     --brand-logo-compact: 3.25rem;
     --brand-logo-home: calc(var(--header-height) - 0.1rem);
@@ -79,6 +61,7 @@
 
   html {
     @apply bg-canvas font-sans;
+    letter-spacing: var(--body-tracking);
     cursor: var(--cursor-hand);
     overflow-x: clip;
     scroll-behavior: auto;
@@ -92,6 +75,7 @@
 
   body {
     @apply bg-canvas font-sans text-ink antialiased;
+    letter-spacing: var(--body-tracking);
     cursor: var(--cursor-hand);
     overflow-x: clip;
     scrollbar-width: none;
