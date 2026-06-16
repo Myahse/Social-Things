@@ -1,8 +1,36 @@
+/* Brand font — drop .ttf files in public/fonts/brand/ (update filenames if needed). */
+@font-face {
+  font-family: 'Social';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/brand/Social-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Social';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/brand/Social-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Youth';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    local('Youth Black'),
+    local('AllCaps Youth Black'),
+    url('/fonts/youth/AllCaps%20-%20Youth%20Black.otf') format('opentype');
+}
+
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Social', 'Youth', system-ui, sans-serif;
+  --font-display: 'Social', 'Youth', system-ui, sans-serif;
   --color-canvas: #f6f4f0;
   --color-ink: #1a1816;
   --color-muted: #6b6560;
@@ -12,7 +40,78 @@
 }
 
 @layer base {
+  :root {
+    --cursor-hand: url('/cursors/hand.png') 18 6, auto;
+    --brand-cluster-nudge: 0.75rem;
+    --brand-logo-compact: 3.25rem;
+    --brand-logo-home: calc(var(--header-height) - 0.1rem);
+    --home-side-box: clamp(3.75rem, calc(var(--header-height) - 1.5rem), 4.5rem);
+    --header-height: 7.25rem;
+    --logo-hero-top: 42%;
+    --logo-hero-size: min(92vw, 30rem);
+    --site-gutter: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --brand-cluster-nudge: 1.75rem;
+      --brand-logo-compact: 3.75rem;
+      --brand-logo-home: calc(var(--header-height) - 0.1rem);
+      --header-height: 8.25rem;
+      --logo-hero-top: 44%;
+      --logo-hero-size: min(78vmin, 34rem);
+      --site-gutter: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --brand-cluster-nudge: 2.5rem;
+      --brand-logo-compact: 4.25rem;
+      --brand-logo-home: calc(var(--header-height) - 0.1rem);
+      --header-height: 9.25rem;
+      --logo-hero-size: min(78vmin, 36rem);
+    }
+  }
+
+  html {
+    @apply bg-canvas font-sans;
+    cursor: var(--cursor-hand);
+    overflow-x: clip;
+    scroll-behavior: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
+  }
+
   body {
     @apply bg-canvas font-sans text-ink antialiased;
+    cursor: var(--cursor-hand);
+    overflow-x: clip;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  a,
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary,
+  label[for],
+  select {
+    cursor: var(--cursor-hand);
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
   }
 }

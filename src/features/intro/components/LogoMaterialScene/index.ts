@@ -1,0 +1,1 @@
+export { LogoMaterialScene } from './LogoMaterialScene'

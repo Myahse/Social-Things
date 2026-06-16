@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { getApiBaseUrl } from '@/shared/api/client'
+import { isJavaApiEnabled } from '@/shared/api/config'
 
 interface CartSummaryProps {
   subtotal: number
@@ -15,7 +16,7 @@ export function CartSummary({
   onCheckout,
 }: CartSummaryProps) {
   return (
-    <aside className="h-fit rounded-lg border border-line bg-white p-6">
+    <aside className="h-fit rounded-2xl border border-line bg-canvas/70 p-6 backdrop-blur-md">
       <div className="flex justify-between text-sm">
         <span className="text-muted">Subtotal</span>
         <span className="font-medium">${subtotal.toFixed(0)}</span>
@@ -40,12 +41,18 @@ export function CartSummary({
       </button>
 
       <p className="mt-3 text-xs text-muted">
-        Checkout is handled by the Java API ({getApiBaseUrl()}/checkout), which redirects
-        to Shopify for payment.
+        {isJavaApiEnabled() ? (
+          <>
+            Checkout is handled by the Java API ({getApiBaseUrl()}/checkout), which redirects
+            to Shopify for payment.
+          </>
+        ) : (
+          <>Dev mode: using local product data. Enable the Java API to test checkout.</>
+        )}
       </p>
 
       <Link
-        to="/"
+        to="/product"
         className="mt-4 block text-center text-sm text-muted underline-offset-4 hover:text-ink hover:underline"
       >
         Continue shopping

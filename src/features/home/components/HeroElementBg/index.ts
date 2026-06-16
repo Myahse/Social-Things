@@ -1,0 +1,1 @@
+export { HeroElementBg } from './HeroElementBg'

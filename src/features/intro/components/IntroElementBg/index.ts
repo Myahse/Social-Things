@@ -1,0 +1,1 @@
+export { IntroElementBg } from './IntroElementBg'

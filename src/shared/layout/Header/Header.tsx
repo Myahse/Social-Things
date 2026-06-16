@@ -1,39 +1,55 @@
-import { Link, NavLink } from 'react-router-dom'
-import { useCart } from '@/features/cart/context/CartContext'
+import { usePageRevealOptional } from '@/shared/context/PageRevealContext'
+import { onHomeNavClick } from '@/features/intro/config/on-home-nav'
+import { useIntroOptional } from '@/features/intro/context/IntroContext'
+import { BrandLogo } from '@/shared/layout/BrandNav'
+import { HomeHeaderDesktop } from '@/shared/layout/HomeHeaderDesktop'
+import { HeaderActions } from '@/shared/layout/HeaderActions'
+import { MobileNavMenu } from '@/shared/layout/MobileNavMenu'
 
-export function Header() {
-  const { itemCount } = useCart()
+interface HeaderProps {
+  transparent?: boolean
+  footerThemeDark?: boolean
+}
 
+export function Header({ transparent = false, footerThemeDark = false }: HeaderProps) {
+  const intro = useIntroOptional()
+  const pageReveal = usePageRevealOptional()
+  const staggerSides = !intro?.isPlaying && pageReveal != null
+  const revealCount = staggerSides ? pageReveal.sideRevealCount : undefined
+
+  const logoNudge = transparent ? '' : 'translate-y-2'
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-canvas/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="font-display text-2xl tracking-tight">
-          VERSE
-        </Link>
-
-        <nav className="flex items-center gap-6 text-sm">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive ? 'text-ink' : 'text-muted transition-colors hover:text-ink'
-            }
-            end
-          >
-            Home
-          </NavLink>
-          <Link
-            to="/cart"
-            className="relative text-muted transition-colors hover:text-ink"
-          >
-            Cart
-            {itemCount > 0 && (
-              <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-medium text-white">
-                {itemCount}
-              </span>
-            )}
-          </Link>
-        </nav>
+    <header
+      className={
+        transparent
+          ? 'sticky top-0 z-50 bg-transparent'
+          : 'sticky top-0 z-50 bg-canvas/90 backdrop-blur-md'
+      }
+    >
+      {/* Mobile/tablet: menu left, logo center, icons right */}
+      <div className="mx-auto flex h-[var(--header-height)] max-w-6xl items-center justify-between px-[var(--site-gutter)] md:hidden">
+        <MobileNavMenu />
+        {/* Keep logo sizing/alignment identical across all pages */}
+        <BrandLogo
+          home
+          className={logoNudge}
+          onNavigateHome={() => onHomeNavClick(intro)}
+        />
+        <HeaderActions />
       </div>
+
+      {/* Desktop: same sidebar format on every page */}
+      <HomeHeaderDesktop
+        logo={
+          <BrandLogo
+            home
+            className={logoNudge}
+            onNavigateHome={() => onHomeNavClick(intro)}
+          />
+        }
+        theme={footerThemeDark ? 'dark' : 'light'}
+        revealCount={revealCount}
+      />
     </header>
   )
 }

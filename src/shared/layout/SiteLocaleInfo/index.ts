@@ -1,0 +1,1 @@
+export { SiteLocaleInfo } from './SiteLocaleInfo'
