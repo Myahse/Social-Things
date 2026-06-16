@@ -3,6 +3,8 @@
  * Default base URL: /api in dev (Vite proxy), http://localhost:8080/api in production.
  */
 
+import { readAuthSession } from '@/features/account/api/auth.storage'
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -23,11 +25,13 @@ export function getApiBaseUrl(): string {
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`
+  const token = readAuthSession()?.token
 
   const response = await fetch(url, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init?.headers,
     },
   })

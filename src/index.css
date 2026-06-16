@@ -1,36 +1,35 @@
-/* Brand font — drop .ttf files in public/fonts/brand/ (update filenames if needed). */
 @font-face {
-  font-family: 'Social';
+  font-family: 'Fit';
   font-style: normal;
   font-weight: 400;
+  font-stretch: normal;
   font-display: swap;
-  src: url('/fonts/brand/Social-Regular.ttf') format('truetype');
+  src: url('/fonts/youth/Fit-Normal-Testing.otf') format('opentype');
 }
 
 @font-face {
-  font-family: 'Social';
+  font-family: 'Fit';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400;
+  font-stretch: condensed;
   font-display: swap;
-  src: url('/fonts/brand/Social-Bold.ttf') format('truetype');
+  src: url('/fonts/youth/Fit-Condensed-Testing.otf') format('opentype');
 }
 
 @font-face {
-  font-family: 'Youth';
+  font-family: 'Fit';
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 400;
+  font-stretch: expanded;
   font-display: swap;
-  src:
-    local('Youth Black'),
-    local('AllCaps Youth Black'),
-    url('/fonts/youth/AllCaps%20-%20Youth%20Black.otf') format('opentype');
+  src: url('/fonts/youth/Fit-ExtraWide-Testing.otf') format('opentype');
 }
 
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'Social', 'Youth', system-ui, sans-serif;
-  --font-display: 'Social', 'Youth', system-ui, sans-serif;
+  --font-sans: 'Fit', system-ui, sans-serif;
+  --font-display: 'Fit', system-ui, sans-serif;
   --color-canvas: #f6f4f0;
   --color-ink: #1a1816;
   --color-muted: #6b6560;
@@ -46,6 +45,8 @@
     --brand-logo-compact: 3.25rem;
     --brand-logo-home: calc(var(--header-height) - 0.1rem);
     --home-side-box: clamp(3.75rem, calc(var(--header-height) - 1.5rem), 4.5rem);
+    --mobile-nav-box: 3.25rem;
+    --mobile-bottom-nav-height: 4.75rem;
     --header-height: 7.25rem;
     --logo-hero-top: 42%;
     --logo-hero-size: min(92vw, 30rem);
@@ -57,6 +58,8 @@
       --brand-cluster-nudge: 1.75rem;
       --brand-logo-compact: 3.75rem;
       --brand-logo-home: calc(var(--header-height) - 0.1rem);
+      --mobile-nav-box: 3.5rem;
+      --mobile-bottom-nav-height: 5rem;
       --header-height: 8.25rem;
       --logo-hero-top: 44%;
       --logo-hero-size: min(78vmin, 34rem);

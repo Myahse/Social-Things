@@ -10,6 +10,8 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
 *.local
 .env
 .env.*

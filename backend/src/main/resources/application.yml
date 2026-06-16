@@ -1,0 +1,38 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: social-things-api
+  datasource:
+    url: jdbc:h2:mem:socialthings;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dev-only-change-me-in-production-use-32-chars-min}
+    expiration-ms: 604800000
+  cors:
+    allowed-origins: http://localhost:5173,http://127.0.0.1:5173,https://socialthngs.com,https://www.socialthngs.com
+  checkout:
+    mock-enabled: ${CHECKOUT_MOCK_ENABLED:true}
+    mock-url: ${CHECKOUT_MOCK_URL:https://socialthngs.com/cart}
+
+logging:
+  level:
+    com.socialthings: INFO

@@ -10,12 +10,13 @@ import socialLogoBlackUrl from '@/assets/social logo-black.png'
 import { useI18n } from '@/shared/i18n/i18n'
 import { useSmoothScroll } from '@/shared/hooks/useSmoothScroll'
 import { ScrollRail } from '@/shared/layout/ScrollRail'
+import { MobileBottomNav } from '@/shared/layout/MobileNavMenu'
 import { SiteLocaleInfo } from '@/shared/layout/SiteLocaleInfo'
 import {
   readHomeRevealHandoff,
   useHomeRevealRouteReset,
 } from '@/features/home/context/HomeRevealContext'
-import { PageRevealProvider } from '@/shared/context/PageRevealContext'
+import { PageRevealProvider, usePageRevealOptional } from '@/shared/context/PageRevealContext'
 
 function isHomePath(pathname: string) {
   return pathname === '/' || pathname === ''
@@ -23,6 +24,19 @@ function isHomePath(pathname: string) {
 
 function isAccountPath(pathname: string) {
   return pathname === '/account'
+}
+
+function MobileNavBar({ theme }: { theme: 'light' | 'dark' }) {
+  const intro = useIntroOptional()
+  const pageReveal = usePageRevealOptional()
+  const staggerSides = !intro?.isPlaying && pageReveal != null
+
+  return (
+    <MobileBottomNav
+      theme={theme}
+      revealCount={staggerSides ? pageReveal.sideRevealCount : undefined}
+    />
+  )
 }
 
 export function Layout() {
@@ -196,7 +210,8 @@ export function Layout() {
             introHandoff={onHome && readHomeRevealHandoff()}
           >
             <Header transparent={headerTransparent} footerThemeDark={logoOnDark} />
-            <main className="flex-1">
+            <MobileNavBar theme={logoOnDark ? 'dark' : 'light'} />
+            <main className="flex-1 pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom))] md:pb-0">
               <Outlet />
             </main>
             {showFooter && <Footer footerRef={footerRef} />}
@@ -204,7 +219,8 @@ export function Layout() {
         ) : (
           <>
             {!hideChrome && <Header transparent={headerTransparent} footerThemeDark={logoOnDark} />}
-            <main className="flex-1">
+            {!hideChrome && <MobileNavBar theme={logoOnDark ? 'dark' : 'light'} />}
+            <main className="flex-1 pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom))] md:pb-0">
               <Outlet />
             </main>
             {showFooter && <Footer footerRef={footerRef} />}

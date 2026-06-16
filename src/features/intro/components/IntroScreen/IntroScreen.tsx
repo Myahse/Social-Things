@@ -7,8 +7,7 @@ import { useDesktopNav } from '@/shared/hooks/useMediaQuery'
 import { STAGGER_STEP_MS } from '@/shared/motion/stagger'
 import { HOME_HEADER_LOGO_CLASS } from '@/shared/layout/brand-cluster'
 import { HomeHeaderDesktop } from '@/shared/layout/HomeHeaderDesktop'
-import { HeaderActions } from '@/shared/layout/HeaderActions'
-import { MobileNavMenu } from '@/shared/layout/MobileNavMenu'
+import { MobileBottomNav } from '@/shared/layout/MobileNavMenu'
 import { resetSiteCursor } from '@/shared/config/site-cursor'
 
 const SHRINK_MS = 1100
@@ -135,23 +134,9 @@ export function IntroScreen({ onIntroDone }: IntroScreenProps) {
         </div>
       )}
 
-      {/* Mobile header sides — fade in after rise */}
+      {/* Mobile bottom nav — same items as desktop side rail */}
       {!isDesktopNav && isDocked && (
-        <div
-          className="pointer-events-auto fixed inset-x-0 top-0 z-30 bg-transparent"
-          style={{ height: 'var(--header-height)' }}
-        >
-          <div
-            className={`mx-auto flex h-full w-full max-w-6xl items-center justify-between px-[var(--site-gutter)] transition-opacity duration-500 ${EASE} ${
-              sidesVisible
-                ? 'opacity-100'
-                : 'pointer-events-none opacity-0'
-            }`}
-          >
-            <MobileNavMenu revealed={sidesVisible} />
-            <HeaderActions />
-          </div>
-        </div>
+        <MobileBottomNav revealed={sidesVisible} revealCount={revealCount} />
       )}
 
       {/* Logo: shrink in place, then rise to header center */}

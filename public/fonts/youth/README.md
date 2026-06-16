@@ -1,9 +1,11 @@
-# Youth font files
+# Fit font files
 
-Current file:
+Site-wide font family: **Fit** (`src/index.css`).
 
-- `AllCaps - Youth Black.otf` — used for all weights (100–900)
+| File | Use |
+|------|-----|
+| `Fit-Normal-Testing.otf` | Default body and UI |
+| `Fit-Condensed-Testing.otf` | Condensed width (`font-stretch: condensed`) |
+| `Fit-ExtraWide-Testing.otf` | Extra-wide width (`font-stretch: expanded`) |
 
-Add more cuts here (Regular, Medium, Bold, etc.) and update `@font-face` in `src/index.css` for lighter body text if you prefer.
-
-`woff2` versions are optional and load faster on the web.
+Legacy: `AllCaps - Youth Black.otf` is kept in this folder but no longer loaded by the app.

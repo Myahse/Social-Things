@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { BRAND_NAV_ITEMS } from '@/shared/layout/BrandNav/nav-items'
+import { BRAND_NAV_ITEMS, navItemIndex } from '@/shared/layout/BrandNav/nav-items'
 import { STAGGER_EASE, STAGGER_REVEAL_MS } from '@/shared/motion/stagger'
 import { useCart } from '@/features/cart/context/CartContext'
 import { onHomeNavClick } from '@/features/intro/config/on-home-nav'
@@ -59,7 +59,7 @@ export function HomeHeaderDesktop({
                 theme={theme}
                 revealed={
                   sidesVisible &&
-                  (revealCount == null || groupIndexForId(to) < revealCount)
+                  (revealCount == null || navItemIndex(to) < revealCount)
                 }
               >
                 <NavItemIcon to={to} />
@@ -174,7 +174,7 @@ function SideActions({
         revealed={
           sidesVisible &&
           (revealCount == null ||
-            groupIndexForId('/account') < revealCount)
+            navItemIndex('/account') < revealCount)
         }
       />
       <SideBoxLink
@@ -188,7 +188,7 @@ function SideActions({
         revealed={
           sidesVisible &&
           (revealCount == null ||
-            groupIndexForId('/cart') < revealCount)
+            navItemIndex('/cart') < revealCount)
         }
       />
     </div>
@@ -273,8 +273,8 @@ function IconBoxLink({
   const anyActive = Boolean(activeId)
   const isActiveHover = anyActive && activeId === selfId
 
-  const activeIndex = anyActive ? groupIndexForId(activeId ?? '') : null
-  const selfIndex = groupIndexForId(selfId ?? to)
+  const activeIndex = anyActive ? navItemIndex(activeId ?? '') : null
+  const selfIndex = navItemIndex(selfId ?? to)
   const delta = activeIndex == null ? 0 : selfIndex - activeIndex
   const abs = Math.abs(delta)
   const dir = delta === 0 ? 0 : delta > 0 ? 1 : -1
@@ -383,12 +383,4 @@ function IconBoxLink({
       )}
     </NavLink>
   )
-}
-
-function groupIndexForId(id: string) {
-  const navIdx = BRAND_NAV_ITEMS.findIndex((i) => i.to === id)
-  if (navIdx !== -1) return navIdx
-  if (id === '/account') return BRAND_NAV_ITEMS.length
-  if (id === '/cart') return BRAND_NAV_ITEMS.length + 1
-  return BRAND_NAV_ITEMS.length + 2
 }
