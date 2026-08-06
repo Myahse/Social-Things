@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import { HOME_SLIDER_IMAGES } from '@/features/home/config/home-slider-images'
+import { HOME_SLIDER_SLIDES } from '@/features/home/config/home-slider-images'
 
 const AUTO_MS = 6000
 const SLIDE_MS = 800
+/** Matches Tailwind `md` — desktop art from this width up. */
+const DESKTOP_MQ = '(min-width: 768px)'
 
 export const HOME_HERO_ID = 'home-hero'
 
 export function HomeHeroSlider() {
-  const slides = HOME_SLIDER_IMAGES
+  const slides = HOME_SLIDER_SLIDES
   const [index, setIndex] = useState(0)
   const count = slides.length
 
@@ -45,14 +47,17 @@ export function HomeHeroSlider() {
             transitionDuration: `${SLIDE_MS}ms`,
           }}
         >
-          {slides.map((src) => (
-            <div key={src} className="h-full min-w-full shrink-0">
-              <img
-                src={src}
-                alt=""
-                draggable={false}
-                className="h-full w-full object-cover object-top"
-              />
+          {slides.map((slide) => (
+            <div key={slide.id} className="h-full min-w-full shrink-0">
+              <picture>
+                <source media={DESKTOP_MQ} srcSet={slide.desktop} />
+                <img
+                  src={slide.mobile}
+                  alt=""
+                  draggable={false}
+                  className="h-full w-full object-cover object-top"
+                />
+              </picture>
             </div>
           ))}
         </div>

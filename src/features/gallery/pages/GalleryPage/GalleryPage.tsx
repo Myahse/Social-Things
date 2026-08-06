@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   GALLERY_GROUPS,
   GALLERY_IMAGES,
@@ -14,18 +14,29 @@ export function GalleryPage() {
   const groups = GALLERY_GROUPS
   const [active, setActive] = useState<number | null>(null)
   const [filter, setFilter] = useState<string>('all')
+  const [filterOpen, setFilterOpen] = useState(false)
+  const touchStartX = useRef<number | null>(null)
 
   const visible = useMemo(
     () => (filter === 'all' ? images : images.filter((img) => img.group === filter)),
     [filter, images],
   )
 
+  const filterLabel = filter === 'all' ? t('page.gallery.all') : galleryGroupLabel(filter)
+
   useEffect(() => {
-    if (active == null) return
+    if (active == null && !filterOpen) return
+
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
 
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') setActive(null)
-      if (visible.length === 0) return
+      if (e.key === 'Escape') {
+        if (active != null) setActive(null)
+        else if (filterOpen) setFilterOpen(false)
+        return
+      }
+      if (active == null || visible.length === 0) return
       if (e.key === 'ArrowRight') {
         setActive((i) => {
           if (i == null) return 0
@@ -45,8 +56,11 @@ export function GalleryPage() {
     }
 
     window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [active, images, visible])
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [active, filterOpen, images, visible])
 
   function openImage(src: string) {
     setActive(images.findIndex((img) => img.src === src))
@@ -60,15 +74,25 @@ export function GalleryPage() {
     setActive(images.findIndex((img) => img.src === next.src))
   }
 
+  function applyFilter(next: string) {
+    setFilter(next)
+    setFilterOpen(false)
+  }
+
+  const activeVisibleIndex =
+    active == null
+      ? -1
+      : visible.findIndex((img) => img.src === images[active]?.src)
+
   return (
     <div className="w-full">
-      <section className="diag-stripes relative mx-auto min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl px-[var(--site-gutter)] pb-16 pt-10">
+      <section className="diag-stripes relative mx-auto min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl px-[var(--site-gutter)] pb-10 pt-6 sm:pb-16 sm:pt-10">
         <div
-          className="pointer-events-none absolute -left-10 top-20 h-24 w-64 -rotate-6 bg-ink"
+          className="pointer-events-none absolute -left-10 top-20 hidden h-24 w-64 -rotate-6 bg-ink sm:block"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute -right-8 bottom-32 h-16 w-48 rotate-3 border-[3px] border-ink bg-bolt"
+          className="pointer-events-none absolute -right-8 bottom-32 hidden h-16 w-48 rotate-3 border-[3px] border-ink bg-bolt sm:block"
           aria-hidden
         />
 
@@ -76,66 +100,66 @@ export function GalleryPage() {
           <span className="tag-flash">
             <span>LOOKBOOK</span>
           </span>
-          <p className="eyebrow-cut mt-4">SOCIAL THINGS</p>
-          <h1 className="slash-title slash-title-ink mt-4 text-3xl sm:text-5xl">
+          <p className="eyebrow-cut mt-3 sm:mt-4">SOCIAL THINGS</p>
+          <h1 className="slash-title slash-title-ink mt-3 max-w-[min(100%,18rem)] text-[1.65rem] leading-none sm:mt-4 sm:max-w-none sm:text-5xl">
             {t('page.gallery.title')}
           </h1>
-          <p className="mt-4 max-w-lg text-sm text-muted sm:text-base">{t('page.gallery.hint')}</p>
+          <p className="mt-3 max-w-lg text-sm text-muted sm:mt-4 sm:text-base">
+            {t('page.gallery.hint')}
+          </p>
         </StaggerReveal>
 
         {groups.length > 0 && (
-          <StaggerReveal index={1} className="mt-8 flex flex-wrap gap-2">
-            <FilterChip
-              label={t('page.gallery.all')}
-              active={filter === 'all'}
-              onClick={() => setFilter('all')}
-            />
-            {groups.map((group) => (
-              <FilterChip
-                key={group.id}
-                label={galleryGroupLabel(group.id)}
-                active={filter === group.id}
-                onClick={() => setFilter(group.id)}
-              />
-            ))}
+          <StaggerReveal index={1} className="mt-6 sm:mt-8">
+            <button
+              type="button"
+              className="btn-slam inline-flex items-center gap-2 !px-4 !py-2.5"
+              onClick={() => setFilterOpen(true)}
+              aria-haspopup="dialog"
+              aria-expanded={filterOpen}
+            >
+              <span>
+                {t('page.gallery.filter')} · {filterLabel}
+              </span>
+            </button>
           </StaggerReveal>
         )}
 
-        <StaggerReveal index={1} className="mt-10">
+        <StaggerReveal index={1} className="mt-6 sm:mt-10">
           {images.length === 0 ? (
-            <div className="border-[3px] border-ink bg-canvas p-8 shadow-[8px_8px_0_var(--color-ink)]">
+            <div className="border-[3px] border-ink bg-canvas p-6 shadow-[6px_6px_0_var(--color-ink)] sm:p-8 sm:shadow-[8px_8px_0_var(--color-ink)]">
               <p className="font-display text-sm tracking-[0.16em]">{t('page.gallery.empty')}</p>
               <p className="mt-3 text-sm text-muted">{t('page.gallery.emptyHint')}</p>
             </div>
           ) : (
-            <div className="space-y-12">
+            <div className="space-y-8 sm:space-y-12">
               {(filter === 'all' ? groups : groups.filter((g) => g.id === filter)).map((group) => (
                 <section key={group.id} id={`gallery-${group.id}`}>
                   {filter === 'all' && (
-                    <h2 className="slash-title slash-title-ink mb-5 text-xl sm:text-2xl">
+                    <h2 className="slash-title slash-title-ink mb-4 text-lg sm:mb-5 sm:text-2xl">
                       {galleryGroupLabel(group.id)}
                     </h2>
                   )}
-                  <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                     {group.images.map((image, index) => (
                       <SlamReveal
                         key={image.src}
                         variant="block"
-                        delayMs={index * 40}
-                        className="mb-4 break-inside-avoid"
+                        delayMs={Math.min(index, 8) * 35}
                       >
                         <button
                           type="button"
-                          className="group product-card-frame panel-cut-hard relative block w-full overflow-hidden border-[3px] border-ink bg-canvas text-left"
+                          className="group product-card-frame panel-cut-hard relative block w-full overflow-hidden border-[2.5px] border-ink bg-canvas text-left sm:border-[3px]"
                           onClick={() => openImage(image.src)}
                           aria-label={image.alt}
                         >
-                          <div className="product-card-top pointer-events-none absolute inset-x-0 top-0 z-10 h-2" />
+                          <div className="product-card-top pointer-events-none absolute inset-x-0 top-0 z-10 h-1.5 sm:h-2" />
                           <img
                             src={image.src}
                             alt={image.alt}
-                            className="block w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                            className="aspect-[3/4] block w-full object-cover transition-transform duration-500 group-active:scale-[1.02] sm:aspect-auto sm:group-hover:scale-[1.03]"
                             loading="lazy"
+                            decoding="async"
                           />
                           <div className="product-card-shine" aria-hidden />
                         </button>
@@ -149,60 +173,136 @@ export function GalleryPage() {
         </StaggerReveal>
       </section>
 
+      {filterOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-ink/55"
+          role="presentation"
+          onClick={() => setFilterOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="gallery-filter-title"
+            className="anim-slam-block w-full max-w-lg border-t-[3px] border-ink bg-canvas px-[var(--site-gutter)] pt-3 shadow-[0_-10px_0_var(--color-ink)] pb-[max(1rem,calc(var(--mobile-bottom-nav-height)+0.5rem))] md:pb-[max(1.25rem,env(safe-area-inset-bottom))]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto mb-4 h-1.5 w-12 bg-ink" aria-hidden />
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="eyebrow-cut">{t('page.gallery.filter')}</p>
+                <h2
+                  id="gallery-filter-title"
+                  className="mt-2 font-display text-xl tracking-[0.08em] uppercase"
+                >
+                  {t('page.gallery.filterTitle')}
+                </h2>
+                <p className="mt-2 text-sm text-muted">{t('page.gallery.filterHint')}</p>
+              </div>
+              <button
+                type="button"
+                className="btn-slam-outline !px-3 !py-2"
+                onClick={() => setFilterOpen(false)}
+              >
+                <span>{t('page.gallery.close')}</span>
+              </button>
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3" role="listbox">
+              <FilterOption
+                label={t('page.gallery.all')}
+                active={filter === 'all'}
+                onClick={() => applyFilter('all')}
+              />
+              {groups.map((group) => (
+                <FilterOption
+                  key={group.id}
+                  label={galleryGroupLabel(group.id)}
+                  active={filter === group.id}
+                  onClick={() => applyFilter(group.id)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {active != null && images[active] && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/90 p-4"
+          className="fixed inset-0 z-[100] flex flex-col bg-ink/92"
           role="dialog"
           aria-modal="true"
           aria-label={t('page.gallery.title')}
           onClick={() => setActive(null)}
+          onTouchStart={(e) => {
+            touchStartX.current = e.changedTouches[0]?.clientX ?? null
+          }}
+          onTouchEnd={(e) => {
+            const start = touchStartX.current
+            touchStartX.current = null
+            if (start == null) return
+            const dx = (e.changedTouches[0]?.clientX ?? start) - start
+            if (Math.abs(dx) < 48) return
+            stepVisible(dx < 0 ? 1 : -1)
+          }}
         >
-          <button
-            type="button"
-            className="btn-slam absolute right-4 top-4 !bg-bolt !text-ink"
-            onClick={() => setActive(null)}
-          >
-            <span>{t('page.gallery.close')}</span>
-          </button>
+          <div className="flex shrink-0 items-center justify-between gap-3 px-3 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-4 sm:pt-4">
+            <p className="font-display text-xs tracking-[0.18em] text-bolt uppercase">
+              {activeVisibleIndex >= 0
+                ? `${activeVisibleIndex + 1} / ${visible.length}`
+                : null}
+            </p>
+            <button
+              type="button"
+              className="btn-slam !bg-bolt !px-3 !py-2 !text-ink"
+              onClick={(e) => {
+                e.stopPropagation()
+                setActive(null)
+              }}
+            >
+              <span>{t('page.gallery.close')}</span>
+            </button>
+          </div>
+
+          <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 sm:px-4">
+            <img
+              src={images[active].src}
+              alt={images[active].alt}
+              className="anim-slam-block max-h-full max-w-full border-[2.5px] border-bolt object-contain shadow-[6px_6px_0_#fff] sm:border-[3px] sm:shadow-[10px_10px_0_#fff]"
+              onClick={(e) => e.stopPropagation()}
+              draggable={false}
+            />
+          </div>
 
           {visible.length > 1 && (
-            <>
+            <div
+              className="flex shrink-0 items-center justify-center gap-3 px-3 pb-[max(1rem,calc(var(--mobile-bottom-nav-height)+0.35rem))] pt-3 sm:gap-4 sm:pb-6 md:pb-[max(1.25rem,env(safe-area-inset-bottom))]"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 type="button"
-                className="btn-slam absolute left-4 top-1/2 -translate-y-1/2"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  stepVisible(-1)
-                }}
+                className="btn-slam min-h-11 min-w-14 !px-4 !py-2.5"
+                onClick={() => stepVisible(-1)}
+                aria-label="Previous"
               >
                 <span>←</span>
               </button>
               <button
                 type="button"
-                className="btn-slam absolute right-4 top-1/2 -translate-y-1/2"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  stepVisible(1)
-                }}
+                className="btn-slam min-h-11 min-w-14 !px-4 !py-2.5"
+                onClick={() => stepVisible(1)}
+                aria-label="Next"
               >
                 <span>→</span>
               </button>
-            </>
+            </div>
           )}
-
-          <img
-            src={images[active].src}
-            alt={images[active].alt}
-            className="anim-slam-block max-h-[85vh] max-w-[min(96vw,56rem)] border-[3px] border-bolt object-contain shadow-[10px_10px_0_#fff]"
-            onClick={(e) => e.stopPropagation()}
-          />
         </div>
       )}
     </div>
   )
 }
 
-function FilterChip({
+function FilterOption({
   label,
   active,
   onClick,
@@ -214,13 +314,17 @@ function FilterChip({
   return (
     <button
       type="button"
+      role="option"
+      aria-selected={active}
       onClick={onClick}
-      className={`border-[2.5px] border-ink px-3 py-1.5 font-display text-xs tracking-[0.18em] uppercase transition-colors ${
-        active ? 'bg-ink text-white' : 'bg-canvas text-ink hover:bg-ink hover:text-white'
+      className={`min-h-12 border-[2.5px] border-ink px-3 py-3 text-left font-display text-xs tracking-[0.16em] uppercase transition-colors ${
+        active
+          ? 'bg-ink text-white shadow-[4px_4px_0_#fff]'
+          : 'bg-canvas text-ink active:bg-ink active:text-white sm:hover:bg-ink sm:hover:text-white'
       }`}
-      style={{ transform: 'skewX(-10deg)' }}
+      style={{ transform: 'skewX(-8deg)' }}
     >
-      <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>{label}</span>
+      <span style={{ display: 'inline-block', transform: 'skewX(8deg)' }}>{label}</span>
     </button>
   )
 }

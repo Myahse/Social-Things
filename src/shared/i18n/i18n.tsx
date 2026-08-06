@@ -21,6 +21,9 @@ type I18nKey =
   | 'page.gallery.emptyHint'
   | 'page.gallery.close'
   | 'page.gallery.all'
+  | 'page.gallery.filter'
+  | 'page.gallery.filterTitle'
+  | 'page.gallery.filterHint'
   | 'page.account.title'
   | 'page.account.guestHint'
   | 'page.account.welcomeBack'
@@ -91,6 +94,9 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.gallery.emptyHint': 'Add images under src/assets/gallery/ (folders ok) then refresh.',
     'page.gallery.close': 'Close',
     'page.gallery.all': 'All',
+    'page.gallery.filter': 'Filter',
+    'page.gallery.filterTitle': 'Filter by color',
+    'page.gallery.filterHint': 'Pick a color to narrow the lookbook.',
     'page.account.title': 'Account',
     'page.account.guestHint': 'Sign in or create an account to continue.',
     'page.account.welcomeBack': 'You are signed in.',
@@ -161,6 +167,9 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.gallery.emptyHint': 'Ajoutez des images dans src/assets/gallery/ (dossiers ok) puis actualisez.',
     'page.gallery.close': 'Fermer',
     'page.gallery.all': 'Tout',
+    'page.gallery.filter': 'Filtrer',
+    'page.gallery.filterTitle': 'Filtrer par couleur',
+    'page.gallery.filterHint': 'Choisissez une couleur pour affiner le lookbook.',
     'page.account.title': 'Compte',
     'page.account.guestHint': 'Connectez-vous ou créez un compte pour continuer.',
     'page.account.welcomeBack': 'Vous êtes connecté.',
