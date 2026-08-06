@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { BRAND_NAV_ITEMS, navItemIndex } from '@/shared/layout/BrandNav/nav-items'
+import { YOUTH_LABEL_CLASS } from '@/shared/layout/youth-type'
 import { STAGGER_EASE, STAGGER_REVEAL_MS } from '@/shared/motion/stagger'
 import { useCart } from '@/features/cart/context/CartContext'
 import { onHomeNavClick } from '@/features/intro/config/on-home-nav'
@@ -238,9 +239,18 @@ function InfoIcon({ className = 'h-[1.125rem] w-[1.125rem]' }: { className?: str
   )
 }
 
+function GalleryIcon({ className = 'h-[1.125rem] w-[1.125rem]' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M4.25 5.25h15.5A1.75 1.75 0 0 1 21.5 7v10a1.75 1.75 0 0 1-1.75 1.75H4.25A1.75 1.75 0 0 1 2.5 17V7a1.75 1.75 0 0 1 1.75-1.75Zm1.5 1.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5ZM4.75 16.5l3.7-4.2a.75.75 0 0 1 1.12 0l2.08 2.36 2.85-3.55a.75.75 0 0 1 1.18 0l3.87 5.39H4.75Z" />
+    </svg>
+  )
+}
+
 function NavItemIcon({ to }: { to: string }) {
   if (to === '/') return <HomeIcon className="h-7 w-7" />
   if (to.startsWith('/product')) return <GridIcon className="h-7 w-7" />
+  if (to.startsWith('/gallery')) return <GalleryIcon className="h-7 w-7" />
   if (to.startsWith('/about')) return <InfoIcon className="h-7 w-7" />
   return <GridIcon className="h-7 w-7" />
 }
@@ -339,14 +349,14 @@ function IconBoxLink({
       onPointerEnter={onActivate}
       onFocus={() => onActivate?.()}
       className={({ isActive }) =>
-        `group relative flex h-[var(--home-side-box)] w-[var(--home-side-box)] items-center justify-center rounded-2xl will-change-transform transition-[transform,opacity,colors,background-color,filter] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
+        `group relative flex h-[var(--home-side-box)] w-[var(--home-side-box)] items-center justify-center will-change-transform transition-[transform,opacity,colors,background-color,filter,border-color] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
           anyActive
             ? isDark
-              ? `bg-canvas/20 backdrop-blur-md ${isActiveHover ? 'z-10 bg-canvas/25' : ''}`
-              : `bg-canvas/95 backdrop-blur-md ${isActiveHover ? 'z-10 bg-canvas' : ''}`
+              ? `border-2 border-canvas/40 bg-canvas/20 backdrop-blur-md ${isActiveHover ? 'z-10 border-bolt bg-canvas/25' : ''}`
+              : `border-2 border-ink/20 bg-canvas/95 backdrop-blur-md ${isActiveHover ? 'z-10 border-ink bg-canvas' : ''}`
             : isDark
-              ? `bg-canvas/10 border border-canvas/15 ${isActiveHover ? 'z-10 bg-canvas/15' : ''} hover:bg-canvas/15`
-              : `bg-ink/[0.06] ${isActiveHover ? 'z-10 bg-ink/[0.09]' : ''} hover:bg-ink/[0.09]`
+              ? `border-2 border-canvas/20 bg-canvas/10 ${isActiveHover ? 'z-10 border-bolt bg-canvas/15' : ''} hover:bg-canvas/15`
+              : `border-2 border-ink/10 bg-ink/[0.06] ${isActiveHover ? 'z-10 border-ink bg-ink/[0.09]' : ''} hover:bg-ink/[0.09]`
         } ${
           isActive
             ? isDark
@@ -358,21 +368,23 @@ function IconBoxLink({
         }`
       }
       style={{
+        clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%)',
         pointerEvents: revealed ? 'auto' : 'none',
         transform: `translateX(${revealTranslate + translateX}px) translateY(${translateY}px) scale(${scale * revealScale})`,
         opacity: opacity * revealOpacity,
-        transition: `transform ${STAGGER_REVEAL_MS}ms ${STAGGER_EASE}, opacity ${STAGGER_REVEAL_MS}ms ${STAGGER_EASE}, colors 450ms ${STAGGER_EASE}, background-color 450ms ${STAGGER_EASE}, filter 450ms ${STAGGER_EASE}`,
+        transition: `transform ${STAGGER_REVEAL_MS}ms ${STAGGER_EASE}, opacity ${STAGGER_REVEAL_MS}ms ${STAGGER_EASE}, colors 450ms ${STAGGER_EASE}, background-color 450ms ${STAGGER_EASE}, filter 450ms ${STAGGER_EASE}, border-color 450ms ${STAGGER_EASE}`,
       }}
     >
       {children}
 
-      {/* Label pill (appears “in front”) */}
+      {/* Label slash (appears “in front”) */}
       <span
-        className={`pointer-events-none absolute left-full top-1/2 ml-3 -translate-y-1/2 whitespace-nowrap rounded-2xl px-3 py-2 text-[12px] tracking-tight backdrop-blur-md transition-all duration-450 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
-          isDark ? 'bg-ink/70 text-canvas' : 'bg-canvas/30 text-ink'
+        className={`pointer-events-none absolute left-full top-1/2 ml-3 -translate-y-1/2 whitespace-nowrap border-2 border-ink px-3 py-2 text-[12px] ${YOUTH_LABEL_CLASS} transition-all duration-450 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
+          isDark ? 'bg-ink text-white' : 'bg-ink text-white'
         } ${
           isActiveHover ? 'opacity-100' : 'opacity-0'
         }`}
+        style={{ transform: 'translateY(-50%) skewX(-12deg)', boxShadow: '4px 4px 0 var(--color-ink)' }}
       >
         {label}
       </span>

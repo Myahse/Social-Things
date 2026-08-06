@@ -8,9 +8,19 @@ export interface CheckoutLineRequest {
 
 export interface CheckoutRequest {
   items: CheckoutLineRequest[]
+  email?: string
+  shipping?: {
+    name?: string
+    line1?: string
+    city?: string
+    region?: string
+    postal?: string
+    country?: string
+  }
 }
 
-/** Response from Java after creating a Shopify checkout session */
+/** Response from Java after creating a checkout session / order */
 export interface CheckoutResponse {
   checkoutUrl: string
+  orderId?: string
 }

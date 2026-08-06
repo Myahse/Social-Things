@@ -1,0 +1,1 @@
+export { RegisterPolicyConsents } from './RegisterPolicyConsents'

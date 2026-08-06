@@ -1,3 +1,5 @@
+import { HomeHeroSlider } from '@/features/home/components/HomeHeroSlider'
+
 export function HeroSection() {
-  return <section className="relative min-h-[100svh] w-full" aria-hidden />
+  return <HomeHeroSlider />
 }

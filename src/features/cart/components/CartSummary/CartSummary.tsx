@@ -16,7 +16,12 @@ export function CartSummary({
   onCheckout,
 }: CartSummaryProps) {
   return (
-    <aside className="h-fit rounded-2xl border border-line bg-canvas/70 p-6 backdrop-blur-md">
+    <aside
+      className="h-fit border-[3px] border-ink bg-canvas p-6 shadow-[8px_8px_0_var(--color-ink)]"
+      style={{
+        clipPath: 'polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px))',
+      }}
+    >
       <div className="flex justify-between text-sm">
         <span className="text-muted">Subtotal</span>
         <span className="font-medium">${subtotal.toFixed(0)}</span>
@@ -26,7 +31,7 @@ export function CartSummary({
       </p>
 
       {checkoutError && (
-        <p className="mt-4 rounded-md bg-accent-soft px-3 py-2 text-sm text-accent">
+        <p className="mt-4 border-2 border-ink bg-accent-soft px-3 py-2 text-sm text-ink">
           {checkoutError}
         </p>
       )}
@@ -35,9 +40,9 @@ export function CartSummary({
         type="button"
         onClick={onCheckout}
         disabled={isCheckingOut}
-        className="mt-6 w-full rounded-full bg-ink py-3 text-sm font-medium text-canvas transition-opacity disabled:opacity-60"
+        className="btn-slam mt-6 w-full"
       >
-        {isCheckingOut ? 'Redirecting…' : 'Checkout with Shopify'}
+        <span>{isCheckingOut ? 'Redirecting…' : 'Checkout with Shopify'}</span>
       </button>
 
       <p className="mt-3 text-xs text-muted">

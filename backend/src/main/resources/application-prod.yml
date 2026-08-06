@@ -5,11 +5,11 @@ spring:
     password: ${DATABASE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: ${JPA_DDL_AUTO:validate}
   h2:
     console:
       enabled: false
 
 app:
   checkout:
-    mock-enabled: false
+    mock-enabled: ${CHECKOUT_MOCK_ENABLED:false}

@@ -1,0 +1,105 @@
+@font-face {
+  font-family: 'Youth';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    local('Youth Black'),
+    local('AllCaps Youth Black'),
+    url('/fonts/youth/AllCaps%20-%20Youth%20Black.otf') format('opentype');
+}
+
+:root {
+  --canvas: #f6f4f0;
+  --ink: #1a1816;
+  --muted: #6b6560;
+  --line: #ddd8d0;
+  --accent: #8b3a2a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1.25rem 3rem;
+  font-family: 'Youth', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+.legal-doc {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.legal-doc h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.legal-doc .eyebrow {
+  margin: 0 0 1.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.legal-doc h2 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.legal-doc p,
+.legal-doc li {
+  color: var(--ink);
+}
+
+.legal-doc p {
+  margin: 0 0 1rem;
+}
+
+.legal-doc ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.legal-doc li {
+  margin-bottom: 0.65rem;
+}
+
+.legal-doc a {
+  color: var(--accent);
+}
+
+.legal-doc .faq-item {
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.legal-doc .faq-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.legal-doc .faq-q {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.legal-doc .faq-a {
+  margin: 0;
+  color: var(--muted);
+}

@@ -1,6 +1,8 @@
 export const BRAND_NAV_ITEMS = [
   { to: '/', key: 'nav.home', end: true },
-  { to: '/product', key: 'nav.catalog' },
+  { to: '/product', key: 'nav.products' },
+  { to: '/gallery', key: 'nav.gallery' },
+  { to: '/#faq', key: 'nav.faq' },
   { to: '/about', key: 'nav.about' },
 ] as const
 

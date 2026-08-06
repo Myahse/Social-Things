@@ -16,6 +16,7 @@ backend/.mvn/wrapper/maven-wrapper.jar
 .env
 .env.*
 !.env.example
+!backend/.env.example
 
 # Editor directories and files
 .vscode/*

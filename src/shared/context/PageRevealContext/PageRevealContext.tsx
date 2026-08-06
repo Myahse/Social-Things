@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { useStaggerReveal } from '@/shared/hooks/useStaggerReveal'
 import { STAGGER_INITIAL_DELAY_MS } from '@/shared/motion/stagger'
 
-export const SIDE_REVEAL_COUNT = 5
+export const SIDE_REVEAL_COUNT = 6
 
 interface PageRevealContextValue {
   sideRevealCount: number
@@ -14,6 +14,7 @@ const PageRevealContext = createContext<PageRevealContextValue | null>(null)
 function contentSlotsForRoute(pathname: string): number {
   if (pathname === '/' || pathname === '') return 3
   if (pathname === '/about') return 3
+  if (pathname === '/gallery') return 2
   if (pathname === '/account') return 4
   if (pathname === '/cart') return 4
   if (pathname === '/product') return 3

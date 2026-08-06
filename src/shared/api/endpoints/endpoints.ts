@@ -9,4 +9,5 @@ export const endpoints = {
   authLogin: '/auth/login',
   authRegister: '/auth/register',
   authLogout: '/auth/logout',
+  orders: '/orders',
 } as const

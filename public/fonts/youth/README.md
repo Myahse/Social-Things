@@ -1,11 +1,9 @@
-# Fit font files
+# Youth font
 
-Site-wide font family: **Fit** (`src/index.css`).
+Site-wide font family: **Youth Black** (`src/index.css`).
 
-| File | Use |
-|------|-----|
-| `Fit-Normal-Testing.otf` | Default body and UI |
-| `Fit-Condensed-Testing.otf` | Condensed width (`font-stretch: condensed`) |
-| `Fit-ExtraWide-Testing.otf` | Extra-wide width (`font-stretch: expanded`) |
+| File | Role |
+|------|------|
+| `AllCaps - Youth Black.otf` | Default body, UI, and display text |
 
-Legacy: `AllCaps - Youth Black.otf` is kept in this folder but no longer loaded by the app.
+Fit font files may remain in this folder but are not used by the app.

@@ -1,11 +1,27 @@
-import { useState, type FormEvent } from 'react'
+import { useMemo, useState, type FormEvent } from 'react'
+import { RegisterPolicyConsents } from '@/features/account/components/RegisterPolicyConsents'
 import { useAuth } from '@/features/account/context/AuthContext'
 import { useI18n } from '@/shared/i18n/i18n'
+import {
+  REGISTRATION_CONSENT_POLICIES,
+  type PolicyDocumentId,
+} from '@/shared/legal/policy-documents'
 
 type AuthMode = 'login' | 'register'
 
 const fieldClass =
-  'w-full rounded-2xl border border-line bg-canvas/60 px-4 py-3 text-sm text-ink backdrop-blur-md outline-none transition-colors placeholder:text-muted focus:border-ink'
+  'w-full border-[3px] border-ink bg-canvas px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted focus:border-ink focus:shadow-[4px_4px_0_var(--color-ink)]'
+
+const labelClass = 'font-display text-xs tracking-[0.18em]'
+const tabClass = 'font-display text-xs tracking-[0.2em]'
+
+function emptyConsents(): Partial<Record<PolicyDocumentId, boolean>> {
+  return Object.fromEntries(REGISTRATION_CONSENT_POLICIES.map((doc) => [doc.id, false]))
+}
+
+function allConsentsAccepted(accepted: Partial<Record<PolicyDocumentId, boolean>>): boolean {
+  return REGISTRATION_CONSENT_POLICIES.every((doc) => accepted[doc.id])
+}
 
 export function AccountAuthPanel() {
   const { t } = useI18n()
@@ -15,8 +31,21 @@ export function AccountAuthPanel() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [acceptedPolicies, setAcceptedPolicies] = useState(emptyConsents)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+
+  const policiesComplete = useMemo(() => allConsentsAccepted(acceptedPolicies), [acceptedPolicies])
+
+  function switchMode(next: AuthMode) {
+    setMode(next)
+    setError(null)
+    setAcceptedPolicies(emptyConsents())
+  }
+
+  function handlePolicyChange(id: PolicyDocumentId, checked: boolean) {
+    setAcceptedPolicies((prev) => ({ ...prev, [id]: checked }))
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -38,6 +67,10 @@ export function AccountAuthPanel() {
       }
       if (password !== confirmPassword) {
         setError(t('page.account.errorPasswordMatch'))
+        return
+      }
+      if (!policiesComplete) {
+        setError(t('page.account.errorPoliciesRequired'))
         return
       }
     }
@@ -66,41 +99,41 @@ export function AccountAuthPanel() {
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <div className="mb-8 flex rounded-2xl border border-line bg-canvas/50 p-1 backdrop-blur-md">
+      <div className="mb-8 flex border-[3px] border-ink bg-canvas p-1 shadow-[5px_5px_0_var(--color-ink)]">
         <button
           type="button"
-          className={`flex-1 rounded-xl py-2.5 text-xs tracking-[0.2em] transition-colors ${
-            mode === 'login' ? 'bg-ink text-canvas' : 'text-muted hover:text-ink'
+          className={`flex-1 py-2.5 ${tabClass} transition-colors ${
+            mode === 'login' ? 'bg-ink text-white' : 'text-muted hover:text-ink'
           }`}
-          onClick={() => {
-            setMode('login')
-            setError(null)
-          }}
+          style={mode === 'login' ? { transform: 'skewX(-10deg)' } : undefined}
+          onClick={() => switchMode('login')}
         >
-          {t('page.account.signIn')}
+          <span style={mode === 'login' ? { display: 'inline-block', transform: 'skewX(10deg)' } : undefined}>
+            {t('page.account.signIn')}
+          </span>
         </button>
         <button
           type="button"
-          className={`flex-1 rounded-xl py-2.5 text-xs tracking-[0.2em] transition-colors ${
-            mode === 'register' ? 'bg-ink text-canvas' : 'text-muted hover:text-ink'
+          className={`flex-1 py-2.5 ${tabClass} transition-colors ${
+            mode === 'register' ? 'bg-ink text-white' : 'text-muted hover:text-ink'
           }`}
-          onClick={() => {
-            setMode('register')
-            setError(null)
-          }}
+          style={mode === 'register' ? { transform: 'skewX(-10deg)' } : undefined}
+          onClick={() => switchMode('register')}
         >
-          {t('page.account.register')}
+          <span style={mode === 'register' ? { display: 'inline-block', transform: 'skewX(10deg)' } : undefined}>
+            {t('page.account.register')}
+          </span>
         </button>
       </div>
 
-      <p className="mb-6 text-center text-sm text-muted">
+      <p className="mb-6 text-center text-sm leading-relaxed text-muted">
         {mode === 'login' ? t('page.account.signInHint') : t('page.account.registerHint')}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {mode === 'register' && (
           <label className="block">
-            <span className="mb-2 block text-xs tracking-[0.18em] text-muted">
+            <span className={`mb-2 block ${labelClass} text-muted`}>
               {t('page.account.name')}
             </span>
             <input
@@ -114,7 +147,7 @@ export function AccountAuthPanel() {
         )}
 
         <label className="block">
-          <span className="mb-2 block text-xs tracking-[0.18em] text-muted">
+          <span className={`mb-2 block ${labelClass} text-muted`}>
             {t('page.account.email')}
           </span>
           <input
@@ -127,7 +160,7 @@ export function AccountAuthPanel() {
         </label>
 
         <label className="block">
-          <span className="mb-2 block text-xs tracking-[0.18em] text-muted">
+          <span className={`mb-2 block ${labelClass} text-muted`}>
             {t('page.account.password')}
           </span>
           <input
@@ -141,7 +174,7 @@ export function AccountAuthPanel() {
 
         {mode === 'register' && (
           <label className="block">
-            <span className="mb-2 block text-xs tracking-[0.18em] text-muted">
+            <span className={`mb-2 block ${labelClass} text-muted`}>
               {t('page.account.confirmPassword')}
             </span>
             <input
@@ -154,22 +187,28 @@ export function AccountAuthPanel() {
           </label>
         )}
 
+        {mode === 'register' && (
+          <RegisterPolicyConsents accepted={acceptedPolicies} onChange={handlePolicyChange} />
+        )}
+
         {error && (
-          <p className="rounded-2xl border border-accent/30 bg-accent-soft/40 px-4 py-3 text-sm text-accent">
+          <p className="border-2 border-ink bg-accent-soft/80 px-4 py-3 text-sm text-ink">
             {error}
           </p>
         )}
 
         <button
           type="submit"
-          disabled={submitting}
-          className="mt-2 w-full rounded-full border border-ink bg-ink py-3 text-sm font-medium tracking-[0.18em] text-canvas transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={submitting || (mode === 'register' && !policiesComplete)}
+          className="btn-slam mt-2 w-full"
         >
-          {submitting
-            ? t('page.account.submitting')
-            : mode === 'login'
-              ? t('page.account.signIn')
-              : t('page.account.createAccount')}
+          <span>
+            {submitting
+              ? t('page.account.submitting')
+              : mode === 'login'
+                ? t('page.account.signIn')
+                : t('page.account.createAccount')}
+          </span>
         </button>
       </form>
     </div>

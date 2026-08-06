@@ -10,23 +10,16 @@ export function AccountDashboard() {
 
   return (
     <div className="mx-auto w-full max-w-md text-center">
-      <p className="text-xs tracking-[0.22em] text-muted">{t('page.account.signedInAs')}</p>
-      <p className="mt-3 font-display text-2xl tracking-tight sm:text-3xl">{user.name}</p>
-      <p className="mt-2 text-sm text-muted">{user.email}</p>
+      <p className="eyebrow-cut justify-center">{t('page.account.signedInAs')}</p>
+      <p className="slash-title slash-title-ink mt-4 text-2xl sm:text-3xl">{user.name}</p>
+      <p className="mt-4 text-sm text-muted">{user.email}</p>
 
       <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
-        <Link
-          to="/product"
-          className="inline-block rounded-full border border-line bg-canvas/60 px-8 py-3 text-sm tracking-[0.16em] text-ink backdrop-blur-md transition-colors hover:border-ink"
-        >
-          {t('page.account.browseCatalog')}
+        <Link to="/product" className="btn-slam btn-slam-outline">
+          <span>{t('page.account.browseProducts')}</span>
         </Link>
-        <button
-          type="button"
-          onClick={() => void logout()}
-          className="inline-block rounded-full border border-ink bg-ink px-8 py-3 text-sm font-medium tracking-[0.18em] text-canvas transition-opacity hover:opacity-90"
-        >
-          {t('page.account.signOut')}
+        <button type="button" onClick={() => void logout()} className="btn-slam">
+          <span>{t('page.account.signOut')}</span>
         </button>
       </div>
     </div>

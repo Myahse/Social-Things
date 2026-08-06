@@ -1,30 +1,58 @@
+import { SlamReveal } from '@/shared/components/SlamReveal'
+
 export function Footer({ footerRef }: { footerRef?: React.RefObject<HTMLElement | null> }) {
   return (
-    <footer ref={footerRef} className="mt-auto bg-ink text-canvas">
-      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
-          {/* Top: social icon boxes */}
-          <div className="mb-10 flex items-center justify-center gap-3">
-            <SocialBox href="https://instagram.com" label="Instagram">
-              <InstagramIcon />
-            </SocialBox>
-            <SocialBox href="https://tiktok.com" label="TikTok">
-              <TikTokIcon />
-            </SocialBox>
-            <SocialBox href="https://x.com" label="X">
-              <XIcon />
-            </SocialBox>
-          </div>
+    <footer ref={footerRef} className="relative mt-auto overflow-hidden bg-ink text-canvas">
+      <div
+        className="pointer-events-none absolute inset-0 diag-stripes-red anim-stripe-scroll opacity-40"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -left-24 top-1/4 h-80 w-80 anim-shape-drift bg-bolt"
+        style={{
+          clipPath: 'polygon(0 18%, 100% 0, 82% 100%, 0 88%)',
+          ['--p5-rot' as string]: '12deg',
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -right-16 bottom-1/4 h-36 w-[30rem] anim-shape-drift bg-canvas"
+        style={{ ['--p5-rot' as string]: '-6deg', animationDelay: '-2.2s' }}
+        aria-hidden
+      />
 
-          <div className="font-display text-xl tracking-[0.22em] sm:text-2xl">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
+        <SlamReveal variant="block" className="mb-12 flex items-center justify-center gap-3">
+          <SocialBox href="https://instagram.com" label="Instagram">
+            <InstagramIcon />
+          </SocialBox>
+          <SocialBox href="https://tiktok.com" label="TikTok">
+            <TikTokIcon />
+          </SocialBox>
+          <SocialBox href="https://x.com" label="X">
+            <XIcon />
+          </SocialBox>
+        </SlamReveal>
+
+        <SlamReveal variant="tag">
+          <span className="tag-flash">
+            <span>CALLING CARD</span>
+          </span>
+        </SlamReveal>
+        <SlamReveal variant="block" delayMs={100} className="mt-6">
+          <p className="eyebrow-cut justify-center !text-bolt">SOCIAL THINGS</p>
+        </SlamReveal>
+        <SlamReveal variant="title" delayMs={180} className="mt-5">
+          <div className="slash-title slash-title-bolt anim-glitch-idle text-2xl sm:text-4xl lg:text-5xl">
             WELCOME TO SOCIAL THINGS
           </div>
+        </SlamReveal>
 
-          <a
-            className="mt-6 text-sm tracking-[0.22em] text-canvas/70 underline-offset-4 hover:text-canvas hover:underline"
-            href="mailto:contact@socialthings.com"
-          >
-            CONTACT US
+        <SlamReveal variant="block" delayMs={280} className="mt-10">
+          <a className="btn-slam anim-pulse-ring" href="mailto:contact@socialthings.com">
+            <span>CONTACT US</span>
           </a>
+        </SlamReveal>
       </div>
     </footer>
   )
@@ -45,9 +73,13 @@ function SocialBox({
       target="_blank"
       rel="noreferrer"
       aria-label={label}
-      className="group flex h-[var(--home-side-box)] w-[var(--home-side-box)] items-center justify-center rounded-2xl border border-canvas/15 bg-canvas/10 text-canvas transition-colors hover:bg-canvas/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-canvas/50"
+      className="group flex h-[var(--home-side-box)] w-[var(--home-side-box)] items-center justify-center border-[3px] border-canvas bg-canvas/5 text-canvas shadow-[4px_4px_0_#fff] transition-[background,border-color,transform,box-shadow] duration-300 hover:border-bolt hover:bg-bolt hover:text-ink hover:shadow-[6px_6px_0_var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bolt p5-hover-jolt"
+      style={{
+        clipPath: 'polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))',
+        transitionTimingFunction: 'var(--ease-slam)',
+      }}
     >
-      <span className="transition-transform duration-300 group-hover:scale-105">{children}</span>
+      <span className="transition-transform duration-300 group-hover:scale-110">{children}</span>
     </a>
   )
 }

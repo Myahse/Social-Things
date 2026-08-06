@@ -2,14 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCart } from '@/features/cart/context/CartContext'
 import { useProduct } from '@/features/products/hooks/useProduct'
-import { useProducts } from '@/features/products/hooks/useProducts'
-import { ProductCard } from '@/features/products/components/ProductCard'
-import { StaggerReveal } from '@/shared/components/StaggerReveal'
+const PRODUCT_LABEL_CLASS = 'font-display text-sm tracking-[0.18em]'
+const PRODUCT_MICRO_CLASS = 'font-display text-xs tracking-[0.16em]'
 
 type SelectorKey = 'avatar' | 'color' | 'size' | 'quantity'
-
-const RECENTS_KEY = 'social-things:recent-products'
-const MAX_RECENTS = 8
 
 function ringPos(angleDeg: number, radiusPct: number) {
   const rad = (angleDeg * Math.PI) / 180
@@ -57,7 +53,6 @@ function Dot({
 export function ProductPage() {
   const { slug } = useParams<{ slug: string }>()
   const { product, loading } = useProduct(slug)
-  const { products: allProducts } = useProducts()
   const { addItem } = useCart()
   const navigate = useNavigate()
 
@@ -81,42 +76,6 @@ export function ProductPage() {
     setActiveSelector(null)
   }, [product?.id])
 
-  useEffect(() => {
-    if (!product) return
-    try {
-      const raw = window.localStorage.getItem(RECENTS_KEY)
-      const prev = raw ? (JSON.parse(raw) as string[]) : []
-      const next = [product.slug, ...prev.filter((s) => s !== product.slug)].slice(0, MAX_RECENTS)
-      window.localStorage.setItem(RECENTS_KEY, JSON.stringify(next))
-    } catch {
-      // ignore storage issues
-    }
-  }, [product?.slug])
-
-  const recentSlugs = useMemo(() => {
-    try {
-      const raw = window.localStorage.getItem(RECENTS_KEY)
-      return raw ? (JSON.parse(raw) as string[]) : []
-    } catch {
-      return []
-    }
-  }, [product?.slug])
-
-  const recentProducts = useMemo(() => {
-    if (!product) return []
-    const bySlug = new Map(allProducts.map((p) => [p.slug, p]))
-    return recentSlugs
-      .filter((s) => s !== product.slug)
-      .map((s) => bySlug.get(s))
-      .filter((p): p is (typeof allProducts)[number] => Boolean(p))
-      .slice(0, 6)
-  }, [allProducts, recentSlugs, product])
-
-  const moreProducts = useMemo(() => {
-    if (!product) return []
-    return allProducts.filter((p) => p.slug !== product.slug).slice(0, 12)
-  }, [allProducts, product])
-
   const canBuy = Boolean(product && color && size && quantity > 0)
 
   if (loading) return null
@@ -135,7 +94,6 @@ export function ProductPage() {
 
   return (
     <div className="w-full">
-      <StaggerReveal index={0}>
       {/* Section 1: must fill the viewport under header */}
       <section className="relative mx-auto flex min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl items-center justify-center px-4 py-0 sm:px-6">
       {/* Ring */}
@@ -161,7 +119,7 @@ export function ProductPage() {
             <button
               key={item.label}
               type="button"
-              className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-4 text-sm tracking-[0.22em] transition-colors ${
+              className={`pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-4 ${PRODUCT_LABEL_CLASS} transition-colors ${
                 activeSelector === item.key ? 'text-ink' : 'text-ink/75 hover:text-ink'
               }`}
               style={{ left: `calc(50% + ${x.toFixed(2)}%)`, top: `calc(50% + ${y.toFixed(2)}%)` }}
@@ -194,7 +152,9 @@ export function ProductPage() {
 
       {/* Center product */}
       <div className="relative z-10 flex w-full max-w-md flex-col items-center text-center">
-        <div className="mb-6 text-sm tracking-[0.22em] text-muted">{selectorTitle}</div>
+        <h1 className="slash-title slash-title-ink text-3xl sm:text-4xl">{product.name}</h1>
+        <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{product.description}</p>
+        <div className={`mb-6 mt-5 ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>
 
         <div className="relative w-full">
           <div className="mx-auto aspect-[4/5] w-[min(72vw,18rem)] overflow-hidden rounded-2xl bg-canvas/40 backdrop-blur-sm">
@@ -216,7 +176,7 @@ export function ProductPage() {
         </div>
 
         <div className="mt-6 flex items-center justify-center gap-6">
-          <div className="text-3xl font-semibold">${product.price}</div>
+          <div className="slash-title slash-title-bolt text-3xl">${product.price}</div>
           <button
             type="button"
             onClick={() => {
@@ -228,9 +188,9 @@ export function ProductPage() {
               navigate('/cart')
             }}
             disabled={!canBuy}
-            className="rounded-full border border-ink bg-ink px-8 py-3 text-sm font-medium tracking-[0.22em] text-canvas transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+            className={`btn-slam ${PRODUCT_LABEL_CLASS} disabled:cursor-not-allowed disabled:opacity-40`}
           >
-            {added ? 'ADDED' : 'BUY'}
+            <span>{added ? 'ADDED' : 'BUY'}</span>
           </button>
         </div>
 
@@ -238,14 +198,14 @@ export function ProductPage() {
         <div className="mt-8 w-full max-w-sm md:hidden">
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
-              <div className="text-xs tracking-[0.22em] text-muted">SIZE</div>
+              <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>SIZE</div>
               <div className="flex flex-wrap justify-end gap-2">
                 {sizes.map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => setSize(s)}
-                    className={`rounded-full border px-4 py-2 text-xs tracking-[0.18em] transition-colors ${
+                    className={`rounded-full border px-4 py-2 ${PRODUCT_MICRO_CLASS} transition-colors ${
                       size === s ? 'border-ink bg-ink text-canvas' : 'border-line hover:border-ink'
                     }`}
                   >
@@ -256,7 +216,7 @@ export function ProductPage() {
             </div>
 
             <div className="flex items-center justify-between rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
-              <div className="text-xs tracking-[0.22em] text-muted">QTY</div>
+              <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>QTY</div>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
@@ -285,7 +245,7 @@ export function ProductPage() {
       <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 hidden h-[min(86vmin,48rem)] w-[min(86vmin,48rem)] -translate-x-1/2 -translate-y-1/2 md:block">
         {activeSelector == null && (
           <div
-            className="absolute -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-line bg-canvas/70 px-5 py-3 text-xs tracking-[0.22em] text-muted backdrop-blur-md"
+            className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-line bg-canvas/70 px-5 py-3 ${PRODUCT_MICRO_CLASS} text-muted backdrop-blur-md`}
             style={ringPos(0, 54)}
           >
             SELECT ON LEFT
@@ -332,7 +292,7 @@ export function ProductPage() {
                   <button
                     type="button"
                     onClick={() => setSize(s)}
-                    className={`rounded-full border px-4 py-2 text-xs tracking-[0.18em] transition-colors ${
+                    className={`rounded-full border px-4 py-2 ${PRODUCT_MICRO_CLASS} transition-colors ${
                       size === s
                         ? 'border-ink bg-ink text-canvas'
                         : 'border-line bg-canvas/70 text-ink backdrop-blur-md hover:border-ink'
@@ -362,7 +322,7 @@ export function ProductPage() {
                   style={ringPos(item.angleDeg, 54)}
                 >
                   {item.kind === 'value' ? (
-                    <div className="rounded-full border border-line bg-canvas/70 px-5 py-2 text-base tracking-[0.22em] text-ink backdrop-blur-md">
+                    <div className={`rounded-full border border-line bg-canvas/70 px-5 py-2 text-base ${PRODUCT_LABEL_CLASS} text-ink backdrop-blur-md`}>
                       {quantity}
                     </div>
                   ) : (
@@ -398,7 +358,7 @@ export function ProductPage() {
                 <button
                   key={id}
                   type="button"
-                  className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-line bg-canvas/70 px-4 py-3 text-xs tracking-[0.22em] text-ink backdrop-blur-md transition-colors hover:bg-canvas"
+                  className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-line bg-canvas/70 px-4 py-3 ${PRODUCT_MICRO_CLASS} text-ink backdrop-blur-md transition-colors hover:bg-canvas`}
                   style={ringPos(angleDeg, r)}
                 >
                   {id}
@@ -409,32 +369,6 @@ export function ProductPage() {
         )}
       </div>
       </section>
-      </StaggerReveal>
-
-      <StaggerReveal index={1}>
-      {/* Section 2: other products + recently visited */}
-      <section className="mx-auto min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl px-4 pb-20 pt-10 sm:px-6">
-        {recentProducts.length > 0 && (
-          <div>
-            <div className="mb-4 text-xs tracking-[0.22em] text-muted">RECENTLY VIEWED</div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {recentProducts.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className={recentProducts.length > 0 ? 'mt-12' : ''}>
-          <div className="mb-4 text-xs tracking-[0.22em] text-muted">MORE FROM THE CATALOG</div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {moreProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </div>
-      </section>
-      </StaggerReveal>
     </div>
   )
 }

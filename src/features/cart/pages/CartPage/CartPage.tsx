@@ -19,7 +19,7 @@ export function CartPage() {
   const { products, loading } = useProducts()
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const [isCheckingOut, setIsCheckingOut] = useState(false)
-  const catalogPreview = useMemo(() => {
+  const productPreview = useMemo(() => {
     const inCart = new Set(items.map((i) => i.productId))
     return products.filter((p) => !inCart.has(p.id)).slice(0, 4)
   }, [items, products])
@@ -44,12 +44,15 @@ export function CartPage() {
     <div className="w-full">
       <section className="mx-auto flex min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl flex-col px-4 pb-12 pt-10 sm:px-6">
         <StaggerReveal index={0} className="shrink-0">
-          <p className="text-xs tracking-[0.28em] text-muted">SOCIAL THINGS</p>
-          <h1 className="mt-3 font-display text-3xl tracking-tight sm:text-4xl">
+          <span className="tag-flash">
+            <span>HEIST BAG</span>
+          </span>
+          <p className="eyebrow-cut mt-4">SOCIAL THINGS</p>
+          <h1 className="slash-title slash-title-ink mt-4 text-3xl sm:text-4xl">
             {t('page.cart.title')}
           </h1>
           {itemCount > 0 && (
-            <p className="mt-2 text-sm tracking-[0.18em] text-muted">
+            <p className="mt-3 text-sm tracking-[0.18em] text-muted">
               {itemCount} {itemLabel}
             </p>
           )}
@@ -58,15 +61,12 @@ export function CartPage() {
         <StaggerReveal index={1} className="flex flex-1 flex-col">
           {items.length === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
-              <p className="font-display text-2xl tracking-tight sm:text-3xl">
+              <p className="slash-title slash-title-ink text-2xl sm:text-3xl">
                 {t('page.cart.empty')}
               </p>
               <p className="mt-4 max-w-sm text-sm text-muted">{t('page.cart.emptyHint')}</p>
-              <Link
-                to="/product"
-                className="mt-8 inline-block rounded-full border border-ink bg-ink px-8 py-3 text-sm font-medium tracking-[0.18em] text-canvas transition-opacity hover:opacity-90"
-              >
-                {t('page.cart.continue')}
+              <Link to="/product" className="btn-slam mt-8">
+                <span>{t('page.cart.continue')}</span>
               </Link>
             </div>
           ) : (
@@ -100,9 +100,9 @@ export function CartPage() {
       <section className="mx-auto min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl px-4 pb-20 pt-6 sm:px-6">
         <StaggerReveal index={2} className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs tracking-[0.22em] text-muted">{t('page.cart.catalogEyebrow')}</p>
+            <p className="text-xs tracking-[0.22em] text-muted">{t('page.cart.productsEyebrow')}</p>
             <h2 className="mt-2 font-display text-2xl tracking-tight sm:text-3xl">
-              {t('page.cart.catalogTitle')}
+              {t('page.cart.productsTitle')}
             </h2>
           </div>
           <Link
@@ -116,16 +116,16 @@ export function CartPage() {
         <StaggerReveal index={3}>
           {loading && <p className="text-center text-muted">{t('page.cart.loading')}</p>}
 
-          {!loading && catalogPreview.length > 0 && (
+          {!loading && productPreview.length > 0 && (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {catalogPreview.map((product) => (
+              {productPreview.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
 
-          {!loading && catalogPreview.length === 0 && (
-            <p className="text-center text-sm text-muted">{t('page.cart.catalogEmpty')}</p>
+          {!loading && productPreview.length === 0 && (
+            <p className="text-center text-sm text-muted">{t('page.cart.productsEmpty')}</p>
           )}
         </StaggerReveal>
       </section>

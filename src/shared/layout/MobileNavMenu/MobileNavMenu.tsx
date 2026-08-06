@@ -51,9 +51,18 @@ function CartIcon({ className = 'h-6 w-6' }: { className?: string }) {
   )
 }
 
+function GalleryIcon({ className = 'h-6 w-6' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M4.25 5.25h15.5A1.75 1.75 0 0 1 21.5 7v10a1.75 1.75 0 0 1-1.75 1.75H4.25A1.75 1.75 0 0 1 2.5 17V7a1.75 1.75 0 0 1 1.75-1.75Zm1.5 1.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5ZM4.75 16.5l3.7-4.2a.75.75 0 0 1 1.12 0l2.08 2.36 2.85-3.55a.75.75 0 0 1 1.18 0l3.87 5.39H4.75Z" />
+    </svg>
+  )
+}
+
 function NavItemIcon({ to }: { to: string }) {
   if (to === '/') return <HomeIcon />
   if (to.startsWith('/product')) return <GridIcon />
+  if (to.startsWith('/gallery')) return <GalleryIcon />
   if (to.startsWith('/about')) return <InfoIcon />
   if (to === '/account') return <AccountIcon />
   if (to === '/cart') return <CartIcon />
@@ -88,27 +97,33 @@ function BottomNavLink({
       aria-label={label}
       onClick={() => onNavClick?.()}
       className={({ isActive }) =>
-        `relative flex h-[var(--mobile-nav-box)] w-[var(--mobile-nav-box)] shrink-0 items-center justify-center rounded-2xl transition-[colors,background-color,transform,opacity] duration-450 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
+        `relative flex h-[var(--mobile-nav-box)] w-[var(--mobile-nav-box)] shrink-0 items-center justify-center border-[2.5px] transition-[colors,background-color,transform,opacity,box-shadow] duration-450 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
           isActive
             ? isDark
-              ? 'bg-canvas/25 text-canvas'
-              : 'bg-canvas text-ink'
+              ? 'border-ink bg-ink text-white shadow-[3px_3px_0_#fff]'
+              : 'border-ink bg-ink text-white shadow-[3px_3px_0_#fff]'
             : isDark
-              ? 'border border-canvas/15 bg-canvas/10 text-canvas/85 hover:bg-canvas/15'
-              : 'bg-ink/[0.06] text-ink/70 hover:bg-ink/[0.09] hover:text-ink'
+              ? 'border-canvas/30 bg-canvas/10 text-canvas/85 hover:border-bolt hover:bg-canvas/15'
+              : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:border-ink hover:text-ink'
         }`
       }
       style={{
+        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
         pointerEvents: revealed ? 'auto' : 'none',
         opacity: revealed ? 1 : 0,
         transform: revealed ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.94)',
-        transition: `transform ${STAGGER_REVEAL_MS}ms ${STAGGER_EASE}, opacity ${STAGGER_REVEAL_MS}ms ${STAGGER_EASE}, colors 450ms ${STAGGER_EASE}, background-color 450ms ${STAGGER_EASE}`,
+        transition: `transform ${STAGGER_REVEAL_MS}ms ${STAGGER_EASE}, opacity ${STAGGER_REVEAL_MS}ms ${STAGGER_EASE}, colors 450ms ${STAGGER_EASE}, background-color 450ms ${STAGGER_EASE}, box-shadow 450ms ${STAGGER_EASE}`,
       }}
     >
       <NavItemIcon to={to} />
       {badge != null && badge > 0 && (
-        <span className="absolute right-1 top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[11px] font-medium text-white">
-          {badge > 9 ? '9+' : badge}
+        <span
+          className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center bg-ink px-1 text-[11px] font-medium text-white"
+          style={{ transform: 'skewX(-10deg)' }}
+        >
+          <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>
+            {badge > 9 ? '9+' : badge}
+          </span>
         </span>
       )}
     </NavLink>

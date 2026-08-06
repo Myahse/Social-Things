@@ -22,47 +22,37 @@ public class DataSeeder {
                 return;
             }
 
-            log.info("Seeding catalog products");
+            log.info("Seeding products");
 
             save(
                     productRepository,
-                    "Relaxed Linen Shirt",
-                    "relaxed-linen-shirt",
+                    "Green Piece",
+                    "green",
                     "98",
-                    "Breathable linen with a relaxed drape for warm days and layered evenings.",
-                    "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&q=80&auto=format&fit=crop",
-                    List.of("Oat", "Charcoal"),
-                    List.of("S", "M", "L", "XL"));
-
-            save(
-                    productRepository,
-                    "Merino Crew Tee",
-                    "merino-crew-tee",
-                    "58",
-                    "Fine-gauge merino that regulates temperature and resists odor naturally.",
+                    "Bold green staple — cut for movement and everyday wear.",
                     "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80&auto=format&fit=crop",
-                    List.of("Black", "Stone", "Ivory"),
+                    List.of("Green"),
                     List.of("S", "M", "L", "XL"));
 
             save(
                     productRepository,
-                    "Wool Overshirt",
-                    "wool-overshirt",
-                    "168",
-                    "Structured overshirt in brushed wool — wears like a light jacket.",
-                    "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80&auto=format&fit=crop",
-                    List.of("Navy", "Camel"),
-                    List.of("S", "M", "L"));
+                    "Orange Piece",
+                    "orange",
+                    "98",
+                    "Statement orange layer — fearlessly expressive on the street.",
+                    "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&q=80&auto=format&fit=crop",
+                    List.of("Orange"),
+                    List.of("S", "M", "L", "XL"));
 
             save(
                     productRepository,
-                    "Canvas Tote",
-                    "canvas-tote",
-                    "42",
-                    "Heavy canvas tote with interior pocket. Built for daily carry.",
-                    "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=800&q=80&auto=format&fit=crop",
-                    List.of("Natural"),
-                    List.of("One size"));
+                    "Red Piece",
+                    "red",
+                    "98",
+                    "Deep red finish — structured fit with a relaxed drape.",
+                    "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80&auto=format&fit=crop",
+                    List.of("Red"),
+                    List.of("S", "M", "L", "XL"));
         };
     }
 

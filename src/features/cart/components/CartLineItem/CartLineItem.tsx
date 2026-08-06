@@ -28,7 +28,7 @@ export function CartLineItem({ item, onRemove, onUpdateQuantity }: CartLineItemP
           <button
             type="button"
             onClick={onRemove}
-            className="mt-2 text-sm text-muted underline-offset-4 hover:text-accent hover:underline"
+            className="mt-2 text-sm text-muted underline-offset-4 hover:text-ink hover:underline"
           >
             Remove
           </button>

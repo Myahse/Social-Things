@@ -1,0 +1,1 @@
+export { SlamReveal } from './SlamReveal'

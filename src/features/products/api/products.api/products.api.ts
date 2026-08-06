@@ -3,30 +3,38 @@ import {
   getFallbackProductBySlug,
 } from '@/features/products/data/fallback-products'
 import type { Product } from '@/features/products/types'
+import {
+  withProductAssets,
+  withProductAssetsList,
+} from '@/features/products/utils/merge-product-assets'
 import { apiFetch } from '@/shared/api/client'
 import { isJavaApiEnabled } from '@/shared/api/config'
 import { endpoints } from '@/shared/api/endpoints'
 
 export async function fetchProducts(): Promise<Product[]> {
   if (!isJavaApiEnabled()) {
-    return fallbackProducts
+    return withProductAssetsList(fallbackProducts)
   }
 
   try {
-    return await apiFetch<Product[]>(endpoints.products)
+    const products = await apiFetch<Product[]>(endpoints.products)
+    return withProductAssetsList(products)
   } catch {
-    return fallbackProducts
+    return withProductAssetsList(fallbackProducts)
   }
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | undefined> {
   if (!isJavaApiEnabled()) {
-    return getFallbackProductBySlug(slug)
+    const product = getFallbackProductBySlug(slug)
+    return product ? withProductAssets(product) : undefined
   }
 
   try {
-    return await apiFetch<Product>(endpoints.productBySlug(slug))
+    const product = await apiFetch<Product>(endpoints.productBySlug(slug))
+    return withProductAssets(product)
   } catch {
-    return getFallbackProductBySlug(slug)
+    const product = getFallbackProductBySlug(slug)
+    return product ? withProductAssets(product) : undefined
   }
 }

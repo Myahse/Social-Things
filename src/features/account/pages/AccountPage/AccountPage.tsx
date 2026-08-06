@@ -12,12 +12,15 @@ export function AccountPage() {
       <section className="mx-auto flex min-h-[calc(100dvh-var(--header-height))] w-full max-w-6xl flex-col px-4 py-10 sm:px-6">
         <header className="shrink-0 text-center">
           <StaggerReveal index={0}>
-            <p className="text-xs tracking-[0.28em] text-muted">SOCIAL THINGS</p>
+            <span className="tag-flash mx-auto">
+              <span>MEMBER</span>
+            </span>
+            <p className="eyebrow-cut mt-4 justify-center">SOCIAL THINGS</p>
           </StaggerReveal>
-          <StaggerReveal index={1} className="mt-3 font-display text-3xl tracking-tight sm:text-4xl">
-            {t('page.account.title')}
+          <StaggerReveal index={1} className="mt-4">
+            <h1 className="slash-title slash-title-ink text-3xl sm:text-4xl">{t('page.account.title')}</h1>
           </StaggerReveal>
-          <StaggerReveal index={2} className="mt-3 text-sm tracking-[0.16em] text-muted">
+          <StaggerReveal index={2} className="mt-3 text-sm tracking-[0.06em] text-muted">
             {isLoading
               ? t('page.account.loading')
               : isAuthenticated

@@ -1,1 +1,0 @@
-export { HeroElementBg } from './HeroElementBg'
