@@ -1,6 +1,6 @@
 package com.socialthings.service;
 
-import com.socialthings.config.CheckoutProperties;
+import com.socialthings.config.StorefrontProperties;
 import com.socialthings.domain.Order;
 import com.socialthings.domain.OrderItem;
 import com.socialthings.domain.Product;
@@ -9,6 +9,8 @@ import com.socialthings.dto.checkout.CheckoutRequest;
 import com.socialthings.dto.checkout.CheckoutResponse;
 import com.socialthings.exception.ApiException;
 import com.socialthings.repository.OrderRepository;
+import com.socialthings.tracker.TrackerCatalogService;
+import com.socialthings.tracker.TrackerInventoryItem;
 import java.math.BigDecimal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -21,15 +23,18 @@ public class CheckoutService {
 
     private final ProductService productService;
     private final OrderRepository orderRepository;
-    private final CheckoutProperties checkoutProperties;
+    private final TrackerCatalogService trackerCatalogService;
+    private final StorefrontProperties storefrontProperties;
 
     public CheckoutService(
             ProductService productService,
             OrderRepository orderRepository,
-            CheckoutProperties checkoutProperties) {
+            TrackerCatalogService trackerCatalogService,
+            StorefrontProperties storefrontProperties) {
         this.productService = productService;
         this.orderRepository = orderRepository;
-        this.checkoutProperties = checkoutProperties;
+        this.trackerCatalogService = trackerCatalogService;
+        this.storefrontProperties = storefrontProperties;
     }
 
     @Transactional
@@ -53,39 +58,64 @@ public class CheckoutService {
         }
 
         BigDecimal subtotal = BigDecimal.ZERO;
-        for (CheckoutRequest.CheckoutLineRequest line : request.items()) {
-            Product product = productService.findEntityById(parseProductId(line.productId()));
-            validateVariant(product, line.size(), line.color());
+        if (trackerCatalogService.enabled()) {
+            for (CheckoutRequest.CheckoutLineRequest line : request.items()) {
+                TrackerInventoryItem variant =
+                        trackerCatalogService.requireVariant(line.productId(), line.size(), line.color());
+                if (variant.stock() < line.quantity()) {
+                    throw new ApiException(
+                            HttpStatus.CONFLICT, "Not enough stock for " + variant.name());
+                }
+                trackerCatalogService.decrementStock(variant.id(), line.quantity(), variant.name());
 
-            OrderItem item = new OrderItem();
-            item.setProductId(product.getId());
-            item.setProductSlug(product.getSlug());
-            item.setProductName(product.getName());
-            item.setSize(line.size());
-            item.setColor(line.color());
-            item.setQuantity(line.quantity());
-            item.setUnitPrice(product.getPrice());
-            order.addItem(item);
+                OrderItem item = new OrderItem();
+                item.setProductId(syntheticId(variant.id()));
+                item.setProductSlug(line.productId());
+                item.setProductName(variant.name());
+                item.setSize(line.size());
+                item.setColor(line.color());
+                item.setQuantity(line.quantity());
+                item.setUnitPrice(variant.price());
+                order.addItem(item);
+                subtotal = subtotal.add(variant.price().multiply(BigDecimal.valueOf(line.quantity())));
+            }
+        } else {
+            for (CheckoutRequest.CheckoutLineRequest line : request.items()) {
+                Product product = productService.findEntityById(parseProductId(line.productId()));
+                validateVariant(product, line.size(), line.color());
 
-            subtotal = subtotal.add(product.getPrice().multiply(BigDecimal.valueOf(line.quantity())));
+                OrderItem item = new OrderItem();
+                item.setProductId(product.getId());
+                item.setProductSlug(product.getSlug());
+                item.setProductName(product.getName());
+                item.setSize(line.size());
+                item.setColor(line.color());
+                item.setQuantity(line.quantity());
+                item.setUnitPrice(product.getPrice());
+                order.addItem(item);
+                subtotal = subtotal.add(product.getPrice().multiply(BigDecimal.valueOf(line.quantity())));
+            }
         }
 
         order.setSubtotal(subtotal);
-        order.setStatus("PENDING");
-
-        String checkoutUrl;
-        if (checkoutProperties.mockEnabled()) {
-            checkoutUrl = checkoutProperties.mockUrl();
-            order.setStatus("MOCK_CHECKOUT");
-        } else {
-            throw new ApiException(
-                    HttpStatus.SERVICE_UNAVAILABLE,
-                    "Shopify checkout is not configured. Set CHECKOUT_MOCK_ENABLED=true for development.");
-        }
-
-        order.setCheckoutUrl(checkoutUrl);
+        order.setStatus("CONFIRMED");
         Order saved = orderRepository.save(order);
+        String checkoutUrl = storefrontUrl() + "/order/" + saved.getId();
+        saved.setCheckoutUrl(checkoutUrl);
+        saved = orderRepository.save(saved);
         return new CheckoutResponse(checkoutUrl, saved.getId().toString());
+    }
+
+    private String storefrontUrl() {
+        String url = storefrontProperties.url();
+        if (url == null || url.isBlank()) {
+            return "http://localhost:5173";
+        }
+        return url.replaceAll("/$", "");
+    }
+
+    private static long syntheticId(String inventoryId) {
+        return Math.abs((long) inventoryId.hashCode());
     }
 
     private User currentUser() {

@@ -5,9 +5,9 @@ import { isJavaApiEnabled } from '@/shared/api/config'
 import { endpoints } from '@/shared/api/endpoints'
 
 /**
- * Sends the cart to the Java backend. The server returns a Shopify checkout URL.
+ * Sends the cart to the Java backend. The server saves the order and decrements tracker stock.
  */
-export async function createCheckoutSession(items: CartItem[]): Promise<string> {
+export async function createCheckoutSession(items: CartItem[]): Promise<CheckoutResponse> {
   if (!isJavaApiEnabled()) {
     throw new Error(
       'Java API is offline. Start Spring Boot on port 8080 and set VITE_USE_JAVA_API=true in .env.development.',
@@ -23,14 +23,14 @@ export async function createCheckoutSession(items: CartItem[]): Promise<string> 
     })),
   }
 
-  const { checkoutUrl } = await apiFetch<CheckoutResponse>(endpoints.checkout, {
+  const response = await apiFetch<CheckoutResponse>(endpoints.checkout, {
     method: 'POST',
     body: JSON.stringify(body),
   })
 
-  if (!checkoutUrl) {
-    throw new Error('Backend did not return a checkout URL')
+  if (!response.orderId && !response.checkoutUrl) {
+    throw new Error('Backend did not confirm the order')
   }
 
-  return checkoutUrl
+  return response
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { CartLineItem } from '@/features/cart/components/CartLineItem'
 import { CartSummary } from '@/features/cart/components/CartSummary'
 import { useCart } from '@/features/cart/context/CartContext'
@@ -15,7 +15,8 @@ function itemKey(productId: string, size: string, color: string) {
 
 export function CartPage() {
   const { t } = useI18n()
-  const { items, itemCount, subtotal, removeItem, updateQuantity } = useCart()
+  const { items, itemCount, subtotal, removeItem, updateQuantity, clearCart } = useCart()
+  const navigate = useNavigate()
   const { products, loading } = useProducts()
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const [isCheckingOut, setIsCheckingOut] = useState(false)
@@ -29,8 +30,9 @@ export function CartPage() {
     setCheckoutError(null)
     setIsCheckingOut(true)
     try {
-      const url = await createCheckoutSession(items)
-      window.location.assign(url)
+      const result = await createCheckoutSession(items)
+      clearCart()
+      navigate(result.orderId ? `/order/${result.orderId}` : '/cart')
     } catch (err) {
       setCheckoutError(err instanceof Error ? err.message : 'Checkout failed')
       setIsCheckingOut(false)

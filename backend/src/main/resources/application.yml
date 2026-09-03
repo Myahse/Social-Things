@@ -28,9 +28,13 @@ app:
     expiration-ms: 604800000
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,https://socialthngs.com,https://www.socialthngs.com}
-  checkout:
-    mock-enabled: ${CHECKOUT_MOCK_ENABLED:true}
-    mock-url: ${CHECKOUT_MOCK_URL:https://socialthngs.com/cart}
+  tracker:
+    url: ${TRACKER_DATABASE_URL:}
+    username: ${TRACKER_DATABASE_USERNAME:}
+    password: ${TRACKER_DATABASE_PASSWORD:}
+    public-base-url: ${TRACKER_PUBLIC_BASE_URL:}
+  storefront:
+    url: ${STOREFRONT_URL:http://localhost:5173}
 
 logging:
   level:

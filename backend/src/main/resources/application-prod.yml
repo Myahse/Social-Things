@@ -11,5 +11,5 @@ spring:
       enabled: false
 
 app:
-  checkout:
-    mock-enabled: ${CHECKOUT_MOCK_ENABLED:false}
+  storefront:
+    url: ${STOREFRONT_URL:https://socialthngs.com}

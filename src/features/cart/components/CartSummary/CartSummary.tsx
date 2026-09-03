@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { getApiBaseUrl } from '@/shared/api/client'
 import { isJavaApiEnabled } from '@/shared/api/config'
 
 interface CartSummaryProps {
@@ -27,7 +26,7 @@ export function CartSummary({
         <span className="font-medium">${subtotal.toFixed(0)}</span>
       </div>
       <p className="mt-2 text-xs text-muted">
-        Shipping and taxes calculated at checkout on Shopify.
+        Stock is reserved from tracker inventory when you place the order.
       </p>
 
       {checkoutError && (
@@ -42,17 +41,14 @@ export function CartSummary({
         disabled={isCheckingOut}
         className="btn-slam mt-6 w-full"
       >
-        <span>{isCheckingOut ? 'Redirecting…' : 'Checkout with Shopify'}</span>
+        <span>{isCheckingOut ? 'Placing order…' : 'Place order'}</span>
       </button>
 
       <p className="mt-3 text-xs text-muted">
         {isJavaApiEnabled() ? (
-          <>
-            Checkout is handled by the Java API ({getApiBaseUrl()}/checkout), which redirects
-            to Shopify for payment.
-          </>
+          <>Orders are saved in this store and inventory is updated in tracker-social.</>
         ) : (
-          <>Dev mode: using local product data. Enable the Java API to test checkout.</>
+          <>Start the Java API and set VITE_USE_JAVA_API=true to place orders against tracker inventory.</>
         )}
       </p>
 

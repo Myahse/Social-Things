@@ -17,6 +17,7 @@ function contentSlotsForRoute(pathname: string): number {
   if (pathname === '/gallery') return 2
   if (pathname === '/account') return 4
   if (pathname === '/cart') return 4
+  if (pathname.startsWith('/order/')) return 5
   if (pathname === '/product') return 3
   if (pathname.startsWith('/product/')) return 2
   return 3

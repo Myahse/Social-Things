@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import { AboutPage } from '@/features/about/pages/AboutPage'
 import { AccountPage } from '@/features/account/pages/AccountPage'
 import { CartPage } from '@/features/cart/pages/CartPage'
+import { OrderConfirmationPage } from '@/features/checkout/pages/OrderConfirmationPage'
 import { GalleryPage } from '@/features/gallery/pages/GalleryPage'
 import { HomePage } from '@/features/home/pages/HomePage'
 import { IntroGate } from '@/features/intro/components/IntroGate'
@@ -22,6 +23,7 @@ function App() {
           <Route path="about" element={<AboutPage />} />
           <Route path="account" element={<AccountPage />} />
           <Route path="cart" element={<CartPage />} />
+          <Route path="order/:orderId" element={<OrderConfirmationPage />} />
           <Route path="legal/:documentId" element={<LegalDocumentPage />} />
         </Route>
       </Routes>

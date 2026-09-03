@@ -58,6 +58,10 @@ type I18nKey =
   | 'page.cart.viewAll'
   | 'page.cart.loading'
   | 'page.cart.productsEmpty'
+  | 'page.order.tag'
+  | 'page.order.title'
+  | 'page.order.hint'
+  | 'page.order.number'
   | 'page.product.moreFromProducts'
   | 'page.products.title'
   | 'page.products.hint'
@@ -135,6 +139,10 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.cart.viewAll': 'View all',
     'page.cart.loading': 'Loading products…',
     'page.cart.productsEmpty': 'Nothing else to show right now.',
+    'page.order.tag': 'LOCKED IN',
+    'page.order.title': 'Order confirmed',
+    'page.order.hint': 'Your order is saved and stock was taken from tracker inventory.',
+    'page.order.number': 'Order',
     'page.product.moreFromProducts': 'MORE FROM THE PRODUCTS',
     'page.products.title': 'Products',
     'page.products.hint': 'Tap a piece to view details and add to cart.',
@@ -208,6 +216,10 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.cart.viewAll': 'Tout voir',
     'page.cart.loading': 'Chargement des produits…',
     'page.cart.productsEmpty': 'Rien d’autre à afficher pour le moment.',
+    'page.order.tag': 'VALIDÉ',
+    'page.order.title': 'Commande confirmée',
+    'page.order.hint': 'Votre commande est enregistrée et le stock a été retiré de tracker-social.',
+    'page.order.number': 'Commande',
     'page.product.moreFromProducts': 'PLUS DE PRODUITS',
     'page.products.title': 'Produits',
     'page.products.hint': 'Touchez une pièce pour voir les détails et l’ajouter au panier.',

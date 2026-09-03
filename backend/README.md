@@ -51,7 +51,7 @@ Then `npm run dev` (Vite proxies `/api` → `localhost:8080`).
 | POST | `/auth/login` | No | Sign in |
 | GET | `/auth/session` | Bearer JWT | Current session |
 | POST | `/auth/logout` | Bearer JWT | Sign out |
-| POST | `/checkout` | No | Validate cart, **persist order**, return checkout URL |
+| POST | `/checkout` | No | Validate cart, decrement tracker stock, persist order |
 | GET | `/orders` | Bearer JWT | Current user's orders |
 
 ## Environment variables
@@ -64,11 +64,14 @@ Then `npm run dev` (Vite proxies `/api` → `localhost:8080`).
 | `JPA_DDL_AUTO` | `update` | Hibernate schema mode |
 | `H2_CONSOLE_ENABLED` | `true` | Disable when using Neon |
 | `JWT_SECRET` | dev placeholder | HMAC secret (min 32 chars) |
-| `CHECKOUT_MOCK_ENABLED` | `true` | Mock checkout redirect |
-| `CHECKOUT_MOCK_URL` | cart URL | Mock redirect target |
+| `TRACKER_DATABASE_URL` | empty | JDBC URL for tracker-social inventory Neon |
+| `TRACKER_DATABASE_USERNAME` | empty | Tracker DB user |
+| `TRACKER_DATABASE_PASSWORD` | empty | Tracker DB password |
+| `TRACKER_PUBLIC_BASE_URL` | empty | Prefix for relative `/uploads` images |
+| `STOREFRONT_URL` | `http://localhost:5173` | Confirmation page base URL |
 
 Production: `SPRING_PROFILES_ACTIVE=prod` + Neon `DATABASE_*` (`ddl-auto` defaults to `validate`).
 
-## Shopify checkout
+## Catalog + checkout
 
-Checkout validates lines, saves an `orders` + `order_items` row, then returns a mock URL when `CHECKOUT_MOCK_ENABLED=true`. Wire Shopify in `CheckoutService` for live payments.
+The storefront catalog is read from **tracker-social** `inventory_items` when `TRACKER_DATABASE_URL` is set. Rows with the same name become one product (sizes/colors aggregated). Checkout saves `orders` + `order_items` here and decrements stock in tracker.

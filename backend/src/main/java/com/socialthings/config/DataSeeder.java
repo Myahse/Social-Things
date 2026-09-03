@@ -2,6 +2,7 @@ package com.socialthings.config;
 
 import com.socialthings.domain.Product;
 import com.socialthings.repository.ProductRepository;
+import com.socialthings.tracker.TrackerCatalogService;
 import java.math.BigDecimal;
 import java.util.List;
 import org.slf4j.Logger;
@@ -16,8 +17,13 @@ public class DataSeeder {
     private static final Logger log = LoggerFactory.getLogger(DataSeeder.class);
 
     @Bean
-    CommandLineRunner seedProducts(ProductRepository productRepository) {
+    CommandLineRunner seedProducts(
+            ProductRepository productRepository, TrackerCatalogService trackerCatalogService) {
         return args -> {
+            if (trackerCatalogService.enabled()) {
+                log.info("Skipping demo product seed — catalog comes from tracker-social inventory");
+                return;
+            }
             if (productRepository.count() > 0) {
                 return;
             }
