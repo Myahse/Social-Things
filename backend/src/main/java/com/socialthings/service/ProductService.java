@@ -56,18 +56,22 @@ public class ProductService {
                 product.description(),
                 product.image(),
                 product.colors(),
-                product.sizes());
+                product.sizes(),
+                product.images());
     }
 
     private ProductResponse toResponse(Product product) {
+        String image = product.getImage();
+        List<String> images = image == null || image.isBlank() ? List.of() : List.of(image);
         return new ProductResponse(
                 String.valueOf(product.getId()),
                 product.getName(),
                 product.getSlug(),
                 product.getPrice().doubleValue(),
                 product.getDescription(),
-                product.getImage(),
+                image,
                 product.getColors(),
-                product.getSizes());
+                product.getSizes(),
+                images);
     }
 }

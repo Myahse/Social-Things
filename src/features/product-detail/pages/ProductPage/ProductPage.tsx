@@ -3,7 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '@/features/account/context/AuthContext'
 import { useCart } from '@/features/cart/context/CartContext'
 import { useI18n } from '@/shared/i18n/i18n'
+import { ProductImageSlider } from '@/features/products/components/ProductImageSlider'
 import { useProduct } from '@/features/products/hooks/useProduct'
+import { productGallery } from '@/features/products/utils/merge-product-assets'
 const PRODUCT_LABEL_CLASS = 'font-display text-sm tracking-[0.18em]'
 const PRODUCT_MICRO_CLASS = 'font-display text-xs tracking-[0.16em]'
 
@@ -160,23 +162,15 @@ export function ProductPage() {
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{product.description}</p>
         <div className={`mb-5 mt-4 hidden md:block ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>
 
-        <div className="relative w-full">
-          <div className="mx-auto aspect-[4/5] w-[min(78vw,18rem)] overflow-hidden rounded-2xl bg-canvas/40 backdrop-blur-sm">
-            <img src={product.image} alt={product.name} className="h-full w-full object-contain" />
-          </div>
-        </div>
-
-        <div className="mt-5 hidden items-center justify-center gap-3 md:flex">
-          <div className="flex items-center gap-2">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="h-12 w-12 overflow-hidden rounded-xl border border-line bg-canvas/50 backdrop-blur-sm"
-              >
-                <img src={product.image} alt="" className="h-full w-full object-contain opacity-90" />
-              </div>
-            ))}
-          </div>
+        <div className="relative mx-auto w-[min(78vw,18rem)]">
+          <ProductImageSlider
+            key={product.id}
+            images={productGallery(product)}
+            alt={product.name}
+            objectFit="contain"
+            showThumbs
+            frameClassName="rounded-2xl bg-canvas/40 backdrop-blur-sm"
+          />
         </div>
 
         {/* Color + Size + Quantity (mobile/tablet) */}

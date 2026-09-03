@@ -10,4 +10,5 @@ public record ProductResponse(
         String description,
         String image,
         List<String> colors,
-        List<String> sizes) {}
+        List<String> sizes,
+        List<String> images) {}

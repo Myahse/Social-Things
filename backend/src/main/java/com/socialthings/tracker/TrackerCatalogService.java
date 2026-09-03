@@ -78,15 +78,23 @@ public class TrackerCatalogService {
             TrackerInventoryItem first = variants.get(0);
             Set<String> colors = new LinkedHashSet<>();
             Set<String> sizes = new LinkedHashSet<>();
-            String image = "";
+            Set<String> images = new LinkedHashSet<>();
             BigDecimal price = first.price();
             for (TrackerInventoryItem variant : variants) {
                 colors.add(variant.color() == null || variant.color().isBlank() ? "Default" : variant.color());
                 sizes.add(variant.size() == null || variant.size().isBlank() ? "OS" : variant.size());
-                if (image.isBlank() && variant.imageUrl() != null && !variant.imageUrl().isBlank()) {
-                    image = resolveImage(variant.imageUrl());
+                if (variant.imageUrl() != null && !variant.imageUrl().isBlank()) {
+                    images.add(resolveImage(variant.imageUrl()));
+                }
+                if (variant.galleryUrls() != null) {
+                    for (String extra : variant.galleryUrls()) {
+                        if (extra != null && !extra.isBlank()) {
+                            images.add(resolveImage(extra));
+                        }
+                    }
                 }
             }
+            String image = images.isEmpty() ? "" : images.iterator().next();
             String category = first.category() == null || first.category().isBlank()
                     ? "SOCIAL THINGS"
                     : first.category();
@@ -97,6 +105,7 @@ public class TrackerCatalogService {
                             first.name(),
                             category,
                             image,
+                            List.copyOf(images),
                             price,
                             List.copyOf(colors),
                             List.copyOf(sizes)));

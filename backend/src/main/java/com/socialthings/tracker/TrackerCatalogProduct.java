@@ -8,6 +8,7 @@ public record TrackerCatalogProduct(
         String name,
         String description,
         String image,
+        List<String> images,
         BigDecimal price,
         List<String> colors,
         List<String> sizes) {}

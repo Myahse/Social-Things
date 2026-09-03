@@ -1,5 +1,7 @@
 package com.socialthings.tracker;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialthings.config.TrackerProperties;
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,10 +15,22 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class TrackerInventoryRepository {
 
+    private static final ObjectMapper GALLERY_MAPPER = new ObjectMapper();
+    private static final TypeReference<List<String>> GALLERY_TYPE = new TypeReference<List<String>>() {};
+
     private final JdbcTemplate jdbc;
 
     public TrackerInventoryRepository(TrackerProperties properties) {
-        this.jdbc = properties.configured() ? new JdbcTemplate(dataSource(properties)) : null;
+        if (!properties.configured()) {
+            this.jdbc = null;
+            return;
+        }
+        this.jdbc = new JdbcTemplate(dataSource(properties));
+        try {
+            this.jdbc.execute("ALTER TABLE inventory_items ADD COLUMN IF NOT EXISTS gallery_urls TEXT");
+        } catch (Exception ignored) {
+            // Shop still works after the tracker migration adds the column.
+        }
     }
 
     public boolean available() {
@@ -27,7 +41,7 @@ public class TrackerInventoryRepository {
         requireJdbc();
         return jdbc.query(
                 """
-                SELECT id, name, sku, category, size, color, image_url, price, stock
+                SELECT id, name, sku, category, size, color, image_url, gallery_urls, price, stock
                 FROM inventory_items
                 ORDER BY name ASC, created_at ASC
                 """,
@@ -38,7 +52,7 @@ public class TrackerInventoryRepository {
         requireJdbc();
         List<TrackerInventoryItem> rows = jdbc.query(
                 """
-                SELECT id, name, sku, category, size, color, image_url, price, stock
+                SELECT id, name, sku, category, size, color, image_url, gallery_urls, price, stock
                 FROM inventory_items
                 WHERE lower(trim(name)) = lower(trim(?))
                   AND lower(trim(coalesce(nullif(size, ''), 'OS'))) = lower(trim(?))
@@ -81,6 +95,21 @@ public class TrackerInventoryRepository {
         return dataSource;
     }
 
+    static List<String> parseGalleryUrls(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return List.of();
+        }
+        try {
+            List<String> parsed = GALLERY_MAPPER.readValue(raw.trim(), GALLERY_TYPE);
+            if (parsed == null) {
+                return List.of();
+            }
+            return parsed.stream().filter(url -> url != null && !url.isBlank()).toList();
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
     private static RowMapper<TrackerInventoryItem> rowMapper() {
         return (rs, rowNum) -> new TrackerInventoryItem(
                 rs.getString("id"),
@@ -90,6 +119,7 @@ public class TrackerInventoryRepository {
                 rs.getString("size"),
                 rs.getString("color"),
                 rs.getString("image_url"),
+                parseGalleryUrls(rs.getString("gallery_urls")),
                 rs.getBigDecimal("price") != null ? rs.getBigDecimal("price") : BigDecimal.ZERO,
                 rs.getInt("stock"));
     }

@@ -1,6 +1,7 @@
 package com.socialthings.tracker;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record TrackerInventoryItem(
         String id,
@@ -10,5 +11,6 @@ public record TrackerInventoryItem(
         String size,
         String color,
         String imageUrl,
+        List<String> galleryUrls,
         BigDecimal price,
         int stock) {}

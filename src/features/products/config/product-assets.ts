@@ -6,6 +6,7 @@ const assetModules = import.meta.glob<string>(
 export type ProductAssetPair = {
   product: string
   avatar: string
+  extras: string[]
 }
 
 function classifyFilename(filename: string): 'product' | 'avatar' | null {
@@ -44,7 +45,8 @@ function buildProductAssets(): Record<string, ProductAssetPair> {
     const avatar = entry.avatar ?? entry.other.find((src) => src !== product) ?? product
 
     if (product) {
-      result[slug] = { product, avatar }
+      const extras = entry.other.filter((src) => src !== product && src !== avatar)
+      result[slug] = { product, avatar, extras }
     }
   }
 
