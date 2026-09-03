@@ -9,7 +9,7 @@ interface CartLineItemProps {
 
 export function CartLineItem({ item, onRemove, onUpdateQuantity }: CartLineItemProps) {
   return (
-    <li className="flex gap-4 py-6 first:pt-0">
+    <li className="flex gap-3 py-5 first:pt-0 sm:gap-4 sm:py-6">
       <Link
         to={`/product/${item.slug}`}
         className="h-24 w-20 shrink-0 overflow-hidden rounded-md border border-line bg-accent-soft/20"
@@ -34,12 +34,12 @@ export function CartLineItem({ item, onRemove, onUpdateQuantity }: CartLineItemP
           </button>
         </div>
 
-        <div className="mt-4 flex items-center gap-4 sm:mt-0">
+        <div className="mt-3 flex items-center justify-between gap-3 sm:mt-0 sm:justify-start sm:gap-4">
           <div className="flex items-center rounded-full border border-line">
             <button
               type="button"
               onClick={() => onUpdateQuantity(item.quantity - 1)}
-              className="px-3 py-1 text-lg leading-none hover:bg-accent-soft/50"
+              className="h-11 w-11 text-lg leading-none sm:h-auto sm:w-auto sm:px-3 sm:py-1"
               aria-label="Decrease quantity"
             >
               −
@@ -48,7 +48,7 @@ export function CartLineItem({ item, onRemove, onUpdateQuantity }: CartLineItemP
             <button
               type="button"
               onClick={() => onUpdateQuantity(item.quantity + 1)}
-              className="px-3 py-1 text-lg leading-none hover:bg-accent-soft/50"
+              className="h-11 w-11 text-lg leading-none sm:h-auto sm:w-auto sm:px-3 sm:py-1"
               aria-label="Increase quantity"
             >
               +

@@ -21,7 +21,7 @@ export function LegalDocumentPage() {
 
   return (
     <div className="flex min-h-[calc(100dvh-var(--header-height))] w-full flex-col">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-[var(--site-gutter)] py-4 sm:px-6">
         <Link
           to="/"
           className="font-display text-xs tracking-[0.22em] text-muted transition-colors hover:text-ink"

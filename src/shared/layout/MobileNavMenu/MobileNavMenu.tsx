@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { MOBILE_BOTTOM_NAV_ITEMS, navItemIndex } from '@/shared/layout/BrandNav/nav-items'
+import { MOBILE_BOTTOM_NAV_ITEMS, mobileNavItemIndex } from '@/shared/layout/BrandNav/nav-items'
 import { onHomeNavClick } from '@/features/intro/config/on-home-nav'
 import { useCart } from '@/features/cart/context/CartContext'
 import { useIntroOptional } from '@/features/intro/context/IntroContext'
@@ -97,14 +97,14 @@ function BottomNavLink({
       aria-label={label}
       onClick={() => onNavClick?.()}
       className={({ isActive }) =>
-        `relative flex h-[var(--mobile-nav-box)] w-[var(--mobile-nav-box)] shrink-0 items-center justify-center border-[2.5px] transition-[colors,background-color,transform,opacity,box-shadow] duration-450 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
+        `relative flex h-[var(--mobile-nav-box)] w-full max-w-[var(--mobile-nav-box)] min-w-0 items-center justify-center border-[2.5px] transition-[colors,background-color,transform,opacity,box-shadow] duration-450 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
           isActive
             ? isDark
               ? 'border-ink bg-ink text-white shadow-[3px_3px_0_#fff]'
               : 'border-ink bg-ink text-white shadow-[3px_3px_0_#fff]'
             : isDark
-              ? 'border-canvas/30 bg-canvas/10 text-canvas/85 hover:border-bolt hover:bg-canvas/15'
-              : 'border-ink/15 bg-ink/[0.06] text-ink/70 hover:border-ink hover:text-ink'
+              ? 'border-canvas/30 bg-canvas/10 text-canvas/85 active:border-bolt active:bg-canvas/15'
+              : 'border-ink/15 bg-ink/[0.06] text-ink/70 active:border-ink active:text-ink'
         }`
       }
       style={{
@@ -153,27 +153,36 @@ export function MobileBottomNav({
       className={`pointer-events-none fixed inset-x-0 bottom-0 z-[55] md:hidden ${className}`}
     >
       <div
-        className={`pointer-events-auto mx-auto flex w-full max-w-lg items-center justify-center gap-2 px-[var(--site-gutter)] pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 ${
-          revealed ? '' : 'pointer-events-none'
+        className={`pointer-events-auto border-t-[2.5px] ${
+          theme === 'dark'
+            ? 'border-canvas/15 bg-ink/80 backdrop-blur-md'
+            : 'border-ink/10 bg-canvas/92 backdrop-blur-md'
         }`}
       >
+        <div
+          className={`mx-auto flex w-full max-w-lg items-center justify-between gap-1.5 px-[var(--site-gutter)] pb-[max(0.55rem,env(safe-area-inset-bottom))] pt-2 ${
+            revealed ? '' : 'pointer-events-none'
+          }`}
+        >
         {MOBILE_BOTTOM_NAV_ITEMS.map((item) => {
           const itemRevealed =
-            revealed && (revealCount == null || navItemIndex(item.to) < revealCount)
+            revealed && (revealCount == null || mobileNavItemIndex(item.to) < revealCount)
 
           return (
-            <BottomNavLink
-              key={item.to}
-              to={item.to}
-              end={'end' in item ? item.end : undefined}
-              label={t(item.key)}
-              badge={item.to === '/cart' ? itemCount : undefined}
-              theme={theme}
-              revealed={itemRevealed}
-              onNavClick={item.to === '/' ? () => onHomeNavClick(intro) : undefined}
-            />
+            <div key={item.to} className="flex min-w-0 flex-1 justify-center">
+              <BottomNavLink
+                to={item.to}
+                end={'end' in item ? item.end : undefined}
+                label={t(item.key)}
+                badge={item.to === '/cart' ? itemCount : undefined}
+                theme={theme}
+                revealed={itemRevealed}
+                onNavClick={item.to === '/' ? () => onHomeNavClick(intro) : undefined}
+              />
+            </div>
           )
         })}
+        </div>
       </div>
     </nav>
   )

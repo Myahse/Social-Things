@@ -8,6 +8,7 @@ import { STAGGER_STEP_MS } from '@/shared/motion/stagger'
 import { HOME_HEADER_LOGO_CLASS } from '@/shared/layout/brand-cluster'
 import { HomeHeaderDesktop } from '@/shared/layout/HomeHeaderDesktop'
 import { MobileBottomNav } from '@/shared/layout/MobileNavMenu'
+import { MOBILE_BOTTOM_NAV_ITEMS } from '@/shared/layout/BrandNav/nav-items'
 import { resetSiteCursor } from '@/shared/config/site-cursor'
 
 const SHRINK_MS = 1100
@@ -73,7 +74,7 @@ export function IntroScreen({ onIntroDone }: IntroScreenProps) {
       setSidesVisible(true)
       setRevealCount(0)
       // Reveal 1-by-1: nav items + account + cart
-      const total = 5
+      const total = MOBILE_BOTTOM_NAV_ITEMS.length
       let i = 0
       const interval = window.setInterval(() => {
         i += 1

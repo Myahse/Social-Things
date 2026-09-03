@@ -14,10 +14,10 @@ export function FaqSection() {
   return (
     <section
       id="faq"
-      className="ink-band relative flex min-h-[100svh] w-full flex-col justify-center overflow-hidden px-[var(--site-gutter)] py-[clamp(1.25rem,4vh,2.5rem)]"
+      className="ink-band relative flex min-h-0 w-full flex-col justify-center overflow-hidden px-[var(--site-gutter)] py-12 sm:py-[clamp(1.25rem,4vh,2.5rem)] md:min-h-[100svh]"
     >
       <div
-        className="pointer-events-none absolute -left-16 top-24 h-40 w-40 anim-shape-drift bg-bolt"
+        className="pointer-events-none absolute -left-16 top-24 hidden h-40 w-40 anim-shape-drift bg-bolt sm:block"
         style={{
           clipPath: 'polygon(0 0, 100% 18%, 78% 100%, 0 82%)',
           ['--p5-rot' as string]: '12deg',
@@ -25,7 +25,7 @@ export function FaqSection() {
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute -right-10 bottom-28 h-24 w-64 anim-shape-drift bg-bolt"
+        className="pointer-events-none absolute -right-10 bottom-28 hidden h-24 w-64 anim-shape-drift bg-bolt sm:block"
         style={{ ['--p5-rot' as string]: '-6deg', animationDelay: '-1.5s' }}
         aria-hidden
       />
@@ -73,7 +73,7 @@ export function FaqSection() {
                 >
                   <button
                     type="button"
-                    className="flex w-full items-start justify-between gap-4 px-4 py-4 text-left font-display text-sm tracking-[0.12em] sm:px-5"
+                    className="flex min-h-12 w-full items-start justify-between gap-3 px-3 py-3.5 text-left font-display text-sm tracking-[0.1em] sm:gap-4 sm:px-5 sm:py-4 sm:tracking-[0.12em]"
                     style={{ transform: open ? 'skewX(4deg)' : undefined }}
                     aria-expanded={open}
                     onClick={() => {

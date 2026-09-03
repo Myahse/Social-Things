@@ -246,7 +246,7 @@ export function Layout() {
           >
             <Header transparent={headerTransparent} footerThemeDark={chromeOnDark} />
             <MobileNavBar theme={chromeOnDark ? 'dark' : 'light'} />
-            <main className="flex-1 pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom))] md:pb-0">
+            <main className="flex-1 pb-[var(--mobile-bottom-nav-height)] md:pb-0">
               <Outlet />
             </main>
             {showFooter && <Footer footerRef={footerRef} />}
@@ -255,7 +255,7 @@ export function Layout() {
           <>
             {!hideChrome && <Header transparent={headerTransparent} footerThemeDark={chromeOnDark} />}
             {!hideChrome && <MobileNavBar theme={chromeOnDark ? 'dark' : 'light'} />}
-            <main className="flex-1 pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom))] md:pb-0">
+            <main className="flex-1 pb-[var(--mobile-bottom-nav-height)] md:pb-0">
               <Outlet />
             </main>
             {showFooter && <Footer footerRef={footerRef} />}

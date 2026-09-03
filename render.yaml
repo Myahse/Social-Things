@@ -1,0 +1,43 @@
+# Render Blueprint — SOCIAL THINGS Spring Boot API
+# Frontend stays on Vercel; this deploys the Java backend only.
+#
+# Setup:
+# 1. Push this repo to GitHub
+# 2. Render Dashboard → New → Blueprint → connect repo
+# 3. Fill sync:false secrets when prompted (Neon + JWT)
+# 4. Set Vercel env: VITE_USE_JAVA_API=true, VITE_API_BASE_URL=https://<service>.onrender.com/api
+
+services:
+  - type: web
+    name: social-things-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: JAVA_TOOL_OPTIONS
+        value: -Xms256m -Xmx512m
+      # Neon — use JDBC URL from Neon console (Connection details → JDBC)
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: JPA_DDL_AUTO
+        value: validate
+      - key: H2_CONSOLE_ENABLED
+        value: "false"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CHECKOUT_MOCK_ENABLED
+        value: "true"
+      - key: CHECKOUT_MOCK_URL
+        value: https://socialthngs.com/cart
+      # Comma-separated frontend origins (Vercel + custom domain)
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://socialthngs.com,https://www.socialthngs.com

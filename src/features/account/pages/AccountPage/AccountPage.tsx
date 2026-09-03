@@ -9,7 +9,7 @@ export function AccountPage() {
   const { isAuthenticated, isLoading } = useAuth()
   return (
     <div className="w-full">
-      <section className="mx-auto flex min-h-[calc(100dvh-var(--header-height))] w-full max-w-6xl flex-col px-4 py-10 sm:px-6">
+      <section className="mx-auto flex min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl flex-col px-[var(--site-gutter)] py-8 sm:px-6 sm:py-10 md:min-h-[calc(100dvh-var(--header-height))]">
         <header className="shrink-0 text-center">
           <StaggerReveal index={0}>
             <span className="tag-flash mx-auto">

@@ -21,7 +21,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
         <div className="pointer-events-none absolute inset-x-0 top-2 z-20 h-0.5 origin-left scale-x-0 bg-ink/40 transition-transform duration-300 delay-75 group-hover:scale-x-100" />
 
         <div className="pointer-events-none absolute left-0 top-3 z-20 flex gap-1 p-2">
-          <span className="tag-flash !px-2 !py-1 !text-[10px] !shadow-[3px_3px_0_var(--color-ink)] scale-50 opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+          <span className="tag-flash !px-2 !py-1 !text-[10px] !shadow-[3px_3px_0_var(--color-ink)] scale-75 opacity-100 transition-all duration-300 md:scale-50 md:opacity-0 md:group-hover:scale-100 md:group-hover:opacity-100">
             <span>SELECT</span>
           </span>
         </div>
@@ -34,8 +34,8 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
             alt={product.name}
             className={`absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out ${
               hasAvatar
-                ? 'opacity-100 group-hover:opacity-0'
-                : 'group-hover:scale-110 group-hover:-rotate-1'
+                ? 'opacity-100 group-active:opacity-0 md:group-hover:opacity-0'
+                : 'group-active:scale-105 md:group-hover:scale-110 md:group-hover:-rotate-1'
             }`}
           />
           {hasAvatar && (
@@ -43,7 +43,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
               src={avatarImage}
               alt=""
               aria-hidden
-              className="absolute inset-0 h-full w-full object-cover scale-105 opacity-0 transition-[opacity,transform] duration-500 ease-out group-hover:scale-100 group-hover:opacity-100"
+              className="absolute inset-0 h-full w-full object-cover scale-105 opacity-0 transition-[opacity,transform] duration-500 ease-out group-active:scale-100 group-active:opacity-100 md:group-hover:scale-100 md:group-hover:opacity-100"
             />
           )}
           <div

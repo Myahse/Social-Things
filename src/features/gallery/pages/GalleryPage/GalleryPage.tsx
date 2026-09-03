@@ -86,7 +86,7 @@ export function GalleryPage() {
 
   return (
     <div className="w-full">
-      <section className="diag-stripes relative mx-auto min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl px-[var(--site-gutter)] pb-10 pt-6 sm:pb-16 sm:pt-10">
+      <section className="diag-stripes relative mx-auto min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl px-[var(--site-gutter)] pb-10 pt-6 sm:pb-16 sm:pt-10 md:min-h-[calc(100vh-var(--header-height))]">
         <div
           className="pointer-events-none absolute -left-10 top-20 hidden h-24 w-64 -rotate-6 bg-ink sm:block"
           aria-hidden

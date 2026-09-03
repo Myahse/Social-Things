@@ -42,7 +42,7 @@ export function CartPage() {
 
   return (
     <div className="w-full">
-      <section className="mx-auto flex min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl flex-col px-4 pb-12 pt-10 sm:px-6">
+      <section className="mx-auto flex min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl flex-col px-[var(--site-gutter)] pb-10 pt-6 sm:px-6 sm:pb-12 sm:pt-10 md:min-h-[calc(100vh-var(--header-height))]">
         <StaggerReveal index={0} className="shrink-0">
           <span className="tag-flash">
             <span>HEIST BAG</span>
@@ -97,7 +97,7 @@ export function CartPage() {
         </StaggerReveal>
       </section>
 
-      <section className="mx-auto min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl px-4 pb-20 pt-6 sm:px-6">
+      <section className="mx-auto w-full max-w-6xl px-[var(--site-gutter)] pb-12 pt-4 sm:px-6 sm:pb-20 sm:pt-6">
         <StaggerReveal index={2} className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs tracking-[0.22em] text-muted">{t('page.cart.productsEyebrow')}</p>
@@ -117,9 +117,9 @@ export function CartPage() {
           {loading && <p className="text-center text-muted">{t('page.cart.loading')}</p>}
 
           {!loading && productPreview.length > 0 && (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
               {productPreview.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} compact />
               ))}
             </div>
           )}

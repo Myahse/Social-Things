@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { HOME_SLIDER_SLIDES } from '@/features/home/config/home-slider-images'
 
 const AUTO_MS = 6000
@@ -13,16 +13,23 @@ export function HomeHeroSlider() {
   const [index, setIndex] = useState(0)
   const count = slides.length
 
+  const touchStartX = useRef<number | null>(null)
+
   const next = useCallback(() => {
     if (count <= 1) return
     setIndex((i) => (i + 1) % count)
+  }, [count])
+
+  const prev = useCallback(() => {
+    if (count <= 1) return
+    setIndex((i) => (i - 1 + count) % count)
   }, [count])
 
   useEffect(() => {
     if (count <= 1) return
     const id = window.setInterval(next, AUTO_MS)
     return () => window.clearInterval(id)
-  }, [count, next])
+  }, [count, next, index])
 
   if (count === 0) {
     return (
@@ -39,7 +46,20 @@ export function HomeHeroSlider() {
       className="relative -mt-[var(--header-height)] h-[100svh] w-full overflow-hidden"
       aria-label="Featured looks"
     >
-      <div className="absolute inset-0 overflow-hidden">
+      <div
+        className="absolute inset-0 overflow-hidden touch-pan-y"
+        onTouchStart={(e) => {
+          touchStartX.current = e.changedTouches[0]?.clientX ?? null
+        }}
+        onTouchEnd={(e) => {
+          const start = touchStartX.current
+          touchStartX.current = null
+          if (start == null || count <= 1) return
+          const delta = (e.changedTouches[0]?.clientX ?? start) - start
+          if (delta < -40) next()
+          else if (delta > 40) prev()
+        }}
+      >
         <div
           className="flex h-full will-change-transform transition-transform ease-in-out"
           style={{

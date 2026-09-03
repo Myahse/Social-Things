@@ -95,9 +95,9 @@ export function ProductPage() {
   return (
     <div className="w-full">
       {/* Section 1: must fill the viewport under header */}
-      <section className="relative mx-auto flex min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl items-center justify-center px-4 py-0 sm:px-6">
-      {/* Ring */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(86vmin,48rem)] w-[min(86vmin,48rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-line/70" />
+      <section className="relative mx-auto flex min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl items-start justify-center px-[var(--site-gutter)] py-6 md:min-h-[calc(100vh-var(--header-height))] md:items-center md:px-6 md:py-0">
+      {/* Ring — desktop composition only */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 hidden h-[min(86vmin,48rem)] w-[min(86vmin,48rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-line/70 md:block" />
 
       {/* Left labels — positioned on the circle arc */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 hidden h-[min(86vmin,48rem)] w-[min(86vmin,48rem)] -translate-x-1/2 -translate-y-1/2 md:block">
@@ -152,17 +152,17 @@ export function ProductPage() {
 
       {/* Center product */}
       <div className="relative z-10 flex w-full max-w-md flex-col items-center text-center">
-        <h1 className="slash-title slash-title-ink text-3xl sm:text-4xl">{product.name}</h1>
+        <h1 className="slash-title slash-title-ink text-[1.65rem] sm:text-4xl">{product.name}</h1>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{product.description}</p>
-        <div className={`mb-6 mt-5 ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>
+        <div className={`mb-5 mt-4 hidden md:block ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>
 
         <div className="relative w-full">
-          <div className="mx-auto aspect-[4/5] w-[min(72vw,18rem)] overflow-hidden rounded-2xl bg-canvas/40 backdrop-blur-sm">
+          <div className="mx-auto aspect-[4/5] w-[min(78vw,18rem)] overflow-hidden rounded-2xl bg-canvas/40 backdrop-blur-sm">
             <img src={product.image} alt={product.name} className="h-full w-full object-contain" />
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-center gap-3">
+        <div className="mt-5 hidden items-center justify-center gap-3 md:flex">
           <div className="flex items-center gap-2">
             {[0, 1, 2].map((i) => (
               <div
@@ -175,29 +175,37 @@ export function ProductPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-center gap-6">
-          <div className="slash-title slash-title-bolt text-3xl">${product.price}</div>
-          <button
-            type="button"
-            onClick={() => {
-              if (!canBuy) return
-              addItem(product, size, color)
-              for (let i = 1; i < quantity; i++) addItem(product, size, color)
-              setAdded(true)
-              setTimeout(() => setAdded(false), 1500)
-              navigate('/cart')
-            }}
-            disabled={!canBuy}
-            className={`btn-slam ${PRODUCT_LABEL_CLASS} disabled:cursor-not-allowed disabled:opacity-40`}
-          >
-            <span>{added ? 'ADDED' : 'BUY'}</span>
-          </button>
-        </div>
+        {/* Color + Size + Quantity (mobile/tablet) */}
+        <div className="mt-6 w-full max-w-sm md:hidden">
+          <div className="flex flex-col gap-3">
+            {colors.length > 0 && (
+              <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
+                <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>COLOR</div>
+                <div className="flex flex-wrap justify-end gap-2">
+                  {colors.map((c, idx) => (
+                    <button
+                      key={`${c}-${idx}`}
+                      type="button"
+                      onClick={() => setColorIndex(idx)}
+                      className={`relative h-10 w-10 rounded-full ${color === c ? 'scale-110' : ''}`}
+                      aria-label={c}
+                      aria-pressed={color === c}
+                    >
+                      <span
+                        className="absolute inset-0 rounded-full border border-ink/15"
+                        style={{ background: c }}
+                        aria-hidden
+                      />
+                      {color === c && (
+                        <span className="absolute -inset-1 rounded-full border border-ink/40" aria-hidden />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        {/* Size + Quantity (mobile/tablet) */}
-        <div className="mt-8 w-full max-w-sm md:hidden">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
               <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>SIZE</div>
               <div className="flex flex-wrap justify-end gap-2">
                 {sizes.map((s) => (
@@ -205,8 +213,8 @@ export function ProductPage() {
                     key={s}
                     type="button"
                     onClick={() => setSize(s)}
-                    className={`rounded-full border px-4 py-2 ${PRODUCT_MICRO_CLASS} transition-colors ${
-                      size === s ? 'border-ink bg-ink text-canvas' : 'border-line hover:border-ink'
+                    className={`min-h-10 min-w-10 rounded-full border px-3 py-2 ${PRODUCT_MICRO_CLASS} transition-colors ${
+                      size === s ? 'border-ink bg-ink text-canvas' : 'border-line'
                     }`}
                   >
                     {s}
@@ -221,7 +229,7 @@ export function ProductPage() {
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="h-10 w-10 rounded-full border border-line bg-canvas/60 text-ink backdrop-blur-md"
+                  className="h-11 w-11 rounded-full border border-line bg-canvas/60 text-ink backdrop-blur-md"
                   aria-label="Decrease quantity"
                 >
                   −
@@ -230,7 +238,7 @@ export function ProductPage() {
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.min(9, q + 1))}
-                  className="h-10 w-10 rounded-full border border-line bg-canvas/60 text-ink backdrop-blur-md"
+                  className="h-11 w-11 rounded-full border border-line bg-canvas/60 text-ink backdrop-blur-md"
                   aria-label="Increase quantity"
                 >
                   +
@@ -238,6 +246,25 @@ export function ProductPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="mt-5 flex w-full flex-col items-stretch gap-4 sm:mt-6 sm:flex-row sm:items-center sm:justify-center sm:gap-6">
+          <div className="slash-title slash-title-bolt self-center text-3xl">${product.price}</div>
+          <button
+            type="button"
+            onClick={() => {
+              if (!canBuy) return
+              addItem(product, size, color)
+              for (let i = 1; i < quantity; i++) addItem(product, size, color)
+              setAdded(true)
+              setTimeout(() => setAdded(false), 1500)
+              navigate('/cart')
+            }}
+            disabled={!canBuy}
+            className={`btn-slam ${PRODUCT_LABEL_CLASS} w-full disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto`}
+          >
+            <span>{added ? 'ADDED' : 'BUY'}</span>
+          </button>
         </div>
       </div>
 

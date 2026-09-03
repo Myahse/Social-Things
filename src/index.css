@@ -34,26 +34,36 @@
     --body-tracking: 0.12em;
     --brand-cluster-nudge: 0.75rem;
     --brand-logo-compact: 3.25rem;
-    --brand-logo-home: calc(var(--header-height) - 0.1rem);
+    --brand-logo-home: calc(var(--header-bar) - 0.2rem);
     --home-side-box: clamp(3.75rem, calc(var(--header-height) - 1.5rem), 4.5rem);
-    --mobile-nav-box: 3.25rem;
-    --mobile-bottom-nav-height: 4.75rem;
-    --header-height: 7.25rem;
+    --mobile-nav-box: 2.85rem;
+    --mobile-bottom-nav-height: calc(4.35rem + env(safe-area-inset-bottom, 0px));
+    --header-bar: 4.15rem;
+    --header-height: calc(var(--header-bar) + env(safe-area-inset-top, 0px));
     --logo-hero-top: 42%;
     --logo-hero-size: min(92vw, 30rem);
-    --site-gutter: 1rem;
+    --site-gutter: 0.875rem;
   }
 
   @media (min-width: 640px) {
     :root {
       --brand-cluster-nudge: 1.75rem;
       --brand-logo-compact: 3.75rem;
-      --brand-logo-home: calc(var(--header-height) - 0.1rem);
-      --mobile-nav-box: 3.5rem;
-      --mobile-bottom-nav-height: 5rem;
-      --header-height: 8.25rem;
+      --brand-logo-home: calc(var(--header-bar) - 0.15rem);
+      --mobile-nav-box: 3rem;
+      --mobile-bottom-nav-height: calc(4.6rem + env(safe-area-inset-bottom, 0px));
+      --header-bar: 4.5rem;
       --logo-hero-top: 44%;
       --logo-hero-size: min(78vmin, 34rem);
+      --site-gutter: 1.25rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --header-bar: 8.25rem;
+      --header-height: var(--header-bar);
+      --brand-logo-home: calc(var(--header-height) - 0.1rem);
       --site-gutter: 1.5rem;
     }
   }
@@ -63,7 +73,8 @@
       --brand-cluster-nudge: 2.5rem;
       --brand-logo-compact: 4.25rem;
       --brand-logo-home: calc(var(--header-height) - 0.1rem);
-      --header-height: 9.25rem;
+      --header-bar: 9.25rem;
+      --header-height: var(--header-bar);
       --logo-hero-size: min(78vmin, 36rem);
     }
   }
@@ -121,6 +132,27 @@
   select,
   textarea {
     font: inherit;
+  }
+
+  a,
+  button,
+  [role='button'] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  @media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
+
+    .btn-slam {
+      padding: 0.85rem 1.2rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+    }
   }
 
   ::selection {
@@ -660,10 +692,12 @@
       border-color 200ms var(--ease-cut);
   }
 
-  .group:hover .product-card-frame {
-    animation: p5-card-lift 0.4s var(--ease-slam) both;
-    border-color: var(--color-ink);
-    box-shadow: 10px 10px 0 var(--color-ink);
+  @media (hover: hover) and (pointer: fine) {
+    .group:hover .product-card-frame {
+      animation: p5-card-lift 0.4s var(--ease-slam) both;
+      border-color: var(--color-ink);
+      box-shadow: 10px 10px 0 var(--color-ink);
+    }
   }
 
   .product-card-top {
@@ -672,8 +706,10 @@
     background: var(--color-ink);
   }
 
-  .group:hover .product-card-top {
-    animation: p5-top-slash 0.35s var(--ease-slam) both;
+  @media (hover: hover) and (pointer: fine) {
+    .group:hover .product-card-top {
+      animation: p5-top-slash 0.35s var(--ease-slam) both;
+    }
   }
 
   .product-card-shine {
@@ -690,18 +726,22 @@
     opacity: 0;
   }
 
-  .group:hover .product-card-shine {
-    animation: p5-shine-sweep 0.7s var(--ease-cut) both;
+  @media (hover: hover) and (pointer: fine) {
+    .group:hover .product-card-shine {
+      animation: p5-shine-sweep 0.7s var(--ease-cut) both;
+    }
   }
 
   .product-card-name {
     transition: background 200ms var(--ease-cut), border-color 200ms var(--ease-cut);
   }
 
-  .group:hover .product-card-name {
-    animation: p5-name-punch 0.35s var(--ease-slam) both;
-    background: var(--color-ink);
-    border-color: var(--color-ink);
+  @media (hover: hover) and (pointer: fine) {
+    .group:hover .product-card-name {
+      animation: p5-name-punch 0.35s var(--ease-slam) both;
+      background: var(--color-ink);
+      border-color: var(--color-ink);
+    }
   }
 
   .btn-slam:active:not(:disabled) {

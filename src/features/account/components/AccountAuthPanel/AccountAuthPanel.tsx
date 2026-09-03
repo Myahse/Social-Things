@@ -102,7 +102,7 @@ export function AccountAuthPanel() {
       <div className="mb-8 flex border-[3px] border-ink bg-canvas p-1 shadow-[5px_5px_0_var(--color-ink)]">
         <button
           type="button"
-          className={`flex-1 py-2.5 ${tabClass} transition-colors ${
+          className={`flex-1 min-h-11 py-2.5 ${tabClass} transition-colors ${
             mode === 'login' ? 'bg-ink text-white' : 'text-muted hover:text-ink'
           }`}
           style={mode === 'login' ? { transform: 'skewX(-10deg)' } : undefined}
@@ -114,7 +114,7 @@ export function AccountAuthPanel() {
         </button>
         <button
           type="button"
-          className={`flex-1 py-2.5 ${tabClass} transition-colors ${
+          className={`flex-1 min-h-11 py-2.5 ${tabClass} transition-colors ${
             mode === 'register' ? 'bg-ink text-white' : 'text-muted hover:text-ink'
           }`}
           style={mode === 'register' ? { transform: 'skewX(-10deg)' } : undefined}

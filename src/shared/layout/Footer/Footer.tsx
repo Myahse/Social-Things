@@ -21,7 +21,7 @@ export function Footer({ footerRef }: { footerRef?: React.RefObject<HTMLElement 
         aria-hidden
       />
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
+      <div className="relative mx-auto flex min-h-[min(36rem,78svh)] w-full max-w-6xl flex-col items-center justify-center px-[var(--site-gutter)] py-16 text-center sm:px-6 md:min-h-screen">
         <SlamReveal variant="block" className="mb-12 flex items-center justify-center gap-3">
           <SocialBox href="https://instagram.com" label="Instagram">
             <InstagramIcon />

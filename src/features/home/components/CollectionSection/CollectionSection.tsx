@@ -33,7 +33,7 @@ function CollectionHeader({
           <p className="eyebrow-cut">DROP</p>
         </SlamReveal>
         <SlamReveal variant="title" delayMs={140} className="mt-4">
-          <h2 className="slash-title slash-title-ink anim-glitch-idle text-3xl sm:text-4xl lg:text-5xl">
+          <h2 className="slash-title slash-title-ink anim-glitch-idle text-[1.65rem] sm:text-4xl lg:text-5xl">
             {title}
           </h2>
         </SlamReveal>
@@ -65,12 +65,12 @@ export function CollectionSection({
         className="diag-stripes anim-stripe-scroll relative flex min-h-[100svh] w-full flex-col justify-center overflow-hidden px-[var(--site-gutter)] py-[clamp(1.25rem,4vh,2.5rem)]"
       >
         <div
-          className="pointer-events-none absolute -left-10 top-16 h-28 w-72 anim-shape-drift bg-ink"
+          className="pointer-events-none absolute -left-10 top-16 hidden h-28 w-72 anim-shape-drift bg-ink sm:block"
           style={{ ['--p5-rot' as string]: '-6deg' }}
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute -right-8 bottom-20 h-20 w-56 anim-shape-drift bg-bolt border-[3px] border-ink"
+          className="pointer-events-none absolute -right-8 bottom-20 hidden h-20 w-56 anim-shape-drift bg-bolt border-[3px] border-ink sm:block"
           style={{ ['--p5-rot' as string]: '3deg', animationDelay: '-2s' }}
           aria-hidden
         />
@@ -108,7 +108,7 @@ export function CollectionSection({
   return (
     <section
       id="products"
-      className="diag-stripes anim-stripe-scroll mx-auto min-h-[calc(100vh-var(--header-height))] w-full max-w-6xl px-4 pb-16 pt-10 sm:px-6"
+      className="diag-stripes anim-stripe-scroll mx-auto min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl px-[var(--site-gutter)] pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-10 md:min-h-[calc(100vh-var(--header-height))]"
     >
       <StaggerReveal index={0}>
         <CollectionHeader
@@ -125,10 +125,10 @@ export function CollectionSection({
 
       {!loading && (
         <StaggerReveal index={2}>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
             {products.map((product, i) => (
               <SlamReveal key={product.id} variant="block" delayMs={i * 70}>
-                <ProductCard product={product} />
+                <ProductCard product={product} compact />
               </SlamReveal>
             ))}
           </div>
