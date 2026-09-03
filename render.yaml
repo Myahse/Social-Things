@@ -63,4 +63,4 @@ services:
         value: https://socialthngs.com
       # Comma-separated frontend origins (Vercel + custom domain)
       - key: CORS_ALLOWED_ORIGINS
-        value: https://socialthngs.com,https://www.socialthngs.com
+        value: https://socialthngs.com,https://www.socialthngs.com,https://social-things.onrender.com

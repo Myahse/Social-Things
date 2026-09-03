@@ -73,6 +73,8 @@ type I18nKey =
   | 'page.account.agreePolicy'
   | 'page.account.policiesConsentTitle'
   | 'page.account.errorPoliciesRequired'
+  | 'page.account.signInToShop'
+  | 'page.product.signInToBuy'
   | 'legal.back'
   | 'legal.faq'
   | 'legal.shipping'
@@ -128,6 +130,8 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.account.policiesConsentTitle': 'Required — accept all policies to register',
     'page.account.errorPoliciesRequired':
       'Please accept all policies (shipping, returns, privacy, and terms) to create your account.',
+    'page.account.signInToShop': 'Sign in or create an account to add this to your cart.',
+    'page.product.signInToBuy': 'SIGN IN',
     'page.cart.title': 'Cart',
     'page.cart.empty': 'Your cart is empty',
     'page.cart.emptyHint': 'Add something from the products to get started.',
@@ -205,6 +209,8 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.account.policiesConsentTitle': 'Obligatoire — acceptez toutes les politiques pour vous inscrire',
     'page.account.errorPoliciesRequired':
       'Veuillez accepter toutes les politiques (expédition, retours, confidentialité et conditions) pour créer votre compte.',
+    'page.account.signInToShop': 'Connectez-vous ou créez un compte pour ajouter cet article au panier.',
+    'page.product.signInToBuy': 'CONNEXION',
     'page.cart.title': 'Panier',
     'page.cart.empty': 'Votre panier est vide',
     'page.cart.emptyHint': 'Ajoutez un produit pour commencer.',

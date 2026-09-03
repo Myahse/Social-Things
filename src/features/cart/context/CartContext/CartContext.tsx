@@ -2,10 +2,12 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react'
+import { useAuth } from '@/features/account/context/AuthContext'
 import type { CartItem } from '@/features/cart/types'
 import type { Product } from '@/features/products/types'
 
@@ -26,10 +28,16 @@ function itemKey(productId: string, size: string, color: string) {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth()
   const [items, setItems] = useState<CartItem[]>([])
+
+  useEffect(() => {
+    if (!isAuthenticated) setItems([])
+  }, [isAuthenticated])
 
   const addItem = useCallback(
     (product: Product, size: string, color: string, quantity = 1) => {
+      if (!isAuthenticated) return
       setItems((prev) => {
         const key = itemKey(product.id, size, color)
         const existing = prev.find(
@@ -59,7 +67,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         ]
       })
     },
-    [],
+    [isAuthenticated],
   )
 
   const removeItem = useCallback((productId: string, size: string, color: string) => {

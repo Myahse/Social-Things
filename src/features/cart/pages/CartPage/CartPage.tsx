@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { CartLineItem } from '@/features/cart/components/CartLineItem'
 import { CartSummary } from '@/features/cart/components/CartSummary'
+import { useAuth } from '@/features/account/context/AuthContext'
 import { useCart } from '@/features/cart/context/CartContext'
 import { createCheckoutSession } from '@/features/checkout/api/checkout.api'
 import { ProductCard } from '@/features/products/components/ProductCard'
@@ -16,6 +17,7 @@ function itemKey(productId: string, size: string, color: string) {
 export function CartPage() {
   const { t } = useI18n()
   const { items, itemCount, subtotal, removeItem, updateQuantity, clearCart } = useCart()
+  const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const { products, loading } = useProducts()
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
@@ -26,6 +28,10 @@ export function CartPage() {
   }, [items, products])
 
   async function handleCheckout() {
+    if (!isAuthenticated) {
+      navigate('/account?next=/cart')
+      return
+    }
     if (items.length === 0) return
     setCheckoutError(null)
     setIsCheckingOut(true)

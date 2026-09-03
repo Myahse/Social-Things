@@ -16,12 +16,8 @@ export async function fetchProducts(): Promise<Product[]> {
     return withProductAssetsList(fallbackProducts)
   }
 
-  try {
-    const products = await apiFetch<Product[]>(endpoints.products)
-    return withProductAssetsList(products)
-  } catch {
-    return withProductAssetsList(fallbackProducts)
-  }
+  const products = await apiFetch<Product[]>(endpoints.products)
+  return withProductAssetsList(products)
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | undefined> {
@@ -34,7 +30,6 @@ export async function fetchProductBySlug(slug: string): Promise<Product | undefi
     const product = await apiFetch<Product>(endpoints.productBySlug(slug))
     return withProductAssets(product)
   } catch {
-    const product = getFallbackProductBySlug(slug)
-    return product ? withProductAssets(product) : undefined
+    return undefined
   }
 }

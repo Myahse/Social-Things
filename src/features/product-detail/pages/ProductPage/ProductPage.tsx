@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '@/features/account/context/AuthContext'
 import { useCart } from '@/features/cart/context/CartContext'
+import { useI18n } from '@/shared/i18n/i18n'
 import { useProduct } from '@/features/products/hooks/useProduct'
 const PRODUCT_LABEL_CLASS = 'font-display text-sm tracking-[0.18em]'
 const PRODUCT_MICRO_CLASS = 'font-display text-xs tracking-[0.16em]'
@@ -54,6 +56,8 @@ export function ProductPage() {
   const { slug } = useParams<{ slug: string }>()
   const { product, loading } = useProduct(slug)
   const { addItem } = useCart()
+  const { isAuthenticated } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
 
   const colors = product?.colors ?? []
@@ -253,6 +257,10 @@ export function ProductPage() {
           <button
             type="button"
             onClick={() => {
+              if (!isAuthenticated) {
+                navigate(`/account?next=/product/${product.slug}`)
+                return
+              }
               if (!canBuy) return
               addItem(product, size, color)
               for (let i = 1; i < quantity; i++) addItem(product, size, color)
@@ -260,10 +268,12 @@ export function ProductPage() {
               setTimeout(() => setAdded(false), 1500)
               navigate('/cart')
             }}
-            disabled={!canBuy}
+            disabled={isAuthenticated && !canBuy}
             className={`btn-slam ${PRODUCT_LABEL_CLASS} w-full disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto`}
           >
-            <span>{added ? 'ADDED' : 'BUY'}</span>
+            <span>
+              {isAuthenticated ? (added ? 'ADDED' : 'BUY') : t('page.product.signInToBuy')}
+            </span>
           </button>
         </div>
       </div>
