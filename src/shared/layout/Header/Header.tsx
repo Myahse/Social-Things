@@ -43,6 +43,7 @@ export function Header({ transparent = false, footerThemeDark = false }: HeaderP
         </button>
         <BrandLogo
           home
+          onDark={footerThemeDark}
           className={logoNudge}
           onNavigateHome={() => onHomeNavClick(intro)}
         />
@@ -54,6 +55,7 @@ export function Header({ transparent = false, footerThemeDark = false }: HeaderP
         logo={
           <BrandLogo
             home
+            onDark={footerThemeDark}
             className={logoNudge}
             onNavigateHome={() => onHomeNavClick(intro)}
           />
