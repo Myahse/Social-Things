@@ -1,18 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { HOME_SLIDER_SLIDES } from '@/features/home/config/home-slider-images'
+import {
+  HOME_DESKTOP_SLIDES,
+  HOME_MOBILE_SLIDES,
+} from '@/features/home/config/home-slider-images'
+import { useDesktopNav } from '@/shared/hooks/useMediaQuery'
 
 const AUTO_MS = 6000
 const SLIDE_MS = 800
-/** Matches Tailwind `md` — desktop art from this width up. */
-const DESKTOP_MQ = '(min-width: 768px)'
 
 export const HOME_HERO_ID = 'home-hero'
 
 export function HomeHeroSlider() {
-  const slides = HOME_SLIDER_SLIDES
+  const isDesktop = useDesktopNav()
+  const slides = isDesktop ? HOME_DESKTOP_SLIDES : HOME_MOBILE_SLIDES
   const [index, setIndex] = useState(0)
   const count = slides.length
-
   const touchStartX = useRef<number | null>(null)
 
   const next = useCallback(() => {
@@ -24,6 +26,10 @@ export function HomeHeroSlider() {
     if (count <= 1) return
     setIndex((i) => (i - 1 + count) % count)
   }, [count])
+
+  useEffect(() => {
+    setIndex(0)
+  }, [isDesktop])
 
   useEffect(() => {
     if (count <= 1) return
@@ -69,26 +75,23 @@ export function HomeHeroSlider() {
         >
           {slides.map((slide) => (
             <div key={slide.id} className="h-full min-w-full shrink-0">
-              <picture>
-                <source media={DESKTOP_MQ} srcSet={slide.desktop} />
-                <img
-                  src={slide.mobile}
-                  alt=""
-                  draggable={false}
-                  className="h-full w-full object-cover object-top"
-                />
-              </picture>
+              <img
+                src={slide.src}
+                alt=""
+                draggable={false}
+                className="h-full w-full object-cover object-center"
+              />
             </div>
           ))}
         </div>
       </div>
 
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink/45 via-transparent to-ink/25"
+        className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-ink/45 via-transparent to-ink/25 md:block"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink/35 to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-ink/35 to-transparent md:block"
         aria-hidden
       />
     </section>
