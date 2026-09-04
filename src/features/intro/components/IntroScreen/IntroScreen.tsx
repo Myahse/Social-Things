@@ -160,7 +160,6 @@ export function IntroScreen({ onIntroDone }: IntroScreenProps) {
               onLogoDoubleClick={startReveal}
               compact
               home={isDesktopNav}
-              onDark={isDocked}
             />
           ) : (
             <div
@@ -174,11 +173,7 @@ export function IntroScreen({ onIntroDone }: IntroScreenProps) {
                   : 'none',
               }}
             >
-              <IntroLogoSlot
-                phase={phase}
-                onLogoDoubleClick={startReveal}
-                onDark={isDocked}
-              />
+              <IntroLogoSlot phase={phase} onLogoDoubleClick={startReveal} />
             </div>
           )}
         </div>

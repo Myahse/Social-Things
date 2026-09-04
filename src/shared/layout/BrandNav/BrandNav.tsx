@@ -169,9 +169,7 @@ export function BrandLogo({
       <img
         src={headerLogoUrl}
         alt=""
-        className={`object-contain ${sizeClass} ${
-          onDark ? 'mix-blend-screen' : 'invert mix-blend-multiply'
-        }`}
+        className={`object-contain ${sizeClass} ${onDark ? '' : 'invert'}`}
       />
     </NavLink>
   )

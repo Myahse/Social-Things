@@ -2,7 +2,7 @@ import { Environment, Float, PresentationControls } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import type { Group, PerspectiveCamera } from 'three'
-import { PlaneLogo } from '@/features/intro/components/LogoMaterialScene/PlaneLogo'
+import { GlbLogo } from '@/features/intro/components/LogoMaterialScene/GlbLogo'
 
 function useResponsiveCamera() {
   const { viewport, camera } = useThree()
@@ -44,7 +44,7 @@ function LogoAssembly({
         rotationIntensity={interactive ? 0.05 : 0}
         floatIntensity={interactive ? 0.12 : 0}
       >
-        <PlaneLogo
+        <GlbLogo
           fitRadius={fitRadius}
           interactive={interactive}
           onLogoDoubleClick={onLogoDoubleClick}

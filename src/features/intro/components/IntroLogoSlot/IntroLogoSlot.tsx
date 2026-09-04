@@ -2,7 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
 import { LogoMaterialScene } from '@/features/intro/components/LogoMaterialScene'
 import type { IntroPhase } from '@/features/intro/context/IntroContext'
-import headerLogoUrl from '@/assets/logo-header.png'
+import logoUrl from '@/assets/logo.png'
 import { HOME_HEADER_LOGO_CLASS } from '@/shared/layout/brand-cluster'
 
 interface IntroLogoSlotProps {
@@ -11,7 +11,6 @@ interface IntroLogoSlotProps {
   compact?: boolean
   /** Header-sized logo (matches home navbar after intro). */
   home?: boolean
-  onDark?: boolean
 }
 
 export function IntroLogoSlot({
@@ -19,7 +18,6 @@ export function IntroLogoSlot({
   onLogoDoubleClick,
   compact = false,
   home = false,
-  onDark = false,
 }: IntroLogoSlotProps) {
   const isHero = phase === 'hero'
   const showPng = phase !== 'hero'
@@ -62,11 +60,9 @@ export function IntroLogoSlot({
         }`}
       >
         <img
-          src={headerLogoUrl}
+          src={logoUrl}
           alt=""
-          className={`h-full w-full object-contain ${
-            onDark ? 'mix-blend-screen' : 'invert mix-blend-multiply'
-          }`}
+          className="h-full w-full object-contain"
           draggable={false}
         />
       </div>
