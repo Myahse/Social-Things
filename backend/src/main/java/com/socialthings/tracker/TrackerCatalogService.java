@@ -112,13 +112,19 @@ public class TrackerCatalogService {
                 colors.add(variant.color() == null || variant.color().isBlank() ? "Default" : variant.color());
                 sizes.add(variant.size() == null || variant.size().isBlank() ? "OS" : variant.size());
                 if (variant.imageUrl() != null && !variant.imageUrl().isBlank()) {
-                    images.add(resolveImage(variant.imageUrl()));
+                    images.add(resolveImage(variant.imageUrl(), variant.id(), -1));
+                } else if (variant.hasImage()) {
+                    images.add(mediaPath(variant.id(), -1));
                 }
-                if (variant.galleryUrls() != null) {
+                if (variant.galleryUrls() != null && !variant.galleryUrls().isEmpty()) {
                     for (String extra : variant.galleryUrls()) {
                         if (extra != null && !extra.isBlank()) {
-                            images.add(resolveImage(extra));
+                            images.add(resolveImage(extra, variant.id(), -1));
                         }
+                    }
+                } else {
+                    for (int i = 0; i < variant.galleryCount(); i++) {
+                        images.add(mediaPath(variant.id(), i));
                     }
                 }
             }
@@ -141,15 +147,25 @@ public class TrackerCatalogService {
         return products;
     }
 
-    private String resolveImage(String imageUrl) {
-        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://") || imageUrl.startsWith("data:")) {
+    private String resolveImage(String imageUrl, String itemId, int galleryIndex) {
+        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
             return imageUrl;
+        }
+        if (imageUrl.startsWith("data:")) {
+            return mediaPath(itemId, galleryIndex);
         }
         String base = trackerProperties.publicBaseUrl();
         if (base == null || base.isBlank()) {
-            return imageUrl;
+            return mediaPath(itemId, galleryIndex);
         }
         return base.replaceAll("/$", "") + (imageUrl.startsWith("/") ? imageUrl : "/" + imageUrl);
+    }
+
+    private static String mediaPath(String itemId, int galleryIndex) {
+        if (galleryIndex >= 0) {
+            return "/media/inventory/" + itemId + "/gallery/" + galleryIndex;
+        }
+        return "/media/inventory/" + itemId;
     }
 
     static String slugify(String name) {

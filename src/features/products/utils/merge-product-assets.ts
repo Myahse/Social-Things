@@ -1,5 +1,14 @@
 import { PRODUCT_ASSETS_BY_SLUG } from '@/features/products/config/product-assets'
 import type { Product } from '@/features/products/types'
+import { getApiBaseUrl } from '@/shared/api/client'
+
+function resolveShopImage(url: string | undefined | null): string | undefined {
+  if (!url) return undefined
+  if (url.startsWith('/media/')) {
+    return `${getApiBaseUrl()}${url}`
+  }
+  return url
+}
 
 function uniqueUrls(...urls: Array<string | undefined | null>): string[] {
   const seen = new Set<string>()
@@ -18,19 +27,22 @@ export function productGallery(product: Product): string[] {
 
 export function withProductAssets(product: Product): Product {
   const assets = PRODUCT_ASSETS_BY_SLUG[product.slug]
-  const trackerImages = product.images ?? []
+  const cover = resolveShopImage(product.image)
+  const trackerImages = (product.images ?? []).map((src) => resolveShopImage(src)).filter(Boolean) as string[]
 
   if (!assets) {
     return {
       ...product,
-      images: uniqueUrls(product.image, ...trackerImages),
+      image: cover ?? '',
+      images: uniqueUrls(cover, ...trackerImages),
     }
   }
 
   return {
     ...product,
+    image: cover || assets.product,
     imageAvatar: assets.avatar,
-    images: uniqueUrls(product.image, ...trackerImages, assets.product, assets.avatar, ...assets.extras),
+    images: uniqueUrls(cover, ...trackerImages, assets.product, assets.avatar, ...assets.extras),
   }
 }
 

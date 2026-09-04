@@ -11,6 +11,8 @@ public record TrackerInventoryItem(
         String size,
         String color,
         String imageUrl,
+        boolean hasImage,
         List<String> galleryUrls,
+        int galleryCount,
         BigDecimal price,
         int stock) {}
