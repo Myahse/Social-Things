@@ -8,6 +8,7 @@ type ProductImageSliderProps = {
   objectFit?: 'cover' | 'contain'
   showThumbs?: boolean
   frameClassName?: string
+  hoverFlip?: boolean
   onActivate?: () => void
 }
 
@@ -17,13 +18,16 @@ export function ProductImageSlider({
   objectFit = 'cover',
   showThumbs = false,
   frameClassName = '',
+  hoverFlip = false,
   onActivate,
 }: ProductImageSliderProps) {
   const count = images.length
   const [index, setIndex] = useState(0)
+  const [peek, setPeek] = useState(false)
   const startX = useRef<number | null>(null)
   const swiped = useRef(false)
-  const safeIndex = count === 0 ? 0 : ((index % count) + count) % count
+  const baseIndex = count === 0 ? 0 : ((index % count) + count) % count
+  const safeIndex = peek && count > 1 ? (baseIndex + 1) % count : baseIndex
 
   const go = useCallback(
     (dir: -1 | 1) => {
@@ -73,13 +77,18 @@ export function ProductImageSlider({
         }}
         onMouseDown={(e) => {
           if ((e.target as HTMLElement).closest('button')) return
+          setPeek(false)
           pointerDown(e.clientX)
         }}
         onMouseUp={(e) => {
           if ((e.target as HTMLElement).closest('button')) return
           pointerUp(e.clientX)
         }}
+        onMouseEnter={() => {
+          if (hoverFlip && count > 1) setPeek(true)
+        }}
         onMouseLeave={() => {
+          setPeek(false)
           startX.current = null
         }}
         role={onActivate ? 'link' : undefined}

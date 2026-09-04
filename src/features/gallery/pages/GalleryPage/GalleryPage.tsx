@@ -1,21 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  GALLERY_GROUPS,
-  GALLERY_IMAGES,
-  galleryGroupLabel,
-} from '@/features/gallery/config/gallery-images'
+import { galleryGroupLabel, groupGalleryImages } from '@/features/gallery/config/gallery-images'
+import { useGallery } from '@/features/gallery/hooks/useGallery'
 import { SlamReveal } from '@/shared/components/SlamReveal'
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
 
 export function GalleryPage() {
   const { t } = useI18n()
-  const images = GALLERY_IMAGES
-  const groups = GALLERY_GROUPS
+  const { images, loading } = useGallery()
+  const groups = useMemo(() => groupGalleryImages(images), [images])
   const [active, setActive] = useState<number | null>(null)
   const [filter, setFilter] = useState<string>('all')
   const [filterOpen, setFilterOpen] = useState(false)
   const touchStartX = useRef<number | null>(null)
+  const mouseStartX = useRef<number | null>(null)
 
   const visible = useMemo(
     () => (filter === 'all' ? images : images.filter((img) => img.group === filter)),
@@ -126,7 +124,9 @@ export function GalleryPage() {
         )}
 
         <StaggerReveal index={1} className="mt-6 sm:mt-10">
-          {images.length === 0 ? (
+          {loading ? (
+            <p className="font-display text-sm tracking-[0.16em] text-muted">…</p>
+          ) : images.length === 0 ? (
             <div className="border-[3px] border-ink bg-canvas p-6 shadow-[6px_6px_0_var(--color-ink)] sm:p-8 sm:shadow-[8px_8px_0_var(--color-ink)]">
               <p className="font-display text-sm tracking-[0.16em]">{t('page.gallery.empty')}</p>
               <p className="mt-3 text-sm text-muted">{t('page.gallery.emptyHint')}</p>
@@ -147,22 +147,11 @@ export function GalleryPage() {
                         variant="block"
                         delayMs={Math.min(index, 8) * 35}
                       >
-                        <button
-                          type="button"
-                          className="group product-card-frame panel-cut-hard relative block w-full overflow-hidden border-[2.5px] border-ink bg-canvas text-left sm:border-[3px]"
-                          onClick={() => openImage(image.src)}
-                          aria-label={image.alt}
-                        >
-                          <div className="product-card-top pointer-events-none absolute inset-x-0 top-0 z-10 h-1.5 sm:h-2" />
-                          <img
-                            src={image.src}
-                            alt={image.alt}
-                            className="aspect-[3/4] block w-full object-cover transition-transform duration-500 group-active:scale-[1.02] sm:aspect-auto sm:group-hover:scale-[1.03]"
-                            loading="lazy"
-                            decoding="async"
-                          />
-                          <div className="product-card-shine" aria-hidden />
-                        </button>
+                        <GalleryTile
+                          image={image}
+                          groupImages={group.images}
+                          onOpen={() => openImage(image.src)}
+                        />
                       </SlamReveal>
                     ))}
                   </div>
@@ -244,6 +233,18 @@ export function GalleryPage() {
             if (Math.abs(dx) < 48) return
             stepVisible(dx < 0 ? 1 : -1)
           }}
+          onMouseDown={(e) => {
+            mouseStartX.current = e.clientX
+          }}
+          onMouseUp={(e) => {
+            const start = mouseStartX.current
+            mouseStartX.current = null
+            if (start == null) return
+            const dx = e.clientX - start
+            if (Math.abs(dx) < 48) return
+            e.preventDefault()
+            stepVisible(dx < 0 ? 1 : -1)
+          }}
         >
           <div className="flex shrink-0 items-center justify-between gap-3 px-3 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-4 sm:pt-4">
             <p className="font-display text-xs tracking-[0.18em] text-bolt uppercase">
@@ -299,6 +300,42 @@ export function GalleryPage() {
         </div>
       )}
     </div>
+  )
+}
+
+function GalleryTile({
+  image,
+  groupImages,
+  onOpen,
+}: {
+  image: { src: string; alt: string }
+  groupImages: Array<{ src: string; alt: string }>
+  onOpen: () => void
+}) {
+  const [peek, setPeek] = useState(false)
+  const idx = groupImages.findIndex((item) => item.src === image.src)
+  const next = groupImages[(idx + 1 + groupImages.length) % groupImages.length]
+  const shown = peek && next && next.src !== image.src ? next : image
+
+  return (
+    <button
+      type="button"
+      className="group product-card-frame panel-cut-hard relative block w-full overflow-hidden border-[2.5px] border-ink bg-canvas text-left sm:border-[3px]"
+      onClick={onOpen}
+      onMouseEnter={() => setPeek(true)}
+      onMouseLeave={() => setPeek(false)}
+      aria-label={image.alt}
+    >
+      <div className="product-card-top pointer-events-none absolute inset-x-0 top-0 z-10 h-1.5 sm:h-2" />
+      <img
+        src={shown.src}
+        alt={shown.alt}
+        className="aspect-[3/4] block w-full object-cover transition-[transform,opacity] duration-500 group-active:scale-[1.02] sm:aspect-auto sm:group-hover:scale-[1.03]"
+        loading="lazy"
+        decoding="async"
+      />
+      <div className="product-card-shine" aria-hidden />
+    </button>
   )
 }
 

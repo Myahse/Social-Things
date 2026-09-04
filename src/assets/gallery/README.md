@@ -1,15 +1,5 @@
 # Gallery images
 
-Put photos in this folder **or in subfolders**:
+Lookbook shots are uploaded in the tracker (Lookbook page) and stored in the tracker bucket.
 
-```
-gallery/
-  orange/
-  rouge/
-  vert/
-  white/
-```
-
-Supported: `png`, `jpg`, `jpeg`, `webp`, `avif`.
-
-Subfolder names become filter groups on `/gallery`.
+Folders on this site are no longer used.

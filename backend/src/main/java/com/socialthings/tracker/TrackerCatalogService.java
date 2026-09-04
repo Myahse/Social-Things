@@ -17,8 +17,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class TrackerCatalogService {
 
+    private static final long CATALOG_TTL_MS = 20_000;
+
     private final TrackerInventoryRepository inventoryRepository;
     private final TrackerProperties trackerProperties;
+    private final Object catalogLock = new Object();
+    private volatile Map<String, TrackerCatalogProduct> catalogCache = Map.of();
+    private volatile long catalogCachedAt;
+    private volatile boolean catalogReady;
 
     public TrackerCatalogService(
             TrackerInventoryRepository inventoryRepository, TrackerProperties trackerProperties) {
@@ -31,11 +37,11 @@ public class TrackerCatalogService {
     }
 
     public List<TrackerCatalogProduct> listProducts() {
-        return group(inventoryRepository.findAll()).values().stream().toList();
+        return List.copyOf(catalog().values());
     }
 
     public TrackerCatalogProduct findBySlug(String slug) {
-        TrackerCatalogProduct product = group(inventoryRepository.findAll()).get(slug);
+        TrackerCatalogProduct product = catalog().get(slug);
         if (product == null) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Product not found");
         }
@@ -58,6 +64,28 @@ public class TrackerCatalogService {
     public void decrementStock(String inventoryId, int quantity, String productName) {
         if (!inventoryRepository.decrementStock(inventoryId, quantity)) {
             throw new ApiException(HttpStatus.CONFLICT, "Not enough stock for " + productName);
+        }
+        catalogCache = Map.of();
+        catalogCachedAt = 0;
+        catalogReady = false;
+    }
+
+    private Map<String, TrackerCatalogProduct> catalog() {
+        long now = System.currentTimeMillis();
+        Map<String, TrackerCatalogProduct> cached = catalogCache;
+        if (catalogReady && now - catalogCachedAt < CATALOG_TTL_MS) {
+            return cached;
+        }
+        synchronized (catalogLock) {
+            cached = catalogCache;
+            if (catalogReady && now - catalogCachedAt < CATALOG_TTL_MS) {
+                return cached;
+            }
+            Map<String, TrackerCatalogProduct> next = group(inventoryRepository.findAll());
+            catalogCache = next;
+            catalogCachedAt = System.currentTimeMillis();
+            catalogReady = true;
+            return next;
         }
     }
 

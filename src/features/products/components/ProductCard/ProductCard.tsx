@@ -32,6 +32,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
           images={images}
           alt={product.name}
           objectFit="cover"
+          hoverFlip
           onActivate={() => navigate(href)}
         />
 

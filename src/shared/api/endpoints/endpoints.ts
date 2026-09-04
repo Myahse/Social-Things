@@ -4,6 +4,7 @@
 export const endpoints = {
   products: '/products',
   productBySlug: (slug: string) => `/products/${encodeURIComponent(slug)}`,
+  gallery: '/gallery',
   checkout: '/checkout',
   authSession: '/auth/session',
   authLogin: '/auth/login',

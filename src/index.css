@@ -30,7 +30,7 @@
 
 @layer base {
   :root {
-    --cursor-hand: url('/cursors/hand.png') 18 6, auto;
+    --cursor-hand: url('/cursors/hand.png') 45 6, auto;
     --body-tracking: 0.12em;
     --brand-cluster-nudge: 0.75rem;
     --brand-logo-compact: 3.25rem;
