@@ -11,6 +11,7 @@ import com.socialthings.exception.ApiException;
 import com.socialthings.repository.OrderRepository;
 import com.socialthings.tracker.TrackerCatalogService;
 import com.socialthings.tracker.TrackerInventoryItem;
+import com.socialthings.ws.CatalogRealtimeService;
 import java.math.BigDecimal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -25,16 +26,19 @@ public class CheckoutService {
     private final OrderRepository orderRepository;
     private final TrackerCatalogService trackerCatalogService;
     private final StorefrontProperties storefrontProperties;
+    private final CatalogRealtimeService catalogRealtimeService;
 
     public CheckoutService(
             ProductService productService,
             OrderRepository orderRepository,
             TrackerCatalogService trackerCatalogService,
-            StorefrontProperties storefrontProperties) {
+            StorefrontProperties storefrontProperties,
+            CatalogRealtimeService catalogRealtimeService) {
         this.productService = productService;
         this.orderRepository = orderRepository;
         this.trackerCatalogService = trackerCatalogService;
         this.storefrontProperties = storefrontProperties;
+        this.catalogRealtimeService = catalogRealtimeService;
     }
 
     @Transactional
@@ -103,6 +107,9 @@ public class CheckoutService {
         String checkoutUrl = storefrontUrl() + "/order/" + saved.getId();
         saved.setCheckoutUrl(checkoutUrl);
         saved = orderRepository.save(saved);
+        if (trackerCatalogService.enabled()) {
+            catalogRealtimeService.notifyChanged("stock.changed");
+        }
         return new CheckoutResponse(checkoutUrl, saved.getId().toString());
     }
 

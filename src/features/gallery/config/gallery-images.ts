@@ -1,4 +1,5 @@
 export type GalleryImage = {
+  id?: string
   src: string
   alt: string
   group: string

@@ -70,6 +70,10 @@ public class TrackerCatalogService {
         if (!inventoryRepository.decrementStock(inventoryId, quantity)) {
             throw new ApiException(HttpStatus.CONFLICT, "Not enough stock for " + productName);
         }
+        invalidate();
+    }
+
+    public void invalidate() {
         catalogCache = Map.of();
         catalogCachedAt = 0;
         catalogReady = false;

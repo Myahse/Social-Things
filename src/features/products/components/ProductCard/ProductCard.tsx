@@ -45,14 +45,16 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
       </div>
 
       <div className="mt-3">
-        <Link
-          to={href}
-          className="product-card-name inline-block border-2 border-ink bg-ink px-2 py-1 font-display text-xs tracking-[0.14em] text-white"
-          style={{ transform: 'skewX(-8deg)' }}
-        >
-          <span style={{ display: 'inline-block', transform: 'skewX(8deg)' }}>{product.name}</span>
-        </Link>
-        <p className="mt-1.5 font-display text-sm tracking-[0.08em] text-ink">${product.price}</p>
+        <div className="flex items-center gap-2">
+          <p className="shrink-0 font-display text-sm tracking-[0.08em] text-ink">${product.price}</p>
+          <Link
+            to={href}
+            className="product-card-name inline-block border-2 border-ink bg-ink px-2 py-1 font-display text-xs tracking-[0.14em] text-white"
+            style={{ transform: 'skewX(-8deg)' }}
+          >
+            <span style={{ display: 'inline-block', transform: 'skewX(8deg)' }}>{product.name}</span>
+          </Link>
+        </div>
         {!compact && (
           <div className="mt-2 text-sm font-light leading-relaxed text-muted">{product.description}</div>
         )}

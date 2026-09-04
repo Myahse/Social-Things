@@ -1,1 +1,1 @@
-export { fetchProducts, fetchProductBySlug } from './products.api'
+export { fetchProducts, fetchProductBySlug, invalidateProductsCache } from './products.api'

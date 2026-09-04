@@ -143,7 +143,7 @@ export function GalleryPage() {
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                     {group.images.map((image, index) => (
                       <SlamReveal
-                        key={image.src}
+                        key={image.id || image.src}
                         variant="block"
                         delayMs={Math.min(index, 8) * 35}
                       >
@@ -327,13 +327,15 @@ function GalleryTile({
       aria-label={image.alt}
     >
       <div className="product-card-top pointer-events-none absolute inset-x-0 top-0 z-10 h-1.5 sm:h-2" />
-      <img
-        src={shown.src}
-        alt={shown.alt}
-        className="aspect-[3/4] block w-full object-cover transition-[transform,opacity] duration-500 group-active:scale-[1.02] sm:aspect-auto sm:group-hover:scale-[1.03]"
-        loading="lazy"
-        decoding="async"
-      />
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-ink/5">
+        <img
+          src={shown.src}
+          alt={shown.alt}
+          className="absolute inset-0 h-full w-full object-cover transition-[transform,opacity] duration-500 group-active:scale-[1.02] sm:group-hover:scale-[1.03]"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
       <div className="product-card-shine" aria-hidden />
     </button>
   )

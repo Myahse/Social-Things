@@ -1,6 +1,7 @@
 package com.socialthings.controller;
 
 import com.socialthings.config.TrackerProperties;
+import com.socialthings.tracker.TrackerGalleryRepository;
 import com.socialthings.tracker.TrackerInventoryRepository;
 import java.net.URI;
 import java.util.Base64;
@@ -19,11 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class MediaController {
 
     private final TrackerInventoryRepository inventoryRepository;
+    private final TrackerGalleryRepository galleryRepository;
     private final TrackerProperties trackerProperties;
 
     public MediaController(
-            TrackerInventoryRepository inventoryRepository, TrackerProperties trackerProperties) {
+            TrackerInventoryRepository inventoryRepository,
+            TrackerGalleryRepository galleryRepository,
+            TrackerProperties trackerProperties) {
         this.inventoryRepository = inventoryRepository;
+        this.galleryRepository = galleryRepository;
         this.trackerProperties = trackerProperties;
     }
 
@@ -37,12 +42,19 @@ public class MediaController {
         return toResponse(inventoryRepository.findGalleryUrl(id, index));
     }
 
+    @GetMapping("/gallery/{id}")
+    public ResponseEntity<byte[]> lookbookImage(@PathVariable String id) {
+        return toResponse(galleryRepository.findImageUrl(id));
+    }
+
     private ResponseEntity<byte[]> toResponse(Optional<String> raw) {
         if (raw.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         String imageUrl = raw.get();
-        if (imageUrl.contains("/api/public/inventory/")) {
+        if (imageUrl.contains("/api/public/inventory/")
+                || imageUrl.contains("/api/public/gallery/")
+                || imageUrl.contains("/api/gallery/")) {
             return ResponseEntity.notFound().build();
         }
         if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {

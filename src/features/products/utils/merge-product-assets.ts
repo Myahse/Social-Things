@@ -1,29 +1,6 @@
 import { PRODUCT_ASSETS_BY_SLUG } from '@/features/products/config/product-assets'
 import type { Product } from '@/features/products/types'
-import { getApiBaseUrl } from '@/shared/api/client'
-
-function resolveShopImage(url: string | undefined | null): string | undefined {
-  if (!url) return undefined
-  const trackerPublic = url.match(/\/api\/public\/inventory\/([^/?#]+)\/image/)
-  if (trackerPublic?.[1]) {
-    return `${getApiBaseUrl()}/media/inventory/${trackerPublic[1]}`
-  }
-  if (
-    url.startsWith('http://') ||
-    url.startsWith('https://') ||
-    url.startsWith('data:') ||
-    url.startsWith('blob:')
-  ) {
-    return url
-  }
-  if (url.startsWith('/media/')) {
-    return `${getApiBaseUrl()}${url}`
-  }
-  if (url.startsWith('/api/media/')) {
-    return `${getApiBaseUrl().replace(/\/api\/?$/, '')}${url}`
-  }
-  return url
-}
+import { resolveShopImage } from '@/shared/media/resolveShopImage'
 
 function uniqueUrls(...urls: Array<string | undefined | null>): string[] {
   const seen = new Set<string>()

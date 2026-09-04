@@ -12,6 +12,11 @@ let productsCache: Product[] | null = null
 let productsCacheAt = 0
 let productsInFlight: Promise<Product[]> | null = null
 
+export function invalidateProductsCache() {
+  productsCache = null
+  productsCacheAt = 0
+}
+
 export async function fetchProducts(): Promise<Product[]> {
   if (!isJavaApiEnabled()) {
     return []
