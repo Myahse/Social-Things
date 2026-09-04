@@ -4,8 +4,23 @@ import { getApiBaseUrl } from '@/shared/api/client'
 
 function resolveShopImage(url: string | undefined | null): string | undefined {
   if (!url) return undefined
+  const trackerPublic = url.match(/\/api\/public\/inventory\/([^/?#]+)\/image/)
+  if (trackerPublic?.[1]) {
+    return `${getApiBaseUrl()}/media/inventory/${trackerPublic[1]}`
+  }
+  if (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('data:') ||
+    url.startsWith('blob:')
+  ) {
+    return url
+  }
   if (url.startsWith('/media/')) {
     return `${getApiBaseUrl()}${url}`
+  }
+  if (url.startsWith('/api/media/')) {
+    return `${getApiBaseUrl().replace(/\/api\/?$/, '')}${url}`
   }
   return url
 }

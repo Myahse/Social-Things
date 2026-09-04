@@ -35,6 +35,8 @@ app:
     public-base-url: ${TRACKER_PUBLIC_BASE_URL:}
   storefront:
     url: ${STOREFRONT_URL:http://localhost:5173}
+  api:
+    public-url: ${PUBLIC_API_URL:${RENDER_EXTERNAL_URL:}}
 
 logging:
   level:

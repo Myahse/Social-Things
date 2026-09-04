@@ -1,5 +1,6 @@
 package com.socialthings.tracker;
 
+import com.socialthings.config.ApiPublicProperties;
 import com.socialthings.config.TrackerProperties;
 import com.socialthings.exception.ApiException;
 import java.math.BigDecimal;
@@ -21,15 +22,19 @@ public class TrackerCatalogService {
 
     private final TrackerInventoryRepository inventoryRepository;
     private final TrackerProperties trackerProperties;
+    private final ApiPublicProperties apiPublicProperties;
     private final Object catalogLock = new Object();
     private volatile Map<String, TrackerCatalogProduct> catalogCache = Map.of();
     private volatile long catalogCachedAt;
     private volatile boolean catalogReady;
 
     public TrackerCatalogService(
-            TrackerInventoryRepository inventoryRepository, TrackerProperties trackerProperties) {
+            TrackerInventoryRepository inventoryRepository,
+            TrackerProperties trackerProperties,
+            ApiPublicProperties apiPublicProperties) {
         this.inventoryRepository = inventoryRepository;
         this.trackerProperties = trackerProperties;
+        this.apiPublicProperties = apiPublicProperties;
     }
 
     public boolean enabled() {
@@ -148,10 +153,10 @@ public class TrackerCatalogService {
     }
 
     private String resolveImage(String imageUrl, String itemId, int galleryIndex) {
-        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+        if (isExternalCdn(imageUrl)) {
             return imageUrl;
         }
-        if (imageUrl.startsWith("data:")) {
+        if (imageUrl.startsWith("data:") || isTrackerPublicProxy(imageUrl)) {
             return mediaPath(itemId, galleryIndex);
         }
         String base = trackerProperties.publicBaseUrl();
@@ -161,11 +166,24 @@ public class TrackerCatalogService {
         return base.replaceAll("/$", "") + (imageUrl.startsWith("/") ? imageUrl : "/" + imageUrl);
     }
 
-    private static String mediaPath(String itemId, int galleryIndex) {
-        if (galleryIndex >= 0) {
-            return "/media/inventory/" + itemId + "/gallery/" + galleryIndex;
+    private static boolean isExternalCdn(String imageUrl) {
+        return (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))
+                && !isTrackerPublicProxy(imageUrl);
+    }
+
+    private static boolean isTrackerPublicProxy(String imageUrl) {
+        return imageUrl.contains("/api/public/inventory/");
+    }
+
+    private String mediaPath(String itemId, int galleryIndex) {
+        String path = galleryIndex >= 0
+                ? "/api/media/inventory/" + itemId + "/gallery/" + galleryIndex
+                : "/api/media/inventory/" + itemId;
+        String origin = apiPublicProperties.origin();
+        if (origin.isBlank()) {
+            return path.startsWith("/api") ? path.substring(4) : path;
         }
-        return "/media/inventory/" + itemId;
+        return origin + path;
     }
 
     static String slugify(String name) {

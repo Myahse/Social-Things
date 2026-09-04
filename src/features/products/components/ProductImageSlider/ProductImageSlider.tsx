@@ -58,7 +58,7 @@ export function ProductImageSlider({
   }
 
   if (count === 0) {
-    return <div className="h-full w-full bg-ink/5" />
+    return <div className={`relative aspect-[4/5] w-full bg-ink/5 ${frameClassName}`} />
   }
 
   const fitClass = objectFit === 'contain' ? 'object-contain' : 'object-cover'
@@ -104,7 +104,7 @@ export function ProductImageSlider({
         }}
       >
         <div
-          className="flex h-full will-change-transform transition-transform duration-300 ease-out"
+          className="absolute inset-0 flex will-change-transform transition-transform duration-300 ease-out"
           style={{ transform: `translateX(-${safeIndex * 100}%)` }}
         >
           {images.map((src, i) => (
@@ -113,7 +113,7 @@ export function ProductImageSlider({
               src={src}
               alt={i === safeIndex ? alt : ''}
               draggable={false}
-              className={`h-full min-w-full shrink-0 select-none ${fitClass}`}
+              className={`h-full w-full min-w-full shrink-0 select-none ${fitClass}`}
             />
           ))}
         </div>

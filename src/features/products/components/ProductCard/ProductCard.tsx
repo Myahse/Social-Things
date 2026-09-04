@@ -52,6 +52,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
         >
           <span style={{ display: 'inline-block', transform: 'skewX(8deg)' }}>{product.name}</span>
         </Link>
+        <p className="mt-1.5 font-display text-sm tracking-[0.08em] text-ink">${product.price}</p>
         {!compact && (
           <div className="mt-2 text-sm font-light leading-relaxed text-muted">{product.description}</div>
         )}

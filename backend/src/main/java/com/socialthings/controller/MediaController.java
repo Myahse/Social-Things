@@ -42,6 +42,9 @@ public class MediaController {
             return ResponseEntity.notFound().build();
         }
         String imageUrl = raw.get();
+        if (imageUrl.contains("/api/public/inventory/")) {
+            return ResponseEntity.notFound().build();
+        }
         if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
             return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(imageUrl)).build();
         }

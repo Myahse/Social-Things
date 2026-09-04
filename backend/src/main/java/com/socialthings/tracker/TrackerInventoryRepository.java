@@ -65,13 +65,27 @@ public class TrackerInventoryRepository {
     }
 
     public Optional<String> findImageUrl(String id) {
-        List<String> rows = trackerJdbc
-                .require()
-                .query(
-                        "SELECT image_url FROM inventory_items WHERE id = ?",
-                        (rs, rowNum) -> rs.getString("image_url"),
-                        id);
-        return rows.stream().filter(url -> url != null && !url.isBlank()).findFirst();
+        try {
+            return firstPresent(
+                    trackerJdbc
+                            .require()
+                            .query(
+                                    """
+                                    SELECT COALESCE(NULLIF(image_blob, ''), NULLIF(image_url, '')) AS image_url
+                                    FROM inventory_items
+                                    WHERE id = ?
+                                    """,
+                                    (rs, rowNum) -> rs.getString("image_url"),
+                                    id));
+        } catch (Exception e) {
+            return firstPresent(
+                    trackerJdbc
+                            .require()
+                            .query(
+                                    "SELECT image_url FROM inventory_items WHERE id = ?",
+                                    (rs, rowNum) -> rs.getString("image_url"),
+                                    id));
+        }
     }
 
     public Optional<String> findGalleryUrl(String id, int index) {
@@ -127,6 +141,10 @@ public class TrackerInventoryRepository {
                         id,
                         quantity);
         return updated == 1;
+    }
+
+    private static Optional<String> firstPresent(List<String> rows) {
+        return rows.stream().filter(url -> url != null && !url.isBlank()).findFirst();
     }
 
     static List<String> parseGalleryUrls(String raw) {
