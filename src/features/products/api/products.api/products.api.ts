@@ -1,7 +1,3 @@
-import {
-  fallbackProducts,
-  getFallbackProductBySlug,
-} from '@/features/products/data/fallback-products'
 import type { Product } from '@/features/products/types'
 import {
   withProductAssets,
@@ -18,7 +14,7 @@ let productsInFlight: Promise<Product[]> | null = null
 
 export async function fetchProducts(): Promise<Product[]> {
   if (!isJavaApiEnabled()) {
-    return withProductAssetsList(fallbackProducts)
+    return []
   }
 
   const now = Date.now()
@@ -45,8 +41,7 @@ export async function fetchProducts(): Promise<Product[]> {
 
 export async function fetchProductBySlug(slug: string): Promise<Product | undefined> {
   if (!isJavaApiEnabled()) {
-    const product = getFallbackProductBySlug(slug)
-    return product ? withProductAssets(product) : undefined
+    return undefined
   }
 
   const cached = productsCache?.find((product) => product.slug === slug)

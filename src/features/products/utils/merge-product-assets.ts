@@ -29,15 +29,8 @@ export function withProductAssets(product: Product): Product {
 
   return {
     ...product,
-    image: assets.product,
     imageAvatar: assets.avatar,
-    images: uniqueUrls(
-      assets.product,
-      assets.avatar,
-      ...assets.extras,
-      product.image,
-      ...trackerImages,
-    ),
+    images: uniqueUrls(product.image, ...trackerImages, assets.product, assets.avatar, ...assets.extras),
   }
 }
 

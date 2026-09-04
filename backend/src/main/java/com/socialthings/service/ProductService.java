@@ -25,20 +25,17 @@ public class ProductService {
     }
 
     public List<ProductResponse> findAll() {
-        if (trackerCatalogService.enabled()) {
-            return trackerCatalogService.listProducts().stream().map(this::toResponse).toList();
+        if (!trackerCatalogService.enabled()) {
+            return List.of();
         }
-        return productRepository.findAll().stream().map(this::toResponse).toList();
+        return trackerCatalogService.listProducts().stream().map(this::toResponse).toList();
     }
 
     public ProductResponse findBySlug(String slug) {
-        if (trackerCatalogService.enabled()) {
-            return toResponse(trackerCatalogService.findBySlug(slug));
+        if (!trackerCatalogService.enabled()) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "Product not found");
         }
-        return productRepository
-                .findBySlug(slug)
-                .map(this::toResponse)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Product not found"));
+        return toResponse(trackerCatalogService.findBySlug(slug));
     }
 
     public Product findEntityById(Long id) {
@@ -58,20 +55,5 @@ public class ProductService {
                 product.colors(),
                 product.sizes(),
                 product.images());
-    }
-
-    private ProductResponse toResponse(Product product) {
-        String image = product.getImage();
-        List<String> images = image == null || image.isBlank() ? List.of() : List.of(image);
-        return new ProductResponse(
-                String.valueOf(product.getId()),
-                product.getName(),
-                product.getSlug(),
-                product.getPrice().doubleValue(),
-                product.getDescription(),
-                image,
-                product.getColors(),
-                product.getSizes(),
-                images);
     }
 }
