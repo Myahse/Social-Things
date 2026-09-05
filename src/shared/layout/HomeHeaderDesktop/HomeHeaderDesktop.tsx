@@ -355,8 +355,8 @@ function IconBoxLink({
               ? `border-2 border-canvas/40 bg-canvas/20 backdrop-blur-md ${isActiveHover ? 'z-10 border-bolt bg-canvas/25' : ''}`
               : `border-2 border-ink/20 bg-canvas/95 backdrop-blur-md ${isActiveHover ? 'z-10 border-ink bg-canvas' : ''}`
             : isDark
-              ? `border-2 border-canvas/20 bg-canvas/10 ${isActiveHover ? 'z-10 border-bolt bg-canvas/15' : ''} hover:bg-canvas/15`
-              : `border-2 border-ink/10 bg-ink/[0.06] ${isActiveHover ? 'z-10 border-ink bg-ink/[0.09]' : ''} hover:bg-ink/[0.09]`
+              ? `border-2 border-canvas/25 bg-canvas/12 shadow-[3px_3px_0_rgba(255,255,255,0.12)] ${isActiveHover ? 'z-10 border-bolt bg-canvas/18' : ''} hover:bg-canvas/15`
+              : `border-2 border-ink/15 bg-ink/[0.05] shadow-[3px_3px_0_rgba(10,10,10,0.08)] ${isActiveHover ? 'z-10 border-ink bg-ink/[0.09]' : ''} hover:bg-ink/[0.09]`
         } ${
           isActive
             ? isDark

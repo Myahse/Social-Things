@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SOCIAL THINGS — email templates</title>
+    <style>
+      body {
+        margin: 0;
+        background: #0a0a0a;
+        color: #f2f2f2;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .bar {
+        padding: 18px 20px;
+        letter-spacing: 0.22em;
+        font-size: 11px;
+        text-transform: uppercase;
+        border-bottom: 3px solid #fff;
+      }
+      .hint {
+        padding: 12px 20px 0;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        color: #999;
+      }
+      .grid {
+        display: grid;
+        gap: 28px;
+        padding: 28px 16px 48px;
+      }
+      @media (min-width: 1100px) {
+        .grid {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+      }
+      iframe {
+        width: 100%;
+        height: 720px;
+        border: 3px solid #fff;
+        background: #f2f2f2;
+        box-shadow: 8px 8px 0 #fff;
+      }
+      h2 {
+        margin: 0 0 12px;
+        font-size: 12px;
+        letter-spacing: 0.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">SOCIAL THINGS · email templates preview</div>
+    <p class="hint">Edit the HTML in backend/src/main/resources/mail — Java only fills {{PLACEHOLDERS}}.</p>
+    <div class="grid">
+      <section>
+        <h2>1 · Register</h2>
+        <iframe title="Register email" src="/email-preview-welcome.html"></iframe>
+      </section>
+      <section>
+        <h2>2 · Order</h2>
+        <iframe title="Order email" src="/email-preview-order.html"></iframe>
+      </section>
+      <section>
+        <h2>3 · Newsletter</h2>
+        <iframe title="Newsletter email" src="/email-preview-newsletter.html"></iframe>
+      </section>
+    </div>
+  </body>
+</html>

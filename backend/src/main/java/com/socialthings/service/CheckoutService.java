@@ -9,6 +9,7 @@ import com.socialthings.dto.checkout.CheckoutRequest;
 import com.socialthings.dto.checkout.CheckoutResponse;
 import com.socialthings.exception.ApiException;
 import com.socialthings.repository.OrderRepository;
+import com.socialthings.mail.BrevoMailService;
 import com.socialthings.tracker.TrackerCatalogService;
 import com.socialthings.tracker.TrackerInventoryItem;
 import com.socialthings.ws.CatalogRealtimeService;
@@ -27,18 +28,21 @@ public class CheckoutService {
     private final TrackerCatalogService trackerCatalogService;
     private final StorefrontProperties storefrontProperties;
     private final CatalogRealtimeService catalogRealtimeService;
+    private final BrevoMailService brevoMailService;
 
     public CheckoutService(
             ProductService productService,
             OrderRepository orderRepository,
             TrackerCatalogService trackerCatalogService,
             StorefrontProperties storefrontProperties,
-            CatalogRealtimeService catalogRealtimeService) {
+            CatalogRealtimeService catalogRealtimeService,
+            BrevoMailService brevoMailService) {
         this.productService = productService;
         this.orderRepository = orderRepository;
         this.trackerCatalogService = trackerCatalogService;
         this.storefrontProperties = storefrontProperties;
         this.catalogRealtimeService = catalogRealtimeService;
+        this.brevoMailService = brevoMailService;
     }
 
     @Transactional
@@ -110,6 +114,7 @@ public class CheckoutService {
         if (trackerCatalogService.enabled()) {
             catalogRealtimeService.notifyChanged("stock.changed");
         }
+        brevoMailService.sendOrderConfirmation(saved);
         return new CheckoutResponse(checkoutUrl, saved.getId().toString());
     }
 

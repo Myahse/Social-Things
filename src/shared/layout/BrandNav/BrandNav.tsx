@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import logoMarkUrl from '@/assets/logo-mark.png'
+import { LogoMark } from '@/shared/brand'
 import { BRAND_NAV_ROW_CLASS } from '@/shared/layout/brand-cluster'
 import { BRAND_NAV_ITEMS } from './nav-items'
 import { useI18n } from '@/shared/i18n/i18n'
@@ -163,14 +163,10 @@ export function BrandLogo({
       to="/"
       end
       onClick={() => onNavigateHome?.()}
-      className={`block shrink-0 bg-transparent transition-opacity hover:opacity-90 ${className}`}
+      className={`logo-home-link block shrink-0 bg-transparent ${className}`}
       aria-label="Home"
     >
-      <img
-        src={logoMarkUrl}
-        alt=""
-        className={`bg-transparent object-contain ${sizeClass}`}
-      />
+      <LogoMark onDark={_onDark} className={sizeClass} imgClassName="h-full w-full object-contain" />
     </NavLink>
   )
 }

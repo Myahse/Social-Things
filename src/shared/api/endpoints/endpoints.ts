@@ -11,4 +11,5 @@ export const endpoints = {
   authRegister: '/auth/register',
   authLogout: '/auth/logout',
   orders: '/orders',
+  newsletter: '/newsletter',
 } as const

@@ -10,10 +10,12 @@ import { LegalDocumentPage } from '@/features/legal/pages/LegalDocumentPage'
 import { ProductPage } from '@/features/product-detail/pages/ProductPage'
 import { ProductsPage } from '@/features/products/pages/ProductsPage'
 import { Layout } from '@/shared/layout/Layout'
+import { PwaPrompt } from '@/shared/pwa'
 
 function App() {
   return (
     <IntroGate>
+      <PwaPrompt />
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<HomePage />} />

@@ -2,7 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
 import { LogoMaterialScene } from '@/features/intro/components/LogoMaterialScene'
 import type { IntroPhase } from '@/features/intro/context/IntroContext'
-import logoMarkUrl from '@/assets/logo-mark.png'
+import { LogoMark } from '@/shared/brand'
 import { HOME_HEADER_LOGO_CLASS } from '@/shared/layout/brand-cluster'
 
 interface IntroLogoSlotProps {
@@ -59,12 +59,7 @@ export function IntroLogoSlot({
           showPng ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       >
-        <img
-          src={logoMarkUrl}
-          alt=""
-          className="h-full w-full bg-transparent object-contain"
-          draggable={false}
-        />
+        <LogoMark className="h-full w-full" imgClassName="h-full w-full object-contain" />
       </div>
     </div>
   )

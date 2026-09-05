@@ -28,7 +28,7 @@ export function Header({ transparent = false, footerThemeDark = false }: HeaderP
       className={
         transparent
           ? 'sticky top-0 z-50 bg-transparent'
-          : 'sticky top-0 z-50 bg-canvas/90 backdrop-blur-md'
+          : 'sticky top-0 z-50 border-b border-ink/10 bg-canvas/80 shadow-[0_12px_40px_rgba(10,10,10,0.04)] backdrop-blur-xl'
       }
     >
       {/* Mobile: language + logo — nav lives in bottom bar */}

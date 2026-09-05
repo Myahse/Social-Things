@@ -89,6 +89,12 @@
     -ms-overflow-style: none;
   }
 
+  @media (display-mode: standalone) {
+    html {
+      background: #0a0a0a;
+    }
+  }
+
   html::-webkit-scrollbar {
     display: none;
   }
@@ -109,8 +115,8 @@
         color-mix(in srgb, var(--color-ink) 4%, transparent) 11px,
         color-mix(in srgb, var(--color-ink) 4%, transparent) 12px
       ),
-      radial-gradient(ellipse 70% 45% at 100% -10%, color-mix(in srgb, var(--color-ink) 6%, transparent), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 0% 100%, color-mix(in srgb, var(--color-ink) 4%, transparent), transparent 50%);
+      radial-gradient(ellipse 80% 50% at 100% -12%, color-mix(in srgb, var(--color-ink) 8%, transparent), transparent 58%),
+      radial-gradient(ellipse 55% 42% at 0% 100%, color-mix(in srgb, var(--color-ink) 5%, transparent), transparent 52%);
     background-attachment: fixed;
   }
 
@@ -640,6 +646,50 @@
   100% {
     box-shadow: 0 0 0 0 transparent;
   }
+}
+
+.logo-mark {
+  position: relative;
+  display: block;
+  isolation: isolate;
+}
+
+.logo-mark-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 6%;
+  z-index: 0;
+  border-radius: 42%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.34), transparent 68%);
+  filter: blur(12px);
+  opacity: 0.55;
+}
+
+.logo-mark-on-dark .logo-mark-glow {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent 70%);
+  opacity: 0.85;
+}
+
+.logo-mark-img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  mix-blend-mode: screen;
+  filter: contrast(1.14) brightness(1.06);
+  transition:
+    filter 280ms var(--ease-slam),
+    transform 280ms var(--ease-slam);
+}
+
+.logo-home-link:hover .logo-mark-img,
+.logo-mark:hover .logo-mark-img {
+  transform: scale(1.04);
+  filter: contrast(1.22) brightness(1.1) drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
+}
+
+.logo-wordmark {
+  filter: drop-shadow(0 8px 18px rgba(10, 10, 10, 0.18));
+  transition: filter 400ms var(--ease-slam), opacity 500ms var(--ease-slam);
 }
 
 @layer utilities {

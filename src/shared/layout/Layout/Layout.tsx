@@ -161,7 +161,7 @@ export function Layout() {
               src={socialLogoBlackUrl}
               alt=""
               draggable={false}
-              className={`pointer-events-none w-32 transition-opacity duration-500 ${
+              className={`logo-wordmark pointer-events-none w-32 transition-opacity duration-500 ${
                 chromeOnDark ? 'opacity-0' : 'opacity-90'
               }`}
             />
@@ -169,7 +169,7 @@ export function Layout() {
               src={socialLogoUrl}
               alt=""
               draggable={false}
-              className={`pointer-events-none absolute inset-0 w-32 transition-opacity duration-500 ${
+              className={`logo-wordmark pointer-events-none absolute inset-0 w-32 transition-opacity duration-500 ${
                 chromeOnDark ? 'opacity-90' : 'opacity-0'
               }`}
             />

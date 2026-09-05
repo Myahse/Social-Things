@@ -1,4 +1,8 @@
+import { useState } from 'react'
+import { subscribeNewsletter } from '@/features/newsletter/api/newsletter.api'
+import { notifyNewsletterJoined } from '@/shared/pwa'
 import { SlamReveal } from '@/shared/components/SlamReveal'
+import { useI18n } from '@/shared/i18n/i18n'
 
 export function Footer({ footerRef }: { footerRef?: React.RefObject<HTMLElement | null> }) {
   return (
@@ -48,13 +52,72 @@ export function Footer({ footerRef }: { footerRef?: React.RefObject<HTMLElement 
           </div>
         </SlamReveal>
 
-        <SlamReveal variant="block" delayMs={280} className="mt-10">
+        <SlamReveal variant="block" delayMs={280} className="mt-10 w-full max-w-lg">
+          <NewsletterForm />
+        </SlamReveal>
+
+        <SlamReveal variant="block" delayMs={340} className="mt-8">
           <a className="btn-slam anim-pulse-ring" href="mailto:contact@socialthings.com">
             <span>CONTACT US</span>
           </a>
         </SlamReveal>
       </div>
     </footer>
+  )
+}
+
+function NewsletterForm() {
+  const { t } = useI18n()
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!email.trim() || status === 'loading') return
+    setStatus('loading')
+    try {
+      await subscribeNewsletter(email)
+      notifyNewsletterJoined()
+      setStatus('done')
+      setEmail('')
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  return (
+    <form
+      onSubmit={onSubmit}
+      className="panel-cut-hard border-[3px] border-canvas bg-canvas px-4 py-5 text-left text-ink shadow-[8px_8px_0_#fff] sm:px-5 sm:py-6"
+    >
+      <span className="tag-flash">
+        <span>{t('footer.newsletterTitle')}</span>
+      </span>
+      <p className="eyebrow-cut mt-4">{t('footer.newsletterHint')}</p>
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value)
+            if (status !== 'idle' && status !== 'loading') setStatus('idle')
+          }}
+          placeholder={t('footer.newsletterPlaceholder')}
+          className="min-h-12 flex-1 border-[3px] border-ink bg-canvas px-3 font-display text-sm tracking-[0.12em] text-ink placeholder:text-muted"
+          aria-label={t('footer.newsletterPlaceholder')}
+        />
+        <button type="submit" className="btn-slam" disabled={status === 'loading'}>
+          <span>{status === 'loading' ? t('page.account.submitting') : t('footer.newsletterSubmit')}</span>
+        </button>
+      </div>
+      {status === 'done' && (
+        <p className="mt-3 font-display text-xs tracking-[0.16em] uppercase">{t('footer.newsletterDone')}</p>
+      )}
+      {status === 'error' && (
+        <p className="mt-3 font-display text-xs tracking-[0.16em] uppercase">{t('footer.newsletterError')}</p>
+      )}
+    </form>
   )
 }
 

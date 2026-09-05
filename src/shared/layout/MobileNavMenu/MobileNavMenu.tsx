@@ -155,8 +155,8 @@ export function MobileBottomNav({
       <div
         className={`pointer-events-auto border-t-[2.5px] ${
           theme === 'dark'
-            ? 'border-canvas/15 bg-ink/80 backdrop-blur-md'
-            : 'border-ink/10 bg-canvas/92 backdrop-blur-md'
+            ? 'border-canvas/20 bg-ink/86 shadow-[0_-10px_32px_rgba(0,0,0,0.28)] backdrop-blur-xl'
+            : 'border-ink/10 bg-canvas/94 shadow-[0_-10px_28px_rgba(10,10,10,0.06)] backdrop-blur-xl'
         }`}
       >
         <div

@@ -81,6 +81,22 @@ type I18nKey =
   | 'legal.returns'
   | 'legal.privacy'
   | 'legal.terms'
+  | 'footer.newsletterTitle'
+  | 'footer.newsletterHint'
+  | 'footer.newsletterPlaceholder'
+  | 'footer.newsletterSubmit'
+  | 'footer.newsletterDone'
+  | 'footer.newsletterError'
+  | 'pwa.tag'
+  | 'pwa.title'
+  | 'pwa.hint'
+  | 'pwa.enable'
+  | 'pwa.install'
+  | 'pwa.later'
+  | 'pwa.dismiss'
+  | 'page.account.alertsOn'
+  | 'page.account.alertsOff'
+  | 'page.account.enableAlerts'
 
 const MESSAGES: Record<Language, Record<I18nKey, string>> = {
   en: {
@@ -161,6 +177,22 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'legal.returns': 'Return & Exchange Policy',
     'legal.privacy': 'Privacy Policy',
     'legal.terms': 'Terms of Service',
+    'footer.newsletterTitle': 'Join the list',
+    'footer.newsletterHint': 'Drops and restocks first.',
+    'footer.newsletterPlaceholder': 'Email',
+    'footer.newsletterSubmit': 'Subscribe',
+    'footer.newsletterDone': 'You are on the list.',
+    'footer.newsletterError': 'Could not subscribe. Try again.',
+    'pwa.tag': 'Install',
+    'pwa.title': 'Keep the drop on you',
+    'pwa.hint': 'Add SOCIAL THINGS to your home screen and turn on alerts for restocks.',
+    'pwa.enable': 'Enable alerts',
+    'pwa.install': 'Add to home screen',
+    'pwa.later': 'Later',
+    'pwa.dismiss': 'No thanks',
+    'page.account.alertsOn': 'Drop alerts are on.',
+    'page.account.alertsOff': 'Drop alerts are off on this device.',
+    'page.account.enableAlerts': 'Enable alerts',
   },
   fr: {
     'nav.home': 'Accueil',
@@ -240,6 +272,22 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'legal.returns': 'Politique de retour et d’échange',
     'legal.privacy': 'Politique de confidentialité',
     'legal.terms': 'Conditions d’utilisation',
+    'footer.newsletterTitle': 'Rejoindre la liste',
+    'footer.newsletterHint': 'Drops et restocks en premier.',
+    'footer.newsletterPlaceholder': 'E-mail',
+    'footer.newsletterSubmit': 'S’inscrire',
+    'footer.newsletterDone': 'Vous êtes sur la liste.',
+    'footer.newsletterError': 'Inscription impossible. Réessayez.',
+    'pwa.tag': 'Installer',
+    'pwa.title': 'Gardez le drop sur vous',
+    'pwa.hint': 'Ajoutez SOCIAL THINGS à l’écran d’accueil et activez les alertes restock.',
+    'pwa.enable': 'Activer les alertes',
+    'pwa.install': 'Ajouter à l’accueil',
+    'pwa.later': 'Plus tard',
+    'pwa.dismiss': 'Non merci',
+    'page.account.alertsOn': 'Les alertes drop sont activées.',
+    'page.account.alertsOff': 'Les alertes drop sont désactivées sur cet appareil.',
+    'page.account.enableAlerts': 'Activer les alertes',
   },
 }
 

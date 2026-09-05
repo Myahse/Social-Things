@@ -2,6 +2,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from '@/features/account/context/AuthContext'
 import { CartProvider } from '@/features/cart/context/CartContext'
 import { I18nProvider } from '@/shared/i18n/i18n'
+import { CatalogLiveBridge } from '@/shared/pwa'
 import type { ReactNode } from 'react'
 
 interface AppProvidersProps {
@@ -13,7 +14,10 @@ export function AppProviders({ children }: AppProvidersProps) {
     <BrowserRouter>
       <I18nProvider>
         <AuthProvider>
-          <CartProvider>{children}</CartProvider>
+          <CartProvider>
+            <CatalogLiveBridge />
+            {children}
+          </CartProvider>
         </AuthProvider>
       </I18nProvider>
     </BrowserRouter>

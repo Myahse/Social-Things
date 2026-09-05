@@ -6,6 +6,7 @@ import com.socialthings.dto.auth.LoginRequest;
 import com.socialthings.dto.auth.RegisterRequest;
 import com.socialthings.dto.auth.UserResponse;
 import com.socialthings.exception.ApiException;
+import com.socialthings.mail.BrevoMailService;
 import com.socialthings.repository.UserRepository;
 import com.socialthings.security.JwtService;
 import org.springframework.http.HttpStatus;
@@ -19,12 +20,17 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final BrevoMailService brevoMailService;
 
     public AuthService(
-            UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService,
+            BrevoMailService brevoMailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.brevoMailService = brevoMailService;
     }
 
     @Transactional
@@ -40,6 +46,7 @@ public class AuthService {
         user.setName(request.name().trim());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         userRepository.save(user);
+        brevoMailService.sendWelcome(user.getName(), user.getEmail());
 
         return toSession(user);
     }

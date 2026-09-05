@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SOCIAL THINGS</title>
+  </head>
+  <body>
+    <script>
+      const fill = (html, values) =>
+        Object.entries(values).reduce((out, [key, value]) => out.replaceAll(`{{${key}}}`, value), html)
+
+      Promise.all([fetch('/mail/order.html').then((res) => res.text()), fetch('/mail/order-item.html').then((res) => res.text())]).then(
+        ([order, item]) => {
+          document.open()
+          document.write(
+            fill(order, {
+              LOGO_URL: '/logo-mark.png',
+              GREETING: 'Hey Sam. ',
+              ORDER_ID: 'a1b2c3d4',
+              ITEMS: fill(item, {
+                PRODUCT: 'Tshirt',
+                COLOR: 'Orange',
+                SIZE: 'XL',
+                QTY: '1',
+                LINE_TOTAL: '75',
+              }),
+              TOTAL: '75',
+              ORDER_URL: '/',
+            }),
+          )
+          document.close()
+        },
+      )
+    </script>
+  </body>
+</html>

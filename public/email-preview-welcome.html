@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SOCIAL THINGS</title>
+  </head>
+  <body>
+    <script>
+      const fill = (html, values) =>
+        Object.entries(values).reduce((out, [key, value]) => out.replaceAll(`{{${key}}}`, value), html)
+
+      fetch('/mail/welcome.html')
+        .then((res) => res.text())
+        .then((html) => {
+          document.open()
+          document.write(
+            fill(html, {
+              LOGO_URL: '/logo-mark.png',
+              GREETING: 'Hey Sam — ',
+              SHOP_URL: '/',
+            }),
+          )
+          document.close()
+        })
+    </script>
+  </body>
+</html>

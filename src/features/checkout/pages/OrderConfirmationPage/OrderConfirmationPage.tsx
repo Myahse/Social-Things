@@ -1,10 +1,16 @@
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
+import { notifyOrderConfirmed } from '@/shared/pwa'
 
 export function OrderConfirmationPage() {
   const { t } = useI18n()
   const { orderId } = useParams<{ orderId: string }>()
+
+  useEffect(() => {
+    notifyOrderConfirmed(orderId)
+  }, [orderId])
 
   return (
     <div className="w-full">

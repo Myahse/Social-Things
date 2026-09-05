@@ -37,6 +37,14 @@ app:
     url: ${STOREFRONT_URL:http://localhost:5173}
   api:
     public-url: ${PUBLIC_API_URL:${RENDER_EXTERNAL_URL:}}
+  brevo:
+    api-key: ${BREVO_API_KEY:}
+    sender-email: ${BREVO_SENDER_EMAIL:contact@socialthngs.com}
+    sender-name: ${BREVO_SENDER_NAME:SOCIAL THINGS}
+    template-welcome: ${BREVO_TEMPLATE_WELCOME:0}
+    template-order: ${BREVO_TEMPLATE_ORDER:0}
+    template-newsletter: ${BREVO_TEMPLATE_NEWSLETTER:0}
+    newsletter-list-id: ${BREVO_NEWSLETTER_LIST_ID:0}
 
 logging:
   level:

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { fetchProducts, invalidateProductsCache } from '@/features/products/api/products.api'
+import { fetchProducts } from '@/features/products/api/products.api'
 import type { Product } from '@/features/products/types'
-import { subscribeCatalogUpdates } from '@/shared/api/catalog-socket'
+import { CATALOG_CHANGED_EVENT } from '@/shared/pwa'
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([])
@@ -31,14 +31,14 @@ export function useProducts() {
     }
 
     void load()
-    const stop = subscribeCatalogUpdates(() => {
-      invalidateProductsCache()
+    const onCatalog = () => {
       void load(true)
-    })
+    }
+    window.addEventListener(CATALOG_CHANGED_EVENT, onCatalog)
 
     return () => {
       cancelled = true
-      stop()
+      window.removeEventListener(CATALOG_CHANGED_EVENT, onCatalog)
     }
   }, [])
 
