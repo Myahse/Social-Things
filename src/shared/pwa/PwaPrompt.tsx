@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { NewsletterSubscribe, hasJoinedNewsletter } from '@/features/newsletter/components/NewsletterSubscribe'
+import { useAuth } from '@/features/account/context/AuthContext'
 import { useI18n } from '@/shared/i18n/i18n'
 import {
   notificationPermission,
@@ -26,10 +28,12 @@ function readPromptState(): 'hidden' | 'later' | 'show' {
 
 export function PwaPrompt() {
   const { t } = useI18n()
+  const { user } = useAuth()
   const [open, setOpen] = useState(false)
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>('default')
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null)
   const [busy, setBusy] = useState(false)
+  const [listOpen] = useState(() => !hasJoinedNewsletter())
 
   useEffect(() => {
     setPermission(notificationPermission())
@@ -51,7 +55,7 @@ export function PwaPrompt() {
 
   const canNotify = notificationsSupported() && permission !== 'granted' && permission !== 'unsupported'
   const canInstall = installEvent != null
-  if (!open || (!canNotify && !canInstall)) return null
+  if (!open || (!canNotify && !canInstall && !listOpen)) return null
 
   function dismiss(mode: 'hidden' | 'later') {
     window.localStorage.setItem(PROMPT_KEY, mode === 'later' ? `later:${Date.now()}` : 'hidden')
@@ -88,6 +92,14 @@ export function PwaPrompt() {
         </span>
         <p className="mt-3 font-display text-sm tracking-[0.16em] uppercase">{t('pwa.title')}</p>
         <p className="mt-2 text-xs leading-relaxed text-muted">{t('pwa.hint')}</p>
+        {listOpen && (
+          <div className="mt-4">
+            <p className="mb-2 font-display text-[11px] tracking-[0.18em] uppercase text-muted">
+              {t('footer.newsletterTitle')}
+            </p>
+            <NewsletterSubscribe compact initialEmail={user?.email ?? ''} />
+          </div>
+        )}
         <div className="mt-4 flex flex-col gap-2">
           {canNotify && (
             <button type="button" className="btn-slam" disabled={busy} onClick={() => void enableAlerts()}>

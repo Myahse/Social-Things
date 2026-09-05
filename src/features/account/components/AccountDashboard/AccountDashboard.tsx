@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/features/account/context/AuthContext'
+import { NewsletterSubscribe } from '@/features/newsletter/components/NewsletterSubscribe'
 import { useI18n } from '@/shared/i18n/i18n'
 import { notificationPermission, requestShopNotifications } from '@/shared/pwa'
 
@@ -24,6 +25,15 @@ export function AccountDashboard() {
         <button type="button" onClick={() => void logout()} className="btn-slam">
           <span>{t('page.account.signOut')}</span>
         </button>
+      </div>
+
+      <div className="mt-8 border-[3px] border-ink bg-canvas px-4 py-5 text-left shadow-[6px_6px_0_var(--color-ink)]">
+        <span className="tag-flash">
+          <span>{t('footer.newsletterTitle')}</span>
+        </span>
+        <div className="mt-4">
+          <NewsletterSubscribe initialEmail={user.email} />
+        </div>
       </div>
 
       {alerts !== 'unsupported' && (
