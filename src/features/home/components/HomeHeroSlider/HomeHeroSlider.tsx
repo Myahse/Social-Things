@@ -74,7 +74,7 @@ export function HomeHeroSlider() {
           }}
         >
           {slides.map((slide) => (
-            <div key={slide.id} className="h-full min-w-full shrink-0">
+            <div key={slide.id} className="h-full w-full min-w-full shrink-0">
               <img
                 src={slide.src}
                 alt=""
