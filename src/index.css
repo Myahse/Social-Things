@@ -43,6 +43,8 @@
     --logo-hero-top: 42%;
     --logo-hero-size: min(92vw, 30rem);
     --site-gutter: 0.875rem;
+    /* Inline space page content keeps clear of the fixed desktop side rail (hidden below md). */
+    --side-rail-clear: 0px;
   }
 
   @media (min-width: 640px) {
@@ -65,6 +67,8 @@
       --header-height: var(--header-bar);
       --brand-logo-home: calc(var(--header-height) - 0.1rem);
       --site-gutter: 1.5rem;
+      /* Side rail sits at left: --site-gutter with boxes --home-side-box wide (HomeHeaderDesktop). */
+      --side-rail-clear: calc(var(--site-gutter) + var(--home-side-box));
     }
   }
 

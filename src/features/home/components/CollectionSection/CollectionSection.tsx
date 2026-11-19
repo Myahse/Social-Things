@@ -62,7 +62,7 @@ export function CollectionSection({
     return (
       <section
         id="products"
-        className="diag-stripes anim-stripe-scroll relative flex min-h-[100svh] w-full flex-col justify-center overflow-hidden px-[var(--site-gutter)] py-[clamp(1.25rem,4vh,2.5rem)]"
+        className="diag-stripes anim-stripe-scroll relative flex min-h-[100svh] w-full flex-col justify-center overflow-hidden px-[var(--site-gutter)] py-[clamp(1.25rem,4vh,2.5rem)] md:px-[calc(var(--site-gutter)+var(--side-rail-clear))]"
       >
         <div
           className="pointer-events-none absolute -left-10 top-16 hidden h-28 w-72 anim-shape-drift bg-ink sm:block"

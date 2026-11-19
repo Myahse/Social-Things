@@ -60,6 +60,10 @@ export function Layout() {
   const footerRef = useRef<HTMLElement | null>(null)
   const hideChrome = Boolean(intro?.isPlaying && isHomePath(pathname))
   const onHome = isHomePath(pathname)
+  /** Home sections are full-bleed and clear the side rail themselves. */
+  const mainClass = `flex-1 pb-[var(--mobile-bottom-nav-height)] md:pb-0 ${
+    onHome ? '' : 'md:px-[var(--side-rail-clear)]'
+  }`
   const pageReveal = !hideChrome
   const showFooter = !hideChrome && !isAccountPath(pathname) && !isProductPath(pathname)
 
@@ -246,7 +250,7 @@ export function Layout() {
           >
             <Header transparent={headerTransparent} footerThemeDark={chromeOnDark} />
             <MobileNavBar theme={chromeOnDark ? 'dark' : 'light'} />
-            <main className="flex-1 pb-[var(--mobile-bottom-nav-height)] md:pb-0">
+            <main className={mainClass}>
               <Outlet />
             </main>
             {showFooter && <Footer footerRef={footerRef} />}
@@ -255,7 +259,7 @@ export function Layout() {
           <>
             {!hideChrome && <Header transparent={headerTransparent} footerThemeDark={chromeOnDark} />}
             {!hideChrome && <MobileNavBar theme={chromeOnDark ? 'dark' : 'light'} />}
-            <main className="flex-1 pb-[var(--mobile-bottom-nav-height)] md:pb-0">
+            <main className={mainClass}>
               <Outlet />
             </main>
             {showFooter && <Footer footerRef={footerRef} />}

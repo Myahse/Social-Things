@@ -14,7 +14,7 @@ export function FaqSection() {
   return (
     <section
       id="faq"
-      className="ink-band relative flex min-h-0 w-full flex-col justify-center overflow-hidden px-[var(--site-gutter)] py-12 sm:py-[clamp(1.25rem,4vh,2.5rem)] md:min-h-[100svh]"
+      className="ink-band relative flex min-h-0 w-full flex-col justify-center overflow-hidden px-[var(--site-gutter)] py-12 sm:py-[clamp(1.25rem,4vh,2.5rem)] md:min-h-[100svh] md:px-[calc(var(--site-gutter)+var(--side-rail-clear))]"
     >
       <div
         className="pointer-events-none absolute -left-16 top-24 hidden h-40 w-40 anim-shape-drift bg-bolt sm:block"
