@@ -41,7 +41,7 @@ function CollectionHeader({
           <p className="text-sm text-muted sm:text-base">{hint}</p>
         </SlamReveal>
       </div>
-      <SlamReveal variant="block" delayMs={280} className="self-start sm:self-auto">
+      <SlamReveal variant="block" delayMs={280} className="shrink-0 self-start sm:self-auto">
         <Link to="/product" className="btn-slam btn-slam-outline anim-pulse-ring shrink-0">
           <span>{viewAll}</span>
         </Link>

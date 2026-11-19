@@ -33,7 +33,8 @@ export function LegalDocumentPage() {
       <iframe
         src={doc.htmlPath}
         title={t(LEGAL_TITLE_KEYS[doc.id])}
-        className="min-h-0 flex-1 w-full border-0 bg-canvas"
+        // Full-bleed panel: break out of main's side-rail padding, keep the document clear of the rail.
+        className="min-h-0 flex-1 w-full border-0 bg-canvas md:-mx-[var(--side-rail-clear)] md:w-[calc(100%+var(--side-rail-clear)*2)] md:max-w-none md:px-[var(--side-rail-clear)]"
       />
     </div>
   )
