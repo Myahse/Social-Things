@@ -11,4 +11,6 @@ export interface Product {
   imageAvatar?: string
   colors: string[]
   sizes: string[]
+  /** Print artwork for the 3D Avatar view (`print-front.*` / `print-back.*` in assets). */
+  prints?: { front?: string; back?: string }
 }

@@ -1,4 +1,4 @@
-import { PRODUCT_ASSETS_BY_SLUG } from '@/features/products/config/product-assets'
+import { PRODUCT_ASSETS_BY_SLUG, PRODUCT_PRINTS_BY_SLUG } from '@/features/products/config/product-assets'
 import type { Product } from '@/features/products/types'
 import { resolveShopImage } from '@/shared/media/resolveShopImage'
 
@@ -21,10 +21,12 @@ export function withProductAssets(product: Product): Product {
   const assets = PRODUCT_ASSETS_BY_SLUG[product.slug]
   const cover = resolveShopImage(product.image)
   const trackerImages = (product.images ?? []).map((src) => resolveShopImage(src)).filter(Boolean) as string[]
+  const prints = PRODUCT_PRINTS_BY_SLUG[product.slug]
 
   if (!assets) {
     return {
       ...product,
+      prints,
       image: cover ?? '',
       images: uniqueUrls(cover, ...trackerImages),
     }
@@ -32,6 +34,7 @@ export function withProductAssets(product: Product): Product {
 
   return {
     ...product,
+    prints,
     image: cover || assets.product,
     imageAvatar: assets.avatar,
     images: uniqueUrls(cover, ...trackerImages, assets.product, assets.avatar, ...assets.extras),

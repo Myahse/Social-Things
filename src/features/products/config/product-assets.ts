@@ -9,8 +9,12 @@ export type ProductAssetPair = {
   extras: string[]
 }
 
-function classifyFilename(filename: string): 'product' | 'avatar' | null {
+/** Print artwork for the 3D Avatar view: `print-front.*` / `print-back.*` (kept out of the photo gallery). */
+const PRINT_FILE = /^print-(front|back)\./
+
+function classifyFilename(filename: string): 'product' | 'avatar' | 'print' | null {
   const lower = filename.toLowerCase()
+  if (PRINT_FILE.test(lower)) return 'print'
   if (/^avatar\.|\/avatar\.|avatar/.test(lower)) return 'avatar'
   if (/^product\.|\/product\.|product/.test(lower)) return 'product'
   return null
@@ -30,6 +34,7 @@ function buildProductAssets(): Record<string, ProductAssetPair> {
 
     const filename = path.split('/').pop() ?? ''
     const kind = classifyFilename(filename)
+    if (kind === 'print') continue
     const entry = buckets.get(slug) ?? { other: [] }
     buckets.set(slug, entry)
 
@@ -55,3 +60,19 @@ function buildProductAssets(): Record<string, ProductAssetPair> {
 
 /** Local images: `src/assets/product/{slug}/product.*` + `avatar.*` */
 export const PRODUCT_ASSETS_BY_SLUG = buildProductAssets()
+
+export type ProductPrintFiles = { front?: string; back?: string }
+
+function buildProductPrints(): Record<string, ProductPrintFiles> {
+  const result: Record<string, ProductPrintFiles> = {}
+  for (const [path, src] of Object.entries(assetModules)) {
+    const slug = slugFromPath(path)
+    const side = (path.split('/').pop() ?? '').toLowerCase().match(PRINT_FILE)?.[1] as 'front' | 'back' | undefined
+    if (!slug || !side) continue
+    result[slug] = { ...result[slug], [side]: src }
+  }
+  return result
+}
+
+/** Print artwork for the 3D Avatar view: `src/assets/product/{slug}/print-front.*` + `print-back.*` */
+export const PRODUCT_PRINTS_BY_SLUG = buildProductPrints()
