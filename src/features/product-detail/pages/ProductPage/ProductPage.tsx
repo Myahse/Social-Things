@@ -1,5 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import {
+  AvatarTryOn,
+  DEFAULT_MANNEQUIN,
+  MANNEQUINS,
+  MANNEQUIN_GROUPS,
+  firstMannequinOf,
+  mannequinById,
+  type MannequinId,
+} from '@/features/product-detail/components/AvatarTryOn'
 import { useAuth } from '@/features/account/context/AuthContext'
 import { useCart } from '@/features/cart/context/CartContext'
 import { useMediaQuery } from '@/shared/hooks/useMediaQuery'
@@ -13,9 +22,58 @@ const PRODUCT_MICRO_CLASS = 'font-display text-xs tracking-[0.16em]'
 /**
  * The ring composition needs room on both axes: the options sit on the circle left of the
  * product column and the choices on its right, and the buy row must stay above the fold.
- * Narrower or shorter screens (tablets, 1366×768 laptops) use the stacked panels instead.
+ * Narrower or shorter screens (tablets, 1366×768 laptops) use the stacked panels instead. From 1200px the
+ * left labels keep clear of the fixed side rail even with a long colour name.
  */
-const RING_LAYOUT_MEDIA = '(min-width: 1024px) and (min-height: 860px)'
+const RING_LAYOUT_MEDIA = '(min-width: 1200px) and (min-height: 860px)'
+const PILL_CLASS = `rounded-full border px-3 py-2 ${'font-display text-xs tracking-[0.16em]'} transition-colors`
+
+function pillState(active: boolean) {
+  return active ? 'border-ink bg-ink text-canvas' : 'border-line bg-canvas/70 text-ink hover:border-ink'
+}
+
+/** Men / Women / Duo, then that group's looks. */
+function AvatarPicker({
+  mannequin,
+  onChange,
+  t,
+}: {
+  mannequin: MannequinId
+  onChange: (id: MannequinId) => void
+  t: ReturnType<typeof useI18n>['t']
+}) {
+  const current = mannequinById(mannequin)
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2" role="group" aria-label={t('page.product.avatar')}>
+        {MANNEQUIN_GROUPS.map((g) => (
+          <button
+            key={g.id}
+            type="button"
+            onClick={() => current.group !== g.id && onChange(firstMannequinOf(g.id))}
+            aria-pressed={current.group === g.id}
+            className={`${PILL_CLASS} ${pillState(current.group === g.id)}`}
+          >
+            {t(g.label)}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap justify-center gap-2">
+        {MANNEQUINS.filter((m) => m.group === current.group).map((m) => (
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => onChange(m.id)}
+            aria-pressed={mannequin === m.id}
+            className={`${PILL_CLASS} ${pillState(mannequin === m.id)}`}
+          >
+            {t(m.look)}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 /** Ring box: never taller than the space under the header. */
 const RING_BOX_CLASS =
   'h-[min(86vmin,48rem,calc(100vh-var(--header-height)-1rem))] w-[min(86vmin,48rem,calc(100vh-var(--header-height)-1rem))]'
@@ -83,6 +141,9 @@ export function ProductPage() {
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
   const [activeSelector, setActiveSelector] = useState<SelectorKey | null>(null)
+  /** Photo slider or the 3D mannequin wearing the product. */
+  const [view, setView] = useState<'photo' | 'avatar'>('photo')
+  const [mannequin, setMannequin] = useState<MannequinId>(DEFAULT_MANNEQUIN)
 
   useEffect(() => {
     // reset when product changes
@@ -91,6 +152,7 @@ export function ProductPage() {
     setQuantity(1)
     setAdded(false)
     setActiveSelector(null)
+    setView('photo')
   }, [product?.id])
 
   const canBuy = Boolean(product && color && size && quantity > 0)
@@ -110,7 +172,7 @@ export function ProductPage() {
     return (
       <div className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6">
         <h1 className="slash-title slash-title-ink text-3xl">{t('page.product.notFound')}</h1>
-        <p className="mt-4 text-muted">{t('page.product.notFoundHint')}</p>
+        <p className="mt-4 text-sm text-muted">{t('page.product.notFoundHint')}</p>
         <Link to="/product" className="btn-slam mt-8">
           <span>{t('page.cart.continue')}</span>
         </Link>
@@ -128,6 +190,11 @@ export function ProductPage() {
           : activeSelector === 'avatar'
             ? t('page.product.chooseAvatar')
             : t('page.product.selectOption')
+
+  const avatarInfo = mannequinById(mannequin)
+  const avatarGroupLabel = MANNEQUIN_GROUPS.find((g) => g.id === avatarInfo.group)?.label
+  const avatarValue = `${avatarGroupLabel ? t(avatarGroupLabel) : ''} · ${t(avatarInfo.look)}`
+  const preloadAvatar = () => void import('@/features/product-detail/components/AvatarTryOn/AvatarTryOn')
 
   return (
     <div className="w-full">
@@ -147,10 +214,10 @@ export function ProductPage() {
       <div className={`pointer-events-none absolute left-1/2 top-1/2 z-20 ${RING_BOX_CLASS} -translate-x-1/2 -translate-y-1/2`}>
         {(
           [
-            { label: t('page.product.avatar'), key: 'avatar' as const, angleDeg: 235 },
-            { label: t('page.product.color'), key: 'color' as const, angleDeg: 205 },
-            { label: t('page.product.size'), key: 'size' as const, angleDeg: 155 },
-            { label: t('page.product.quantity'), key: 'quantity' as const, angleDeg: 125 },
+            { label: t('page.product.avatar'), key: 'avatar' as const, angleDeg: 225 },
+            { label: t('page.product.color'), key: 'color' as const, angleDeg: 195 },
+            { label: t('page.product.size'), key: 'size' as const, angleDeg: 165 },
+            { label: t('page.product.quantity'), key: 'quantity' as const, angleDeg: 135 },
           ] as const
         ).map((item) => {
           // Position labels on the ring using polar coordinates (percent of ring box).
@@ -167,7 +234,11 @@ export function ProductPage() {
                 activeSelector === item.key ? 'text-ink' : 'text-ink/75 hover:text-ink'
               }`}
               style={{ left: `calc(50% + ${x.toFixed(2)}%)`, top: `calc(50% + ${y.toFixed(2)}%)` }}
-              onClick={() => setActiveSelector(item.key)}
+              onClick={() => {
+                setActiveSelector(item.key)
+                if (item.key === 'avatar') setView('avatar')
+              }}
+              onPointerEnter={item.key === 'avatar' ? preloadAvatar : undefined}
             >
               <span
                 className={`h-4 w-4 rounded-full border transition-colors ${
@@ -177,14 +248,14 @@ export function ProductPage() {
               />
               <span className="flex items-baseline gap-3 whitespace-nowrap">
                 <span>{item.label}</span>
-                <span className="text-ink/45">
+                <span className={`text-ink/45 ${item.key === 'color' ? 'max-w-[8rem] truncate' : ''}`}>
                   {item.key === 'color'
                     ? color || '—'
                     : item.key === 'size'
                       ? size || '—'
                       : item.key === 'quantity'
                         ? String(quantity)
-                        : '—'}
+                        : avatarValue}
                 </span>
               </span>
             </button>
@@ -199,17 +270,66 @@ export function ProductPage() {
       <div className="relative z-10 flex w-full max-w-md flex-col items-center text-center">
         <h1 className="slash-title slash-title-ink text-[1.65rem] sm:text-4xl">{product.name}</h1>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{product.description}</p>
-        {ringLayout && <div className={`mb-5 mt-4 ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>}
+        {ringLayout && <div className={`mt-4 ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>}
+
+        {/* Photo / Avatar */}
+        <div className="mb-4 mt-4 flex justify-center gap-2" role="group" aria-label={t('page.product.avatar')}>
+          {(
+            [
+              ['photo', 'page.product.photo'],
+              ['avatar', 'page.product.avatar'],
+            ] as const
+          ).map(([v, label]) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => {
+                setView(v)
+                if (v === 'avatar') setActiveSelector('avatar')
+                else if (activeSelector === 'avatar') setActiveSelector(null)
+              }}
+              onPointerEnter={v === 'avatar' ? preloadAvatar : undefined}
+              onFocus={v === 'avatar' ? preloadAvatar : undefined}
+              aria-pressed={view === v}
+              className={`${PILL_CLASS} !py-1.5 ${pillState(view === v)}`}
+            >
+              {t(label)}
+            </button>
+          ))}
+        </div>
 
         <div className="relative mx-auto w-[min(78vw,18rem)]">
-          <ProductImageSlider
-            key={product.id}
-            images={productGallery(product)}
-            alt={product.name}
-            objectFit="contain"
-            showThumbs
-            frameClassName="rounded-2xl bg-canvas/40 backdrop-blur-sm"
-          />
+          {view === 'avatar' ? (
+            <>
+              <div className="aspect-[3/4] w-full overflow-hidden rounded-2xl bg-canvas/40 backdrop-blur-sm">
+                <Suspense
+                  fallback={
+                    <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+                      {t('page.product.avatarLoading')}
+                    </div>
+                  }
+                >
+                  <AvatarTryOn
+                    mannequin={mannequin}
+                    color={color}
+                    prints={product.prints}
+                    size={size}
+                    className="h-full w-full"
+                  />
+                </Suspense>
+              </div>
+              <p className={`mt-3 ${PRODUCT_MICRO_CLASS} text-muted`}>{t('page.product.dragToTurn')}</p>
+            </>
+          ) : (
+            <ProductImageSlider
+              key={product.id}
+              images={productGallery(product)}
+              alt={product.name}
+              objectFit="contain"
+              showThumbs
+              frameClassName="rounded-2xl bg-canvas/40 backdrop-blur-sm"
+            />
+          )}
         </div>
 
         {/* Color + Size + Quantity (stacked: phones, tablets, short laptops) */}
@@ -283,6 +403,13 @@ export function ProductPage() {
                 </button>
               </div>
             </div>
+
+            {view === 'avatar' && (
+              <div className="flex flex-col gap-3 rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
+                <div className={`${PRODUCT_MICRO_CLASS} text-left text-muted uppercase`}>{t('page.product.avatar')}</div>
+                <AvatarPicker mannequin={mannequin} onChange={setMannequin} t={t} />
+              </div>
+            )}
           </div>
         </div>
         )}
@@ -322,7 +449,7 @@ export function ProductPage() {
       <div className={`pointer-events-none absolute left-1/2 top-1/2 z-20 ${RING_BOX_CLASS} -translate-x-1/2 -translate-y-1/2`}>
         {activeSelector == null && (
           <div
-            className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-line bg-canvas/70 px-5 py-3 ${PRODUCT_MICRO_CLASS} text-muted backdrop-blur-md`}
+            className={`absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-2xl border border-line bg-canvas/70 px-5 py-3 ${PRODUCT_MICRO_CLASS} text-muted backdrop-blur-md`}
             style={ringPos(0, 54)}
           >
             {t('page.product.selectOnLeft')}
@@ -427,25 +554,18 @@ export function ProductPage() {
         )}
 
         {activeSelector === 'avatar' && (
-          <div className="absolute inset-0">
-            {(['A', 'B', 'C', 'D', 'E'] as const).map((id, idx) => {
-              const r = 54
-              const span = 4
-              const start = -62
-              const end = 62
-              const t = idx / span
-              const angleDeg = start + (end - start) * t
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-line bg-canvas/70 px-4 py-3 ${PRODUCT_MICRO_CLASS} text-ink backdrop-blur-md transition-colors hover:bg-canvas`}
-                  style={ringPos(angleDeg, r)}
-                >
-                  {id}
-                </button>
-              )
-            })}
+          <div
+            className="pointer-events-auto absolute w-[16rem] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-line bg-canvas/70 px-4 py-3 backdrop-blur-md"
+            style={ringPos(0, 50)}
+          >
+            <AvatarPicker
+              mannequin={mannequin}
+              onChange={(id) => {
+                setMannequin(id)
+                setView('avatar')
+              }}
+              t={t}
+            />
           </div>
         )}
       </div>
