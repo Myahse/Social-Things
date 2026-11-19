@@ -15,7 +15,7 @@ export async function fetchGallery(): Promise<GalleryImage[]> {
     )
     if (!Array.isArray(rows)) return []
     return rows
-      .map((row, index) => {
+      .map((row, index): GalleryImage | null => {
         const src = resolveShopImage(row.src)
         if (!src || src.startsWith('data:')) return null
         return {
@@ -25,7 +25,7 @@ export async function fetchGallery(): Promise<GalleryImage[]> {
           group: row.group?.trim() || 'all',
         }
       })
-      .filter((row): row is GalleryImage => row != null)
+      .filter((img): img is GalleryImage => img !== null)
   } catch {
     return []
   }
