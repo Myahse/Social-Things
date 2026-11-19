@@ -24,6 +24,8 @@
   --color-flash: #0a0a0a;
   --color-bolt: #ffffff;
   --color-ember: #0a0a0a;
+  /* Page background of the legal documents (public/legal/legal.css --canvas); keep in sync. */
+  --color-legal-canvas: #f6f4f0;
   --ease-slam: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-cut: cubic-bezier(0.2, 0, 0, 1);
 }
