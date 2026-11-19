@@ -79,7 +79,10 @@ export function HomeHeroSlider() {
                 src={slide.src}
                 alt=""
                 draggable={false}
-                className="h-full w-full object-cover object-center"
+                className={`h-full w-full object-cover ${
+                  // Desktop slides bake their headline into the left edge — crop from the right.
+                  isDesktop ? 'object-left' : 'object-center'
+                }`}
               />
             </div>
           ))}

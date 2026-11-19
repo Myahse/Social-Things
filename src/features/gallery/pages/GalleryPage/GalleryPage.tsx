@@ -86,7 +86,7 @@ export function GalleryPage() {
     <div className="w-full">
       <section className="diag-stripes relative mx-auto min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl px-[var(--site-gutter)] pb-10 pt-6 sm:pb-16 sm:pt-10 md:min-h-[calc(100vh-var(--header-height))]">
         <div
-          className="pointer-events-none absolute -left-10 top-20 hidden h-24 w-64 -rotate-6 bg-ink sm:block"
+          className="pointer-events-none absolute -right-10 top-20 hidden h-24 w-64 -rotate-6 bg-ink sm:block"
           aria-hidden
         />
         <div
@@ -99,9 +99,11 @@ export function GalleryPage() {
             <span>LOOKBOOK</span>
           </span>
           <p className="eyebrow-cut mt-3 sm:mt-4">SOCIAL THINGS</p>
-          <h1 className="slash-title slash-title-ink mt-3 max-w-[min(100%,18rem)] text-[1.65rem] leading-none sm:mt-4 sm:max-w-none sm:text-5xl">
-            {t('page.gallery.title')}
-          </h1>
+          <div className="mt-3 sm:mt-4">
+            <h1 className="slash-title slash-title-ink max-w-[min(100%,18rem)] text-[1.65rem] leading-none sm:max-w-none sm:text-5xl">
+              {t('page.gallery.title')}
+            </h1>
+          </div>
           <p className="mt-3 max-w-lg text-sm text-muted sm:mt-4 sm:text-base">
             {t('page.gallery.hint')}
           </p>

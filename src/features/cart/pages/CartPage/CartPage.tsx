@@ -56,9 +56,11 @@ export function CartPage() {
             <span>HEIST BAG</span>
           </span>
           <p className="eyebrow-cut mt-4">SOCIAL THINGS</p>
-          <h1 className="slash-title slash-title-ink mt-4 text-3xl sm:text-4xl">
-            {t('page.cart.title')}
-          </h1>
+          <div className="mt-4">
+            <h1 className="slash-title slash-title-ink text-3xl sm:text-4xl">
+              {t('page.cart.title')}
+            </h1>
+          </div>
           {itemCount > 0 && (
             <p className="mt-3 text-sm tracking-[0.18em] text-muted">
               {itemCount} {itemLabel}
