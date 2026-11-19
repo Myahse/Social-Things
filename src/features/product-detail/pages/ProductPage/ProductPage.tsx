@@ -1,13 +1,24 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '@/features/account/context/AuthContext'
 import { useCart } from '@/features/cart/context/CartContext'
+import { useMediaQuery } from '@/shared/hooks/useMediaQuery'
 import { useI18n } from '@/shared/i18n/i18n'
 import { ProductImageSlider } from '@/features/products/components/ProductImageSlider'
 import { useProduct } from '@/features/products/hooks/useProduct'
 import { productGallery } from '@/features/products/utils/merge-product-assets'
 const PRODUCT_LABEL_CLASS = 'font-display text-sm tracking-[0.18em]'
 const PRODUCT_MICRO_CLASS = 'font-display text-xs tracking-[0.16em]'
+
+/**
+ * The ring composition needs room on both axes: the options sit on the circle left of the
+ * product column and the choices on its right, and the buy row must stay above the fold.
+ * Narrower or shorter screens (tablets, 1366×768 laptops) use the stacked panels instead.
+ */
+const RING_LAYOUT_MEDIA = '(min-width: 1024px) and (min-height: 860px)'
+/** Ring box: never taller than the space under the header. */
+const RING_BOX_CLASS =
+  'h-[min(86vmin,48rem,calc(100vh-var(--header-height)-1rem))] w-[min(86vmin,48rem,calc(100vh-var(--header-height)-1rem))]'
 
 type SelectorKey = 'avatar' | 'color' | 'size' | 'quantity'
 
@@ -83,36 +94,63 @@ export function ProductPage() {
   }, [product?.id])
 
   const canBuy = Boolean(product && color && size && quantity > 0)
+  const ringLayout = useMediaQuery(RING_LAYOUT_MEDIA)
 
-  if (loading) return null
-  if (!product) return null
+  if (loading) {
+    return (
+      <div className="w-full">
+        <section className="mx-auto flex min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl items-center justify-center px-[var(--site-gutter)] md:min-h-[calc(100vh-var(--header-height))]">
+          <p className="text-center text-muted">{t('page.product.loading')}</p>
+        </section>
+      </div>
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6">
+        <h1 className="slash-title slash-title-ink text-3xl">{t('page.product.notFound')}</h1>
+        <p className="mt-4 text-muted">{t('page.product.notFoundHint')}</p>
+        <Link to="/product" className="btn-slam mt-8">
+          <span>{t('page.cart.continue')}</span>
+        </Link>
+      </div>
+    )
+  }
 
   const selectorTitle =
     activeSelector === 'color'
-      ? 'Choose your color'
+      ? t('page.product.chooseColor')
       : activeSelector === 'size'
-        ? 'Choose your size'
+        ? t('page.product.chooseSize')
         : activeSelector === 'quantity'
-          ? 'Choose quantity'
+          ? t('page.product.chooseQuantity')
           : activeSelector === 'avatar'
-            ? 'Choose your avatar'
-            : 'Select an option'
+            ? t('page.product.chooseAvatar')
+            : t('page.product.selectOption')
 
   return (
     <div className="w-full">
       {/* Section 1: must fill the viewport under header */}
-      <section className="relative mx-auto flex min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl items-start justify-center px-[var(--site-gutter)] py-6 md:min-h-[calc(100vh-var(--header-height))] md:items-center md:px-6 md:py-0">
-      {/* Ring — desktop composition only */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 hidden h-[min(86vmin,48rem)] w-[min(86vmin,48rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-line/70 md:block" />
+      <section
+        className={`relative mx-auto flex min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl justify-center px-[var(--site-gutter)] md:min-h-[calc(100vh-var(--header-height))] md:px-6 ${
+          ringLayout ? 'items-center py-0' : 'items-start py-6'
+        }`}
+      >
+      {/* Ring — wide-and-tall composition only */}
+      {ringLayout && (
+        <div className={`pointer-events-none absolute left-1/2 top-1/2 ${RING_BOX_CLASS} -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-line/70`} />
+      )}
 
       {/* Left labels — positioned on the circle arc */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 hidden h-[min(86vmin,48rem)] w-[min(86vmin,48rem)] -translate-x-1/2 -translate-y-1/2 md:block">
+      {ringLayout && (
+      <div className={`pointer-events-none absolute left-1/2 top-1/2 z-20 ${RING_BOX_CLASS} -translate-x-1/2 -translate-y-1/2`}>
         {(
           [
-            { label: 'Avatar', key: 'avatar' as const, angleDeg: 235 },
-            { label: 'Color', key: 'color' as const, angleDeg: 205 },
-            { label: 'Size', key: 'size' as const, angleDeg: 155 },
-            { label: 'Quantity', key: 'quantity' as const, angleDeg: 125 },
+            { label: t('page.product.avatar'), key: 'avatar' as const, angleDeg: 235 },
+            { label: t('page.product.color'), key: 'color' as const, angleDeg: 205 },
+            { label: t('page.product.size'), key: 'size' as const, angleDeg: 155 },
+            { label: t('page.product.quantity'), key: 'quantity' as const, angleDeg: 125 },
           ] as const
         ).map((item) => {
           // Position labels on the ring using polar coordinates (percent of ring box).
@@ -153,6 +191,7 @@ export function ProductPage() {
           )
         })}
       </div>
+      )}
 
       {/* Right side is intentionally "clean": it only shows options for the active selector. */}
 
@@ -160,7 +199,7 @@ export function ProductPage() {
       <div className="relative z-10 flex w-full max-w-md flex-col items-center text-center">
         <h1 className="slash-title slash-title-ink text-[1.65rem] sm:text-4xl">{product.name}</h1>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{product.description}</p>
-        <div className={`mb-5 mt-4 hidden md:block ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>
+        {ringLayout && <div className={`mb-5 mt-4 ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>}
 
         <div className="relative mx-auto w-[min(78vw,18rem)]">
           <ProductImageSlider
@@ -173,12 +212,13 @@ export function ProductPage() {
           />
         </div>
 
-        {/* Color + Size + Quantity (mobile/tablet) */}
-        <div className="mt-6 w-full max-w-sm md:hidden">
+        {/* Color + Size + Quantity (stacked: phones, tablets, short laptops) */}
+        {!ringLayout && (
+        <div className="mt-6 w-full max-w-sm">
           <div className="flex flex-col gap-3">
             {colors.length > 0 && (
               <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
-                <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>COLOR</div>
+                <div className={`${PRODUCT_MICRO_CLASS} text-muted uppercase`}>{t('page.product.color')}</div>
                 <div className="flex flex-wrap justify-end gap-2">
                   {colors.map((c, idx) => (
                     <button
@@ -204,7 +244,7 @@ export function ProductPage() {
             )}
 
             <div className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
-              <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>SIZE</div>
+              <div className={`${PRODUCT_MICRO_CLASS} text-muted uppercase`}>{t('page.product.size')}</div>
               <div className="flex flex-wrap justify-end gap-2">
                 {sizes.map((s) => (
                   <button
@@ -222,13 +262,13 @@ export function ProductPage() {
             </div>
 
             <div className="flex items-center justify-between rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
-              <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>QTY</div>
+              <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>{t('page.product.qty')}</div>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   className="h-11 w-11 rounded-full border border-line bg-canvas/60 text-ink backdrop-blur-md"
-                  aria-label="Decrease quantity"
+                  aria-label={t('page.product.decreaseQuantity')}
                 >
                   −
                 </button>
@@ -237,7 +277,7 @@ export function ProductPage() {
                   type="button"
                   onClick={() => setQuantity((q) => Math.min(9, q + 1))}
                   className="h-11 w-11 rounded-full border border-line bg-canvas/60 text-ink backdrop-blur-md"
-                  aria-label="Increase quantity"
+                  aria-label={t('page.product.increaseQuantity')}
                 >
                   +
                 </button>
@@ -245,6 +285,7 @@ export function ProductPage() {
             </div>
           </div>
         </div>
+        )}
 
         <div className="mt-5 flex w-full flex-col items-stretch gap-4 sm:mt-6 sm:flex-row sm:items-center sm:justify-center sm:gap-6">
           <div className="slash-title slash-title-bolt self-center text-3xl">${product.price}</div>
@@ -266,20 +307,25 @@ export function ProductPage() {
             className={`btn-slam ${PRODUCT_LABEL_CLASS} w-full disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto`}
           >
             <span>
-              {isAuthenticated ? (added ? 'ADDED' : 'BUY') : t('page.product.signInToBuy')}
+              {isAuthenticated
+                ? added
+                  ? t('page.product.added')
+                  : t('page.product.buy')
+                : t('page.product.signInToBuy')}
             </span>
           </button>
         </div>
       </div>
 
       {/* Right controls — swaps based on left-side selector */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 hidden h-[min(86vmin,48rem)] w-[min(86vmin,48rem)] -translate-x-1/2 -translate-y-1/2 md:block">
+      {ringLayout && (
+      <div className={`pointer-events-none absolute left-1/2 top-1/2 z-20 ${RING_BOX_CLASS} -translate-x-1/2 -translate-y-1/2`}>
         {activeSelector == null && (
           <div
             className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-line bg-canvas/70 px-5 py-3 ${PRODUCT_MICRO_CLASS} text-muted backdrop-blur-md`}
             style={ringPos(0, 54)}
           >
-            SELECT ON LEFT
+            {t('page.product.selectOnLeft')}
           </div>
         )}
         {activeSelector === 'color' && (
@@ -365,7 +411,11 @@ export function ProductPage() {
                         )
                       }
                       className="flex h-12 w-12 items-center justify-center rounded-full border border-line bg-canvas/70 text-xl text-ink backdrop-blur-md transition-colors hover:bg-canvas"
-                      aria-label={item.kind === 'minus' ? 'Decrease quantity' : 'Increase quantity'}
+                      aria-label={
+                        item.kind === 'minus'
+                          ? t('page.product.decreaseQuantity')
+                          : t('page.product.increaseQuantity')
+                      }
                     >
                       {item.kind === 'minus' ? '−' : '+'}
                     </button>
@@ -399,6 +449,7 @@ export function ProductPage() {
           </div>
         )}
       </div>
+      )}
       </section>
     </div>
   )

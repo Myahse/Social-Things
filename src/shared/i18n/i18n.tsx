@@ -4,7 +4,7 @@ export type Language = 'en' | 'fr'
 
 const STORAGE_KEY = 'social-things:lang'
 
-type I18nKey =
+export type I18nKey =
   | 'nav.home'
   | 'nav.products'
   | 'nav.gallery'
@@ -75,6 +75,39 @@ type I18nKey =
   | 'page.account.errorPoliciesRequired'
   | 'page.account.signInToShop'
   | 'page.product.signInToBuy'
+  | 'page.product.loading'
+  | 'page.product.notFound'
+  | 'page.product.notFoundHint'
+  | 'page.product.selectOption'
+  | 'page.product.selectOnLeft'
+  | 'page.product.avatar'
+  | 'page.product.color'
+  | 'page.product.size'
+  | 'page.product.quantity'
+  | 'page.product.qty'
+  | 'page.product.chooseAvatar'
+  | 'page.product.chooseColor'
+  | 'page.product.chooseSize'
+  | 'page.product.chooseQuantity'
+  | 'page.product.decreaseQuantity'
+  | 'page.product.increaseQuantity'
+  | 'page.product.buy'
+  | 'page.product.added'
+  | 'page.product.photo'
+  | 'page.product.avatarMen'
+  | 'page.product.avatarWomen'
+  | 'page.product.avatarDuo'
+  | 'page.product.lookBaggy'
+  | 'page.product.lookParachute'
+  | 'page.product.lookCargo'
+  | 'page.product.lookSeated'
+  | 'page.product.lookTogether'
+  | 'page.product.dragToTurn'
+  | 'page.product.zoomIn'
+  | 'page.product.zoomOut'
+  | 'page.product.avatarAria'
+  | 'page.product.avatarUnavailable'
+  | 'page.product.avatarLoading'
   | 'legal.back'
   | 'legal.faq'
   | 'legal.shipping'
@@ -148,6 +181,39 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
       'Please accept all policies (shipping, returns, privacy, and terms) to create your account.',
     'page.account.signInToShop': 'Sign in or create an account to add this to your cart.',
     'page.product.signInToBuy': 'SIGN IN',
+    'page.product.loading': 'Loading product…',
+    'page.product.notFound': 'Product not found',
+    'page.product.notFoundHint': 'This piece may have sold out or moved.',
+    'page.product.selectOption': 'Select an option',
+    'page.product.selectOnLeft': 'SELECT ON LEFT',
+    'page.product.avatar': 'Avatar',
+    'page.product.color': 'Color',
+    'page.product.size': 'Size',
+    'page.product.quantity': 'Quantity',
+    'page.product.qty': 'QTY',
+    'page.product.chooseAvatar': 'Choose your avatar',
+    'page.product.chooseColor': 'Choose your color',
+    'page.product.chooseSize': 'Choose your size',
+    'page.product.chooseQuantity': 'Choose quantity',
+    'page.product.decreaseQuantity': 'Decrease quantity',
+    'page.product.increaseQuantity': 'Increase quantity',
+    'page.product.buy': 'BUY',
+    'page.product.added': 'ADDED',
+    'page.product.photo': 'Photo',
+    'page.product.avatarMen': 'Men',
+    'page.product.avatarWomen': 'Women',
+    'page.product.avatarDuo': 'Duo',
+    'page.product.lookBaggy': 'Baggy',
+    'page.product.lookParachute': 'Parachute',
+    'page.product.lookCargo': 'Cargo',
+    'page.product.lookSeated': 'Seated',
+    'page.product.lookTogether': 'Together',
+    'page.product.dragToTurn': 'Drag to turn · double-tap to zoom',
+    'page.product.zoomIn': 'Zoom in',
+    'page.product.zoomOut': 'Zoom out',
+    'page.product.avatarAria': 'T-shirt worn by a mannequin. Drag to turn it, pinch to zoom.',
+    'page.product.avatarUnavailable': 'The 3D preview isn’t available on this device.',
+    'page.product.avatarLoading': 'Loading avatar…',
     'page.cart.title': 'Cart',
     'page.cart.empty': 'Your cart is empty',
     'page.cart.emptyHint': 'Add something from the products to get started.',
@@ -243,6 +309,39 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
       'Veuillez accepter toutes les politiques (expédition, retours, confidentialité et conditions) pour créer votre compte.',
     'page.account.signInToShop': 'Connectez-vous ou créez un compte pour ajouter cet article au panier.',
     'page.product.signInToBuy': 'CONNEXION',
+    'page.product.loading': 'Chargement du produit…',
+    'page.product.notFound': 'Produit introuvable',
+    'page.product.notFoundHint': 'Cette pièce est peut-être épuisée ou a été déplacée.',
+    'page.product.selectOption': 'Choisissez une option',
+    'page.product.selectOnLeft': 'CHOISISSEZ À GAUCHE',
+    'page.product.avatar': 'Avatar',
+    'page.product.color': 'Couleur',
+    'page.product.size': 'Taille',
+    'page.product.quantity': 'Quantité',
+    'page.product.qty': 'QTÉ',
+    'page.product.chooseAvatar': 'Choisissez votre avatar',
+    'page.product.chooseColor': 'Choisissez votre couleur',
+    'page.product.chooseSize': 'Choisissez votre taille',
+    'page.product.chooseQuantity': 'Choisissez la quantité',
+    'page.product.decreaseQuantity': 'Diminuer la quantité',
+    'page.product.increaseQuantity': 'Augmenter la quantité',
+    'page.product.buy': 'ACHETER',
+    'page.product.added': 'AJOUTÉ',
+    'page.product.photo': 'Photo',
+    'page.product.avatarMen': 'Homme',
+    'page.product.avatarWomen': 'Femme',
+    'page.product.avatarDuo': 'Duo',
+    'page.product.lookBaggy': 'Baggy',
+    'page.product.lookParachute': 'Parachute',
+    'page.product.lookCargo': 'Cargo',
+    'page.product.lookSeated': 'Assis',
+    'page.product.lookTogether': 'Ensemble',
+    'page.product.dragToTurn': 'Faites glisser pour tourner · touchez deux fois pour zoomer',
+    'page.product.zoomIn': 'Zoomer',
+    'page.product.zoomOut': 'Dézoomer',
+    'page.product.avatarAria': 'T-shirt porté par un mannequin. Faites glisser pour le tourner, pincez pour zoomer.',
+    'page.product.avatarUnavailable': 'L’aperçu 3D n’est pas disponible sur cet appareil.',
+    'page.product.avatarLoading': 'Chargement de l’avatar…',
     'page.cart.title': 'Panier',
     'page.cart.empty': 'Votre panier est vide',
     'page.cart.emptyHint': 'Ajoutez un produit pour commencer.',
