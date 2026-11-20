@@ -19,7 +19,7 @@ const TEE_OUTLINE_01: [number, number][] = [
 ]
 
 /** Width / height of the print area (sleeve tip to sleeve tip × collar to hem). */
-const TEE_ASPECT = 0.8962
+export const TEE_ASPECT = 0.8962
 
 export const PRINT_W = 1024
 export const PRINT_H = Math.round(PRINT_W / TEE_ASPECT)

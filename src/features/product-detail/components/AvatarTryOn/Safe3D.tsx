@@ -25,6 +25,11 @@ function can3D() {
 
 const noop = () => () => {}
 
+/** true / false once known (null on first render): whether this device can show the 3D views. */
+export function useCan3D() {
+  return useSyncExternalStore(noop, can3D, () => null)
+}
+
 class Catch3D extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
   state = { failed: false }
 
@@ -43,7 +48,7 @@ class Catch3D extends Component<{ fallback: ReactNode; children: ReactNode }, { 
 
 /** Renders `children` (a <Canvas>) only where 3D works, and falls back to `fallback` if the scene still fails. */
 export function Safe3D({ children, fallback }: { children: ReactNode; fallback: ReactNode }) {
-  const ok = useSyncExternalStore(noop, can3D, () => null)
+  const ok = useCan3D()
   if (ok === null) return null
   if (!ok) return fallback
   return <Catch3D fallback={fallback}>{children}</Catch3D>

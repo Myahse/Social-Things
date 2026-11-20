@@ -46,7 +46,12 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
 
       <div className="mt-3">
         <div className="flex items-center gap-2">
-          <p className="shrink-0 font-display text-sm tracking-[0.12em] text-ink">${product.price}</p>
+          <p className="shrink-0 font-display text-sm tracking-[0.12em] text-ink">
+            {product.compareAtPrice != null && (
+              <s className="mr-1.5 text-muted">${product.compareAtPrice}</s>
+            )}
+            ${product.price}
+          </p>
           <Link
             to={href}
             className="product-card-name inline-block border-2 border-ink bg-ink px-2 py-1 font-display text-xs tracking-[0.14em] text-white"

@@ -1,5 +1,7 @@
 import type { I18nKey } from '@/shared/i18n/i18n'
 
+export { CHEST } from '@/features/product-detail/utils/sizing'
+
 /*
  * The shop mannequins of the product page's Avatar view (ported from ArtSyde's "Porté" view).
  * Each one is a single dressed model in size L (oversized tee, trousers, shoes) with a mask texture
@@ -45,12 +47,6 @@ export function mannequinById(id: MannequinId) {
 
 export function firstMannequinOf(group: MannequinGroup): MannequinId {
   return (MANNEQUINS.find((m) => m.group === group) ?? MANNEQUINS[0]).id
-}
-
-/** Body chest by size (cm, common size charts). The models are made in L; other sizes widen or narrow them. */
-export const CHEST: Record<'homme' | 'femme', Record<string, number>> = {
-  homme: { XS: 86, S: 92, M: 98, L: 104, XL: 110, XXL: 116 },
-  femme: { XS: 78, S: 82, M: 86, L: 91, XL: 97, XXL: 103 },
 }
 
 /** Bump when the model files change: browsers keep the old ones otherwise. */

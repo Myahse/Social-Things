@@ -6,7 +6,7 @@ import { toCreasedNormals } from 'three/examples/jsm/utils/BufferGeometryUtils.j
 import { useI18n } from '@/shared/i18n/i18n'
 import { CHEST, MANNEQUINS, mannequinById, maskUrl, modelUrl, type MannequinId } from './mannequins'
 import { PRINT_H, PRINT_SIDES, PRINT_W, drawPrint, usePrintImages, type ProductPrints } from './print'
-import { Safe3D } from './Safe3D'
+import { Safe3D, useCan3D } from './Safe3D'
 
 /*
  * The product worn by a shop mannequin (ported from ArtSyde's MannequinTryOn).
@@ -178,10 +178,48 @@ function Figure({
   })
 
   return (
-    <group ref={group} position={[0, info.y, 0]}>
+    <group ref={group} name="mannequin-pose" position={[0, info.y, 0]}>
       <primitive object={look.root} />
     </group>
   )
+}
+
+/** Renders the mannequin front-on or back-on, unzoomed, at `width` px, on a transparent background. */
+export type WornSnapshotFn = (width: number, face: 'front' | 'back') => Promise<Blob | null>
+
+/** Registers the snapshot on `target` (the share card's renders); pose and camera are put back after. */
+function WornSnapshot({ target }: { target: React.RefObject<WornSnapshotFn | null> }) {
+  const get = useThree((st) => st.get)
+  useEffect(() => {
+    target.current = (width, face) => {
+      const { gl, scene, camera, size } = get()
+      const pose = scene.getObjectByName('mannequin-pose')
+      const rot = pose?.rotation.y ?? 0
+      const cam = camera.position.clone()
+      if (pose) pose.rotation.y = face === 'back' ? Math.PI : 0
+      camera.position.set(0, CAM_Y, CAM_Z)
+      const max = gl.capabilities.maxTextureSize
+      const scale = Math.min(1, max / Math.max(width, (width * size.height) / size.width))
+      const w = Math.round(width * scale)
+      const h = Math.round(((width * size.height) / size.width) * scale)
+      const ratio = gl.getPixelRatio()
+      gl.setPixelRatio(1)
+      gl.setSize(w, h, false)
+      gl.render(scene, camera)
+      if (pose) pose.rotation.y = rot
+      camera.position.copy(cam)
+      return new Promise<Blob | null>((resolve) => {
+        gl.domElement.toBlob(resolve, 'image/png') // the pixels are captured now, encoded afterwards
+        gl.setPixelRatio(ratio)
+        gl.setSize(size.width, size.height, false)
+        gl.render(scene, camera)
+      })
+    }
+    return () => {
+      target.current = null
+    }
+  }, [get, target])
+  return null
 }
 
 /** Moves the camera with the zoom: closer, and up to the chest, looking straight ahead. */
@@ -209,12 +247,22 @@ export interface AvatarTryOnProps {
   /** The size chosen on the page (the mannequin widens to that size's chest); empty means L. */
   size: string
   className?: string
+  /** Filled with a snapshot function once the scene is ready (used by "Share this look"). */
+  snapshotRef?: React.RefObject<WornSnapshotFn | null>
 }
 
 const NO_PRINTS: ProductPrints = {}
 
-export default function AvatarTryOn({ mannequin, color, prints = NO_PRINTS, size, className = '' }: AvatarTryOnProps) {
+export default function AvatarTryOn({
+  mannequin,
+  color,
+  prints = NO_PRINTS,
+  size,
+  className = '',
+  snapshotRef,
+}: AvatarTryOnProps) {
   const { t } = useI18n()
+  const can3D = useCan3D()
   const drag = useRef<Drag>({ rot: 0.35, active: false })
   const last = useRef(0)
   const view = useRef<View>({ target: 1, focusY: 0.4, panX: 0, panY: 0 })
@@ -336,7 +384,7 @@ export default function AvatarTryOn({ mannequin, color, prints = NO_PRINTS, size
           <Canvas
             dpr={[1, 1.5]}
             camera={{ position: [0, CAM_Y, CAM_Z], fov: 30 }}
-            gl={{ antialias: true, alpha: true }}
+            gl={{ antialias: true, alpha: true, preserveDrawingBuffer: Boolean(snapshotRef) }}
             onCreated={({ gl }) => {
               gl.toneMapping = THREE.NeutralToneMapping
               gl.toneMappingExposure = 1.12 // the fabric's lit side lands on the chosen colour, folds stay darker
@@ -352,6 +400,7 @@ export default function AvatarTryOn({ mannequin, color, prints = NO_PRINTS, size
               <Lightformer intensity={0.8} position={[5, 0, 2]} scale={[3, 8, 1]} />
             </Environment>
             <CameraRig view={view} />
+            {snapshotRef && <WornSnapshot target={snapshotRef} />}
             <Suspense fallback={null}>
               <Figure key={mannequin} id={mannequin} color={color} prints={prints} size={size} drag={drag} onFocus={onFocus} />
             </Suspense>
@@ -359,7 +408,8 @@ export default function AvatarTryOn({ mannequin, color, prints = NO_PRINTS, size
         </Safe3D>
       </div>
 
-      {/* Zoom buttons (pinch, trackpad pinch and double-click also zoom). */}
+      {/* Zoom buttons (pinch, trackpad pinch and double-click also zoom); not shown where 3D can't run. */}
+      {can3D && (
       <div className="absolute right-2 top-2 grid gap-1.5">
         {(
           [
@@ -379,6 +429,7 @@ export default function AvatarTryOn({ mannequin, color, prints = NO_PRINTS, size
           </button>
         ))}
       </div>
+      )}
     </div>
   )
 }

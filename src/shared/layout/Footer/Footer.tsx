@@ -61,8 +61,37 @@ export function Footer({ footerRef }: { footerRef?: React.RefObject<HTMLElement 
             <span>CONTACT US</span>
           </a>
         </SlamReveal>
+
+        <ModelCredit />
       </div>
     </footer>
+  )
+}
+
+/** Credit required by the 3D t-shirt's CC BY 4.0 licence (product page 3D view; public/models/tshirt-license.txt). */
+function ModelCredit() {
+  const { t } = useI18n()
+  const link = 'underline underline-offset-2 transition-colors hover:text-canvas'
+  return (
+    <p className="mt-10 max-w-md text-xs text-canvas/60">
+      {t('footer.credit3d')}{' '}
+      <a
+        className={link}
+        href="https://sketchfab.com/3d-models/oversized-t-shirt-3b6e78d6a1a74370a6e5af6f312d38f7"
+        target="_blank"
+        rel="noreferrer"
+      >
+        “Oversized t-shirt”
+      </a>{' '}
+      {t('footer.by')}{' '}
+      <a className={link} href="https://sketchfab.com/kylelhb" target="_blank" rel="noreferrer">
+        kylelhb
+      </a>
+      ,{' '}
+      <a className={link} href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
+        CC BY 4.0
+      </a>
+    </p>
   )
 }
 

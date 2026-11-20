@@ -66,6 +66,12 @@ export type I18nKey =
   | 'page.products.title'
   | 'page.products.hint'
   | 'page.products.loading'
+  | 'page.products.filterTitle'
+  | 'page.products.filterHint'
+  | 'page.products.filterNew'
+  | 'page.products.filterBest'
+  | 'page.products.filterOffers'
+  | 'page.products.filterEmpty'
   | 'page.faq.eyebrow'
   | 'page.faq.title'
   | 'page.faq.subtitle'
@@ -108,6 +114,33 @@ export type I18nKey =
   | 'page.product.avatarAria'
   | 'page.product.avatarUnavailable'
   | 'page.product.avatarLoading'
+  | 'page.product.views'
+  | 'page.product.mockup'
+  | 'page.product.view3d'
+  | 'page.product.teeAria'
+  | 'page.product.dragToTurnTee'
+  | 'page.product.avatarPicker'
+  | 'page.product.sizeHelper'
+  | 'page.product.sizeHelperHint'
+  | 'page.product.sizeHelperBuild'
+  | 'page.product.sizeHelperHeight'
+  | 'page.product.sizeHelperWeight'
+  | 'page.product.sizeHelperAdvice'
+  | 'page.product.sizeHelperClosest'
+  | 'page.product.sizeHelperOversize'
+  | 'page.product.sizeHelperChoose'
+  | 'page.product.sizeHelperLooser'
+  | 'page.product.sizeHelperNone'
+  | 'page.product.sizeHelperNote'
+  | 'page.product.shareLook'
+  | 'page.product.shareBusy'
+  | 'page.product.shareDone'
+  | 'page.product.front'
+  | 'page.product.back'
+  | 'page.product.sizes'
+  | 'page.product.shareText'
+  | 'footer.credit3d'
+  | 'footer.by'
   | 'legal.back'
   | 'legal.faq'
   | 'legal.shipping'
@@ -214,6 +247,33 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.product.avatarAria': 'T-shirt worn by a mannequin. Drag to turn it, pinch to zoom.',
     'page.product.avatarUnavailable': 'The 3D preview isn’t available on this device.',
     'page.product.avatarLoading': 'Loading avatar…',
+    'page.product.views': 'Views',
+    'page.product.mockup': 'Mockup',
+    'page.product.view3d': '3D',
+    'page.product.teeAria': 'T-shirt in 3D. Drag to turn it.',
+    'page.product.dragToTurnTee': 'Drag to turn',
+    'page.product.avatarPicker': 'Choose a mannequin',
+    'page.product.sizeHelper': 'Which size for me?',
+    'page.product.sizeHelperHint': 'Your height and weight give a size among this piece’s.',
+    'page.product.sizeHelperBuild': 'Build',
+    'page.product.sizeHelperHeight': 'Height (cm)',
+    'page.product.sizeHelperWeight': 'Weight (kg)',
+    'page.product.sizeHelperAdvice': 'We suggest',
+    'page.product.sizeHelperClosest': 'the closest available',
+    'page.product.sizeHelperOversize': 'It’s cut oversize, so it already falls loose.',
+    'page.product.sizeHelperChoose': 'Choose',
+    'page.product.sizeHelperLooser': 'Looser:',
+    'page.product.sizeHelperNone': 'No size advice for this piece’s sizes.',
+    'page.product.sizeHelperNote': 'Indicative advice, from common size charts.',
+    'page.product.shareLook': 'Share this look',
+    'page.product.shareBusy': 'Preparing…',
+    'page.product.shareDone': 'Ready ✓',
+    'page.product.front': 'FRONT',
+    'page.product.back': 'BACK',
+    'page.product.sizes': 'Sizes',
+    'page.product.shareText': 'on SOCIAL THINGS',
+    'footer.credit3d': '3D t-shirt model:',
+    'footer.by': 'by',
     'page.cart.title': 'Cart',
     'page.cart.empty': 'Your cart is empty',
     'page.cart.emptyHint': 'Add something from the products to get started.',
@@ -233,6 +293,12 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.products.title': 'Products',
     'page.products.hint': 'Tap a piece to view details and add to cart.',
     'page.products.loading': 'Loading products…',
+    'page.products.filterTitle': 'Filter products',
+    'page.products.filterHint': 'New pieces, best-sellers or what’s on offer.',
+    'page.products.filterNew': 'New',
+    'page.products.filterBest': 'Best-sellers',
+    'page.products.filterOffers': 'Offers',
+    'page.products.filterEmpty': 'Nothing here right now.',
     'page.faq.eyebrow': 'Support',
     'page.faq.title': 'FAQ',
     'page.faq.subtitle': 'Answers about our brand, fit, and how to reach us.',
@@ -342,6 +408,33 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.product.avatarAria': 'T-shirt porté par un mannequin. Faites glisser pour le tourner, pincez pour zoomer.',
     'page.product.avatarUnavailable': 'L’aperçu 3D n’est pas disponible sur cet appareil.',
     'page.product.avatarLoading': 'Chargement de l’avatar…',
+    'page.product.views': 'Vues',
+    'page.product.mockup': 'Maquette',
+    'page.product.view3d': '3D',
+    'page.product.teeAria': 'T-shirt en 3D. Faites glisser pour le tourner.',
+    'page.product.dragToTurnTee': 'Faites glisser pour tourner',
+    'page.product.avatarPicker': 'Choisir un mannequin',
+    'page.product.sizeHelper': 'Quelle taille pour moi ?',
+    'page.product.sizeHelperHint': 'Votre taille et votre poids donnent une taille parmi celles de cette pièce.',
+    'page.product.sizeHelperBuild': 'Morphologie',
+    'page.product.sizeHelperHeight': 'Taille (cm)',
+    'page.product.sizeHelperWeight': 'Poids (kg)',
+    'page.product.sizeHelperAdvice': 'Nous vous conseillons le',
+    'page.product.sizeHelperClosest': 'la plus proche disponible',
+    'page.product.sizeHelperOversize': 'Coupe oversize : il tombe déjà large.',
+    'page.product.sizeHelperChoose': 'Choisir le',
+    'page.product.sizeHelperLooser': 'Plus ample :',
+    'page.product.sizeHelperNone': 'Pas de conseil pour les tailles de cette pièce.',
+    'page.product.sizeHelperNote': 'Conseil indicatif, d’après des guides de tailles courants.',
+    'page.product.shareLook': 'Partager ce look',
+    'page.product.shareBusy': 'Préparation…',
+    'page.product.shareDone': 'Prêt ✓',
+    'page.product.front': 'DEVANT',
+    'page.product.back': 'DOS',
+    'page.product.sizes': 'Tailles',
+    'page.product.shareText': 'sur SOCIAL THINGS',
+    'footer.credit3d': 'Modèle 3D du t-shirt :',
+    'footer.by': 'par',
     'page.cart.title': 'Panier',
     'page.cart.empty': 'Votre panier est vide',
     'page.cart.emptyHint': 'Ajoutez un produit pour commencer.',
@@ -361,6 +454,12 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.products.title': 'Produits',
     'page.products.hint': 'Touchez une pièce pour voir les détails et l’ajouter au panier.',
     'page.products.loading': 'Chargement des produits…',
+    'page.products.filterTitle': 'Filtrer les produits',
+    'page.products.filterHint': 'Nouveautés, meilleures ventes ou offres du moment.',
+    'page.products.filterNew': 'Nouveautés',
+    'page.products.filterBest': 'Meilleures ventes',
+    'page.products.filterOffers': 'Offres',
+    'page.products.filterEmpty': 'Rien pour le moment.',
     'page.faq.eyebrow': 'Assistance',
     'page.faq.title': 'FAQ',
     'page.faq.subtitle': 'Réponses sur la marque, les tailles et comment nous joindre.',

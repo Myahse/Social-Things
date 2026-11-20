@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { galleryGroupLabel, groupGalleryImages } from '@/features/gallery/config/gallery-images'
 import { useGallery } from '@/features/gallery/hooks/useGallery'
+import { FilterSheet } from '@/shared/components/FilterSheet'
 import { SlamReveal } from '@/shared/components/SlamReveal'
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
@@ -11,7 +12,6 @@ export function GalleryPage() {
   const groups = useMemo(() => groupGalleryImages(images), [images])
   const [active, setActive] = useState<number | null>(null)
   const [filter, setFilter] = useState<string>('all')
-  const [filterOpen, setFilterOpen] = useState(false)
   const touchStartX = useRef<number | null>(null)
   const mouseStartX = useRef<number | null>(null)
 
@@ -20,21 +20,18 @@ export function GalleryPage() {
     [filter, images],
   )
 
-  const filterLabel = filter === 'all' ? t('page.gallery.all') : galleryGroupLabel(filter)
-
   useEffect(() => {
-    if (active == null && !filterOpen) return
+    if (active == null) return
 
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        if (active != null) setActive(null)
-        else if (filterOpen) setFilterOpen(false)
+        setActive(null)
         return
       }
-      if (active == null || visible.length === 0) return
+      if (visible.length === 0) return
       if (e.key === 'ArrowRight') {
         setActive((i) => {
           if (i == null) return 0
@@ -58,7 +55,7 @@ export function GalleryPage() {
       document.body.style.overflow = prevOverflow
       window.removeEventListener('keydown', onKeyDown)
     }
-  }, [active, filterOpen, images, visible])
+  }, [active, images, visible])
 
   function openImage(src: string) {
     setActive(images.findIndex((img) => img.src === src))
@@ -70,11 +67,6 @@ export function GalleryPage() {
     const idx = visible.findIndex((img) => img.src === currentSrc)
     const next = visible[(idx + delta + visible.length) % visible.length]
     setActive(images.findIndex((img) => img.src === next.src))
-  }
-
-  function applyFilter(next: string) {
-    setFilter(next)
-    setFilterOpen(false)
   }
 
   const activeVisibleIndex =
@@ -111,17 +103,18 @@ export function GalleryPage() {
 
         {groups.length > 0 && (
           <StaggerReveal index={1} className="mt-6 sm:mt-8">
-            <button
-              type="button"
-              className="btn-slam inline-flex items-center gap-2 !px-4 !py-2.5"
-              onClick={() => setFilterOpen(true)}
-              aria-haspopup="dialog"
-              aria-expanded={filterOpen}
-            >
-              <span>
-                {t('page.gallery.filter')} · {filterLabel}
-              </span>
-            </button>
+            <FilterSheet
+              filterLabel={t('page.gallery.filter')}
+              title={t('page.gallery.filterTitle')}
+              hint={t('page.gallery.filterHint')}
+              closeLabel={t('page.gallery.close')}
+              options={[
+                { id: 'all', label: t('page.gallery.all') },
+                ...groups.map((group) => ({ id: group.id, label: galleryGroupLabel(group.id) })),
+              ]}
+              value={filter}
+              onChange={setFilter}
+            />
           </StaggerReveal>
         )}
 
@@ -163,59 +156,6 @@ export function GalleryPage() {
           )}
         </StaggerReveal>
       </section>
-
-      {filterOpen && (
-        <div
-          className="fixed inset-0 z-[90] flex items-end justify-center bg-ink/55"
-          role="presentation"
-          onClick={() => setFilterOpen(false)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="gallery-filter-title"
-            className="anim-slam-block w-full max-w-lg border-t-[3px] border-ink bg-canvas px-[var(--site-gutter)] pt-3 shadow-[0_-10px_0_var(--color-ink)] pb-[max(1rem,calc(var(--mobile-bottom-nav-height)+0.5rem))] md:pb-[max(1.25rem,env(safe-area-inset-bottom))]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mx-auto mb-4 h-1.5 w-12 bg-ink" aria-hidden />
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="eyebrow-cut">{t('page.gallery.filter')}</p>
-                <h2
-                  id="gallery-filter-title"
-                  className="mt-2 font-display text-xl tracking-[0.08em] uppercase"
-                >
-                  {t('page.gallery.filterTitle')}
-                </h2>
-                <p className="mt-2 text-sm text-muted">{t('page.gallery.filterHint')}</p>
-              </div>
-              <button
-                type="button"
-                className="btn-slam-outline !px-3 !py-2"
-                onClick={() => setFilterOpen(false)}
-              >
-                <span>{t('page.gallery.close')}</span>
-              </button>
-            </div>
-
-            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3" role="listbox">
-              <FilterOption
-                label={t('page.gallery.all')}
-                active={filter === 'all'}
-                onClick={() => applyFilter('all')}
-              />
-              {groups.map((group) => (
-                <FilterOption
-                  key={group.id}
-                  label={galleryGroupLabel(group.id)}
-                  active={filter === group.id}
-                  onClick={() => applyFilter(group.id)}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       {active != null && images[active] && (
         <div
@@ -339,33 +279,6 @@ function GalleryTile({
         />
       </div>
       <div className="product-card-shine" aria-hidden />
-    </button>
-  )
-}
-
-function FilterOption({
-  label,
-  active,
-  onClick,
-}: {
-  label: string
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      role="option"
-      aria-selected={active}
-      onClick={onClick}
-      className={`min-h-12 border-[2.5px] border-ink px-3 py-3 text-left font-display text-xs tracking-[0.16em] uppercase transition-colors ${
-        active
-          ? 'bg-ink text-white shadow-[4px_4px_0_#fff]'
-          : 'bg-canvas text-ink active:bg-ink active:text-white sm:hover:bg-ink sm:hover:text-white'
-      }`}
-      style={{ transform: 'skewX(-8deg)' }}
-    >
-      <span style={{ display: 'inline-block', transform: 'skewX(8deg)' }}>{label}</span>
     </button>
   )
 }

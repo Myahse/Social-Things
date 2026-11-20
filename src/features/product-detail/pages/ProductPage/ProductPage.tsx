@@ -1,18 +1,24 @@
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   AvatarTryOn,
+  Tee3D,
+  useCan3D,
   DEFAULT_MANNEQUIN,
   MANNEQUINS,
   MANNEQUIN_GROUPS,
   firstMannequinOf,
   mannequinById,
   type MannequinId,
+  type WornSnapshotFn,
 } from '@/features/product-detail/components/AvatarTryOn'
+import { SizeHelper } from '@/features/product-detail/components/SizeHelper'
+import { hasChartSizes } from '@/features/product-detail/utils/sizing'
+import { SITE_URL } from '@/shared/config/site-url'
 import { useAuth } from '@/features/account/context/AuthContext'
 import { useCart } from '@/features/cart/context/CartContext'
 import { useMediaQuery } from '@/shared/hooks/useMediaQuery'
-import { useI18n } from '@/shared/i18n/i18n'
+import { useI18n, type I18nKey } from '@/shared/i18n/i18n'
 import { ProductImageSlider } from '@/features/products/components/ProductImageSlider'
 import { useProduct } from '@/features/products/hooks/useProduct'
 import { productGallery } from '@/features/products/utils/merge-product-assets'
@@ -26,7 +32,7 @@ const PRODUCT_MICRO_CLASS = 'font-display text-xs tracking-[0.16em]'
  * left labels keep clear of the fixed side rail even with a long colour name.
  */
 const RING_LAYOUT_MEDIA = '(min-width: 1200px) and (min-height: 860px)'
-const PILL_CLASS = `rounded-full border px-3 py-2 ${'font-display text-xs tracking-[0.16em]'} transition-colors`
+const PILL_CLASS = `rounded-full border px-3 py-2 ${PRODUCT_MICRO_CLASS} transition-colors`
 
 function pillState(active: boolean) {
   return active ? 'border-ink bg-ink text-canvas' : 'border-line bg-canvas/70 text-ink hover:border-ink'
@@ -45,7 +51,7 @@ function AvatarPicker({
   const current = mannequinById(mannequin)
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="flex flex-wrap justify-center gap-2" role="group" aria-label={t('page.product.avatar')}>
+      <div className="flex flex-wrap justify-center gap-2" role="group" aria-label={t('page.product.avatarPicker')}>
         {MANNEQUIN_GROUPS.map((g) => (
           <button
             key={g.id}
@@ -79,6 +85,7 @@ const RING_BOX_CLASS =
   'h-[min(86vmin,48rem,calc(100vh-var(--header-height)-1rem))] w-[min(86vmin,48rem,calc(100vh-var(--header-height)-1rem))]'
 
 type SelectorKey = 'avatar' | 'color' | 'size' | 'quantity'
+type ProductView = 'photo' | 'mockup' | '3d' | 'avatar'
 
 function ringPos(angleDeg: number, radiusPct: number) {
   const rad = (angleDeg * Math.PI) / 180
@@ -141,9 +148,11 @@ export function ProductPage() {
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
   const [activeSelector, setActiveSelector] = useState<SelectorKey | null>(null)
-  /** Photo slider or the 3D mannequin wearing the product. */
-  const [view, setView] = useState<'photo' | 'avatar'>('photo')
+  /** Photos, flat mockups, the tee alone in 3D, or the 3D mannequin wearing it. */
+  const [view, setView] = useState<ProductView>('photo')
   const [mannequin, setMannequin] = useState<MannequinId>(DEFAULT_MANNEQUIN)
+  const wornSnapshot = useRef<WornSnapshotFn | null>(null)
+  const [sharing, setSharing] = useState<'idle' | 'busy' | 'done'>('idle')
 
   useEffect(() => {
     // reset when product changes
@@ -157,6 +166,7 @@ export function ProductPage() {
 
   const canBuy = Boolean(product && color && size && quantity > 0)
   const ringLayout = useMediaQuery(RING_LAYOUT_MEDIA)
+  const can3D = useCan3D()
 
   if (loading) {
     return (
@@ -195,6 +205,56 @@ export function ProductPage() {
   const avatarGroupLabel = MANNEQUIN_GROUPS.find((g) => g.id === avatarInfo.group)?.label
   const avatarValue = `${avatarGroupLabel ? t(avatarGroupLabel) : ''} · ${t(avatarInfo.look)}`
   const preloadAvatar = () => void import('@/features/product-detail/components/AvatarTryOn/AvatarTryOn')
+  const preloadTee = () => void import('@/features/product-detail/components/AvatarTryOn/Tee3D')
+  const mockups = product.mockups ?? []
+  const views: [ProductView, I18nKey][] = [
+    ['photo', 'page.product.photo'],
+    ...(mockups.length > 0 ? [['mockup', 'page.product.mockup'] as [ProductView, I18nKey]] : []),
+    ['3d', 'page.product.view3d'],
+    ['avatar', 'page.product.avatar'],
+  ]
+
+  /** Share this look: the mannequin front and back on the share card, to the system share sheet or a download. */
+  async function shareWorn() {
+    if (!product || !wornSnapshot.current || sharing === 'busy') return
+    setSharing('busy')
+    try {
+      const [{ wornShareCard, shareOrDownload }, front, back] = await Promise.all([
+        import('@/features/product-detail/components/AvatarTryOn/shareCard'),
+        wornSnapshot.current(1000, 'front'),
+        wornSnapshot.current(1000, 'back'),
+      ])
+      if (!front || !back) throw new Error('no render')
+      const link = `${SITE_URL}/product/${product.slug}`
+      const card = await wornShareCard({
+        front,
+        back,
+        frontLabel: t('page.product.front'),
+        backLabel: t('page.product.back'),
+        title: product.name,
+        price: `$${product.price}`,
+        sizes: `${t('page.product.sizes')} ${product.sizes.join(', ')}`,
+        link,
+      })
+      const res = await shareOrDownload(card, `social-things-${product.slug}.png`, `${product.name} ${t('page.product.shareText')}: ${link}`)
+      setSharing(res === 'cancelled' ? 'idle' : 'done')
+      if (res !== 'cancelled') window.setTimeout(() => setSharing('idle'), 2500)
+    } catch (err) {
+      console.error('Share failed', err)
+      setSharing('idle')
+    }
+  }
+
+  const sizeHelper = hasChartSizes(sizes) ? (
+    <SizeHelper
+      sizes={sizes}
+      current={size}
+      onPick={(s) => {
+        setSize(s)
+        setActiveSelector('size')
+      }}
+    />
+  ) : null
 
   return (
     <div className="w-full">
@@ -271,27 +331,24 @@ export function ProductPage() {
         <h1 className="slash-title slash-title-ink text-[1.65rem] sm:text-4xl">{product.name}</h1>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{product.description}</p>
         {ringLayout && <div className={`mt-4 ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>}
+        {ringLayout && activeSelector === 'size' && sizeHelper && <div className="mt-2">{sizeHelper}</div>}
 
-        {/* Photo / Avatar */}
-        <div className="mb-4 mt-4 flex justify-center gap-2" role="group" aria-label={t('page.product.avatar')}>
-          {(
-            [
-              ['photo', 'page.product.photo'],
-              ['avatar', 'page.product.avatar'],
-            ] as const
-          ).map(([v, label]) => (
+        {/* Photos / Mockup / 3D / Avatar */}
+        <div className="mb-4 mt-4 flex flex-wrap justify-center gap-2" role="tablist" aria-label={t('page.product.views')}>
+          {views.map(([v, label]) => (
             <button
               key={v}
               type="button"
+              role="tab"
+              aria-selected={view === v}
               onClick={() => {
                 setView(v)
                 if (v === 'avatar') setActiveSelector('avatar')
                 else if (activeSelector === 'avatar') setActiveSelector(null)
               }}
-              onPointerEnter={v === 'avatar' ? preloadAvatar : undefined}
-              onFocus={v === 'avatar' ? preloadAvatar : undefined}
-              aria-pressed={view === v}
-              className={`${PILL_CLASS} !py-1.5 ${pillState(view === v)}`}
+              onPointerEnter={v === 'avatar' ? preloadAvatar : v === '3d' ? preloadTee : undefined}
+              onFocus={v === 'avatar' ? preloadAvatar : v === '3d' ? preloadTee : undefined}
+              className={`${PILL_CLASS} ${pillState(view === v)}`}
             >
               {t(label)}
             </button>
@@ -299,31 +356,56 @@ export function ProductPage() {
         </div>
 
         <div className="relative mx-auto w-[min(78vw,18rem)]">
-          {view === 'avatar' ? (
+          {view === 'avatar' || view === '3d' ? (
             <>
               <div className="aspect-[3/4] w-full overflow-hidden rounded-2xl bg-canvas/40 backdrop-blur-sm">
                 <Suspense
                   fallback={
-                    <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+                    <div className="flex h-full w-full items-center justify-center text-center text-muted">
                       {t('page.product.avatarLoading')}
                     </div>
                   }
                 >
-                  <AvatarTryOn
-                    mannequin={mannequin}
-                    color={color}
-                    prints={product.prints}
-                    size={size}
-                    className="h-full w-full"
-                  />
+                  {view === 'avatar' ? (
+                    <AvatarTryOn
+                      mannequin={mannequin}
+                      color={color}
+                      prints={product.prints}
+                      size={size}
+                      className="h-full w-full"
+                      snapshotRef={wornSnapshot}
+                    />
+                  ) : (
+                    <Tee3D color={color} prints={product.prints} className="h-full w-full" />
+                  )}
                 </Suspense>
               </div>
-              <p className={`mt-3 ${PRODUCT_MICRO_CLASS} text-muted`}>{t('page.product.dragToTurn')}</p>
+              {can3D !== false && (
+                <p className={`mt-3 ${PRODUCT_MICRO_CLASS} text-muted`}>
+                  {view === 'avatar' ? t('page.product.dragToTurn') : t('page.product.dragToTurnTee')}
+                </p>
+              )}
+              {view === 'avatar' && can3D && (
+                <button
+                  type="button"
+                  onClick={shareWorn}
+                  disabled={sharing === 'busy'}
+                  className="btn-slam-outline mt-3 !px-4 !py-2 disabled:opacity-60"
+                >
+                  <span>
+                    {sharing === 'busy'
+                      ? t('page.product.shareBusy')
+                      : sharing === 'done'
+                        ? t('page.product.shareDone')
+                        : t('page.product.shareLook')}
+                  </span>
+                </button>
+              )}
             </>
           ) : (
             <ProductImageSlider
-              key={product.id}
-              images={productGallery(product)}
+              key={`${product.id}-${view}`}
+              images={view === 'mockup' ? mockups : productGallery(product)}
               alt={product.name}
               objectFit="contain"
               showThumbs
@@ -380,6 +462,7 @@ export function ProductPage() {
                 ))}
               </div>
             </div>
+            {sizeHelper && <div className="flex justify-end px-1">{sizeHelper}</div>}
 
             <div className="flex items-center justify-between rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
               <div className={`${PRODUCT_MICRO_CLASS} text-muted`}>{t('page.product.qty')}</div>
@@ -404,7 +487,7 @@ export function ProductPage() {
               </div>
             </div>
 
-            {view === 'avatar' && (
+            {view === 'avatar' && can3D !== false && (
               <div className="flex flex-col gap-3 rounded-2xl border border-line bg-canvas/60 px-4 py-3 backdrop-blur-md">
                 <div className={`${PRODUCT_MICRO_CLASS} text-left text-muted uppercase`}>{t('page.product.avatar')}</div>
                 <AvatarPicker mannequin={mannequin} onChange={setMannequin} t={t} />
@@ -415,7 +498,12 @@ export function ProductPage() {
         )}
 
         <div className="mt-5 flex w-full flex-col items-stretch gap-4 sm:mt-6 sm:flex-row sm:items-center sm:justify-center sm:gap-6">
-          <div className="slash-title slash-title-bolt self-center text-3xl">${product.price}</div>
+          <div className="flex items-center justify-center gap-3 self-center">
+            {product.compareAtPrice != null && (
+              <s className="font-display text-base tracking-[0.12em] text-muted">${product.compareAtPrice}</s>
+            )}
+            <div className="slash-title slash-title-bolt text-3xl">${product.price}</div>
+          </div>
           <button
             type="button"
             onClick={() => {
@@ -553,7 +641,7 @@ export function ProductPage() {
           </div>
         )}
 
-        {activeSelector === 'avatar' && (
+        {activeSelector === 'avatar' && can3D !== false && (
           <div
             className="pointer-events-auto absolute w-[16rem] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-line bg-canvas/70 px-4 py-3 backdrop-blur-md"
             style={ringPos(0, 50)}

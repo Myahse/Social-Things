@@ -1,9 +1,21 @@
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ProductCard } from '@/features/products/components/ProductCard'
 import type { Product } from '@/features/products/types'
+import { FilterSheet } from '@/shared/components/FilterSheet'
 import { SlamReveal } from '@/shared/components/SlamReveal'
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
+
+type ShopFilter = 'all' | 'new' | 'best' | 'offers'
+
+/** Which products each shop filter keeps (New and Best-sellers come from the API, Offers from config/offers.ts). */
+const SHOP_FILTERS: Record<ShopFilter, (product: Product) => boolean> = {
+  all: () => true,
+  new: (product) => Boolean(product.newArrival),
+  best: (product) => Boolean(product.bestSeller),
+  offers: (product) => product.compareAtPrice != null,
+}
 
 interface CollectionSectionProps {
   products: Product[]
@@ -57,6 +69,8 @@ export function CollectionSection({
   fullScreen = false,
 }: CollectionSectionProps) {
   const { t } = useI18n()
+  const [filter, setFilter] = useState<ShopFilter>('all')
+  const shown = useMemo(() => products.filter(SHOP_FILTERS[filter]), [products, filter])
 
   if (fullScreen) {
     return (
@@ -123,15 +137,38 @@ export function CollectionSection({
         {error && <p className="text-center text-sm text-ink">{error}</p>}
       </StaggerReveal>
 
+      {!loading && products.length > 0 && (
+        <StaggerReveal index={1} className="mb-6 sm:mb-8">
+          <FilterSheet
+            filterLabel={t('page.gallery.filter')}
+            title={t('page.products.filterTitle')}
+            hint={t('page.products.filterHint')}
+            closeLabel={t('page.gallery.close')}
+            options={[
+              { id: 'all', label: t('page.gallery.all') },
+              { id: 'new', label: t('page.products.filterNew') },
+              { id: 'best', label: t('page.products.filterBest') },
+              { id: 'offers', label: t('page.products.filterOffers') },
+            ]}
+            value={filter}
+            onChange={(id) => setFilter(id as ShopFilter)}
+          />
+        </StaggerReveal>
+      )}
+
       {!loading && (
         <StaggerReveal index={2}>
-          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
-            {products.map((product, i) => (
-              <SlamReveal key={product.id} variant="block" delayMs={i * 70}>
-                <ProductCard product={product} compact />
-              </SlamReveal>
-            ))}
-          </div>
+          {products.length > 0 && shown.length === 0 ? (
+            <p className="text-center text-muted">{t('page.products.filterEmpty')}</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
+              {shown.map((product, i) => (
+                <SlamReveal key={product.id} variant="block" delayMs={i * 70}>
+                  <ProductCard product={product} compact />
+                </SlamReveal>
+              ))}
+            </div>
+          )}
         </StaggerReveal>
       )}
     </section>

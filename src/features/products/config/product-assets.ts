@@ -12,9 +12,13 @@ export type ProductAssetPair = {
 /** Print artwork for the 3D Avatar view: `print-front.*` / `print-back.*` (kept out of the photo gallery). */
 const PRINT_FILE = /^print-(front|back)\./
 
-function classifyFilename(filename: string): 'product' | 'avatar' | 'print' | null {
+/** Flat design mockups for the product page's Mockup view: `mockup.*`, `mockup-1.*`, … (kept out of the photo gallery). */
+const MOCKUP_FILE = /^mockup([-_ ].*)?\./
+
+function classifyFilename(filename: string): 'product' | 'avatar' | 'print' | 'mockup' | null {
   const lower = filename.toLowerCase()
   if (PRINT_FILE.test(lower)) return 'print'
+  if (MOCKUP_FILE.test(lower)) return 'mockup'
   if (/^avatar\.|\/avatar\.|avatar/.test(lower)) return 'avatar'
   if (/^product\.|\/product\.|product/.test(lower)) return 'product'
   return null
@@ -34,7 +38,7 @@ function buildProductAssets(): Record<string, ProductAssetPair> {
 
     const filename = path.split('/').pop() ?? ''
     const kind = classifyFilename(filename)
-    if (kind === 'print') continue
+    if (kind === 'print' || kind === 'mockup') continue
     const entry = buckets.get(slug) ?? { other: [] }
     buckets.set(slug, entry)
 
@@ -76,3 +80,17 @@ function buildProductPrints(): Record<string, ProductPrintFiles> {
 
 /** Print artwork for the 3D Avatar view: `src/assets/product/{slug}/print-front.*` + `print-back.*` */
 export const PRODUCT_PRINTS_BY_SLUG = buildProductPrints()
+
+function buildProductMockups(): Record<string, string[]> {
+  const result: Record<string, string[]> = {}
+  const sorted = Object.entries(assetModules).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+  for (const [path, src] of sorted) {
+    const slug = slugFromPath(path)
+    if (!slug || !MOCKUP_FILE.test((path.split('/').pop() ?? '').toLowerCase())) continue
+    ;(result[slug] ??= []).push(src)
+  }
+  return result
+}
+
+/** Flat mockups for the Mockup view: `src/assets/product/{slug}/mockup*.*`, in file-name order. */
+export const PRODUCT_MOCKUPS_BY_SLUG = buildProductMockups()

@@ -1,4 +1,9 @@
-import { PRODUCT_ASSETS_BY_SLUG, PRODUCT_PRINTS_BY_SLUG } from '@/features/products/config/product-assets'
+import { PRODUCT_OFFERS } from '@/features/products/config/offers'
+import {
+  PRODUCT_ASSETS_BY_SLUG,
+  PRODUCT_MOCKUPS_BY_SLUG,
+  PRODUCT_PRINTS_BY_SLUG,
+} from '@/features/products/config/product-assets'
 import type { Product } from '@/features/products/types'
 import { resolveShopImage } from '@/shared/media/resolveShopImage'
 
@@ -22,11 +27,15 @@ export function withProductAssets(product: Product): Product {
   const cover = resolveShopImage(product.image)
   const trackerImages = (product.images ?? []).map((src) => resolveShopImage(src)).filter(Boolean) as string[]
   const prints = PRODUCT_PRINTS_BY_SLUG[product.slug]
+  const offer = PRODUCT_OFFERS[product.slug]
+  const compareAtPrice = offer && offer.was > product.price ? offer.was : undefined
 
   if (!assets) {
     return {
       ...product,
       prints,
+      mockups: PRODUCT_MOCKUPS_BY_SLUG[product.slug],
+      compareAtPrice,
       image: cover ?? '',
       images: uniqueUrls(cover, ...trackerImages),
     }
@@ -35,6 +44,8 @@ export function withProductAssets(product: Product): Product {
   return {
     ...product,
     prints,
+    mockups: PRODUCT_MOCKUPS_BY_SLUG[product.slug],
+    compareAtPrice,
     image: cover || assets.product,
     imageAvatar: assets.avatar,
     images: uniqueUrls(cover, ...trackerImages, assets.product, assets.avatar, ...assets.extras),
