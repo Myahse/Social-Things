@@ -419,7 +419,7 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.product.dragToTurnTee': 'Faites glisser pour tourner',
     'page.product.avatarPicker': 'Choisir un mannequin',
     'page.product.sizeHelper': 'Quelle taille pour moi ?',
-    'page.product.sizeHelperHint': 'Votre taille et votre poids donnent une taille parmi celles de cette pièce.',
+    'page.product.sizeHelperHint': 'Votre hauteur et votre poids donnent une taille parmi celles de cette pièce.',
     'page.product.sizeHelperBuild': 'Morphologie',
     'page.product.sizeHelperHeight': 'Hauteur (cm)',
     'page.product.sizeHelperWeight': 'Poids (kg)',

@@ -217,6 +217,8 @@ export function ProductPage() {
         ] as [ProductView, I18nKey][])),
   ]
 
+  const showTabs = views.length > 1
+
   function chooseView(v: ProductView) {
     setView(v)
     if (v === 'avatar') setActiveSelector('avatar')
@@ -361,7 +363,8 @@ export function ProductPage() {
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{product.description}</p>
         {ringLayout && <div className={`mt-4 ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>}
 
-        {/* Photos / Mockup / 3D / Avatar */}
+        {/* Photos / Mockup / 3D / Avatar — not shown when there is only one view to pick */}
+        {showTabs && (
         <div className="mb-4 mt-4 flex flex-wrap justify-center gap-2" role="tablist" aria-label={t('page.product.views')}>
           {views.map(([v, label], index) => (
             <button
@@ -382,12 +385,13 @@ export function ProductPage() {
             </button>
           ))}
         </div>
+        )}
 
         <div
           id="product-view-panel"
-          role="tabpanel"
-          aria-labelledby={`product-tab-${view}`}
-          className="relative mx-auto w-[min(78vw,18rem)]"
+          role={showTabs ? 'tabpanel' : undefined}
+          aria-labelledby={showTabs ? `product-tab-${view}` : undefined}
+          className={`relative mx-auto w-[min(78vw,18rem)] ${showTabs ? '' : 'mt-4'}`}
         >
           {view === 'avatar' || view === '3d' ? (
             <>
