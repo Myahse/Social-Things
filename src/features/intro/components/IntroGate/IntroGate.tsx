@@ -54,11 +54,15 @@ interface IntroGateProps {
   children: ReactNode
 }
 
+/** Search and link-preview crawlers: they can't double-click the 3D logo, so they get the page itself. */
+const CRAWLER_UA = /bot|crawl|spider|slurp|facebookexternalhit|embedly|whatsapp|google-inspectiontool|googleother/i
+
 export function IntroGate({ children }: IntroGateProps) {
   const { pathname } = useLocation()
   const onHome = isHomePath(pathname)
+  const isCrawler = typeof navigator !== 'undefined' && CRAWLER_UA.test(navigator.userAgent)
 
-  if (!onHome) {
+  if (!onHome || isCrawler) {
     return <>{children}</>
   }
 

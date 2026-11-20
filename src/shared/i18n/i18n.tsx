@@ -141,6 +141,11 @@ export type I18nKey =
   | 'page.product.back'
   | 'page.product.sizes'
   | 'page.product.shareText'
+  | 'meta.homeDescription'
+  | 'meta.productsDescription'
+  | 'meta.galleryDescription'
+  | 'meta.aboutDescription'
+  | 'meta.legalDescription'
   | 'footer.credit3d'
   | 'footer.by'
   | 'legal.back'
@@ -274,6 +279,11 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.product.back': 'BACK',
     'page.product.sizes': 'Sizes',
     'page.product.shareText': 'on SOCIAL THINGS',
+    'meta.homeDescription': 'Streetwear drops from SOCIAL THINGS. Be bold. Be real. Be unapologetically you.',
+    'meta.productsDescription': 'Shop the SOCIAL THINGS drop: pick your color and size, see it in 3D or on an avatar, and order online.',
+    'meta.galleryDescription': 'The SOCIAL THINGS lookbook: shots from the drop, by color.',
+    'meta.aboutDescription': 'A brand built around community, craft, and the things we share.',
+    'meta.legalDescription': 'SOCIAL THINGS policies: shipping, returns, privacy, terms and FAQ.',
     'footer.credit3d': '3D t-shirt model:',
     'footer.by': 'by',
     'page.cart.title': 'Cart',
@@ -437,6 +447,11 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.product.back': 'DOS',
     'page.product.sizes': 'Tailles',
     'page.product.shareText': 'sur SOCIAL THINGS',
+    'meta.homeDescription': 'Drops streetwear de SOCIAL THINGS. Be bold. Be real. Be unapologetically you.',
+    'meta.productsDescription': 'Découvrez le drop SOCIAL THINGS : choisissez couleur et taille, voyez-le en 3D ou sur un avatar, et commandez en ligne.',
+    'meta.galleryDescription': 'Le lookbook SOCIAL THINGS : les photos du drop, par couleur.',
+    'meta.aboutDescription': 'Une marque construite autour de la communauté, du savoir-faire et de ce que nous partageons.',
+    'meta.legalDescription': 'Politiques SOCIAL THINGS : livraison, retours, confidentialité, conditions et FAQ.',
     'footer.credit3d': 'Modèle 3D du t-shirt :',
     'footer.by': 'par',
     'page.cart.title': 'Panier',

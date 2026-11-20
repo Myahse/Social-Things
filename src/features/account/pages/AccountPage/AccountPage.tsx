@@ -5,6 +5,7 @@ import { AccountDashboard } from '@/features/account/components/AccountDashboard
 import { useAuth } from '@/features/account/context/AuthContext'
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
+import { usePageMeta } from '@/shared/seo'
 
 function safeNextPath(value: string | null) {
   if (!value) return null
@@ -14,6 +15,7 @@ function safeNextPath(value: string | null) {
 
 export function AccountPage() {
   const { t } = useI18n()
+  usePageMeta({ title: t('page.account.title'), description: t('meta.homeDescription'), noindex: true })
   const { isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()

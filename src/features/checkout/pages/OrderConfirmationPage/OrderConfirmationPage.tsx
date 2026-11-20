@@ -2,10 +2,12 @@ import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
+import { usePageMeta } from '@/shared/seo'
 import { notifyOrderConfirmed } from '@/shared/pwa'
 
 export function OrderConfirmationPage() {
   const { t } = useI18n()
+  usePageMeta({ title: t('page.order.title'), description: t('meta.homeDescription'), noindex: true })
   const { orderId } = useParams<{ orderId: string }>()
 
   useEffect(() => {

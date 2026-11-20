@@ -35,6 +35,9 @@ app:
     public-base-url: ${TRACKER_PUBLIC_BASE_URL:}
   storefront:
     url: ${STOREFRONT_URL:http://localhost:5173}
+  seo:
+    # Canonical public address for the sitemap (the bare domain redirects to www).
+    site-url: ${SEO_SITE_URL:https://www.socialthngs.com}
   api:
     public-url: ${PUBLIC_API_URL:${RENDER_EXTERNAL_URL:}}
   brevo:

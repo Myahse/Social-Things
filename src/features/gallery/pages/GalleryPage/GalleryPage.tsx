@@ -5,9 +5,11 @@ import { FilterSheet } from '@/shared/components/FilterSheet'
 import { SlamReveal } from '@/shared/components/SlamReveal'
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
+import { usePageMeta } from '@/shared/seo'
 
 export function GalleryPage() {
   const { t } = useI18n()
+  usePageMeta({ title: t('page.gallery.title'), description: t('meta.galleryDescription'), path: '/gallery' })
   const { images, loading } = useGallery()
   const groups = useMemo(() => groupGalleryImages(images), [images])
   const [active, setActive] = useState<number | null>(null)

@@ -21,6 +21,8 @@ import {
 } from '@/features/product-detail/product-styles'
 import { hasChartSizes } from '@/features/product-detail/utils/sizing'
 import { SITE_URL } from '@/shared/config/site-url'
+import { SITE_NAME, usePageMeta } from '@/shared/seo'
+import type { Product } from '@/features/products/types'
 import { useAuth } from '@/features/account/context/AuthContext'
 import { useCart } from '@/features/cart/context/CartContext'
 import { useMediaQuery } from '@/shared/hooks/useMediaQuery'
@@ -36,6 +38,30 @@ import { productGallery } from '@/features/products/utils/merge-product-assets'
  * left labels keep clear of the fixed side rail even with a long colour name.
  */
 const RING_LAYOUT_MEDIA = '(min-width: 1200px) and (min-height: 860px)'
+
+/** schema.org Product data for search results (name, images, brand, price, availability). */
+function productJsonLd(product: Product) {
+  const abs = (u: string) => (/^https?:\/\//.test(u) ? u : `${SITE_URL}${u.startsWith('/') ? '' : '/'}${u}`)
+  const images = [product.image, ...(product.images ?? [])].filter((u): u is string => Boolean(u))
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description || product.name,
+    sku: product.slug,
+    image: [...new Set(images.map(abs))],
+    brand: { '@type': 'Brand', name: SITE_NAME },
+    ...(product.colors.length ? { color: product.colors.join(', ') } : {}),
+    offers: {
+      '@type': 'Offer',
+      url: `${SITE_URL}/product/${product.slug}`,
+      priceCurrency: 'USD',
+      price: product.price.toFixed(2),
+      availability: 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition',
+    },
+  }
+}
 
 /** Men / Women / Duo, then that group's looks. */
 function AvatarPicker({
@@ -166,6 +192,20 @@ export function ProductPage() {
   const canBuy = Boolean(product && color && size && quantity > 0)
   const ringLayout = useMediaQuery(RING_LAYOUT_MEDIA)
   const can3D = useCan3D()
+  usePageMeta(
+    product
+      ? {
+          title: product.name,
+          description: `${product.name} ${t('footer.by')} ${SITE_NAME} — ${product.description}. $${product.price}.${
+            product.sizes.length ? ` ${t('page.product.sizes')}: ${product.sizes.join(', ')}.` : ''
+          }`,
+          path: `/product/${product.slug}`,
+          image: product.image || undefined,
+          type: 'product',
+          jsonLd: productJsonLd(product),
+        }
+      : { title: loading ? '' : t('page.product.notFound'), description: t('meta.productsDescription'), noindex: !loading },
+  )
 
   if (loading) {
     return (

@@ -1,8 +1,10 @@
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
+import { usePageMeta } from '@/shared/seo'
 
 export function AboutPage() {
   const { t } = useI18n()
+  usePageMeta({ title: t('page.about.title'), description: t('meta.aboutDescription'), path: '/about' })
   return (
     <div className="w-full">
       <section className="diag-stripes relative mx-auto flex min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl flex-col items-center justify-center overflow-hidden px-[var(--site-gutter)] pb-12 pt-8 text-center sm:px-6 sm:pt-10 md:min-h-[calc(100vh-var(--header-height))]">

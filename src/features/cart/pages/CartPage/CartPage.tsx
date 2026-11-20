@@ -9,6 +9,7 @@ import { ProductCard } from '@/features/products/components/ProductCard'
 import { useProducts } from '@/features/products/hooks/useProducts'
 import { StaggerReveal } from '@/shared/components/StaggerReveal'
 import { useI18n } from '@/shared/i18n/i18n'
+import { usePageMeta } from '@/shared/seo'
 
 function itemKey(productId: string, size: string, color: string) {
   return `${productId}-${size}-${color}`
@@ -16,6 +17,7 @@ function itemKey(productId: string, size: string, color: string) {
 
 export function CartPage() {
   const { t } = useI18n()
+  usePageMeta({ title: t('page.cart.title'), description: t('meta.homeDescription'), noindex: true })
   const { items, itemCount, subtotal, removeItem, updateQuantity, clearCart } = useCart()
   const { isAuthenticated } = useAuth()
   const navigate = useNavigate()

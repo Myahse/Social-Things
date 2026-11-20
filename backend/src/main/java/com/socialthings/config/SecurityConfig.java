@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/checkout").permitAll()
                         .requestMatchers(HttpMethod.POST, "/newsletter").permitAll()
                         .requestMatchers("/health").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/sitemap.xml").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/auth/session", "/auth/logout").authenticated()
                         .requestMatchers("/orders", "/orders/**").authenticated()

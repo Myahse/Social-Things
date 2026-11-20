@@ -1,6 +1,7 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { getPolicyDocument, type PolicyDocumentId } from '@/shared/legal/policy-documents'
 import { useI18n } from '@/shared/i18n/i18n'
+import { usePageMeta } from '@/shared/seo'
 
 const LEGAL_TITLE_KEYS: Record<PolicyDocumentId, 'legal.faq' | 'legal.shipping' | 'legal.returns' | 'legal.privacy' | 'legal.terms'> = {
   faq: 'legal.faq',
@@ -14,6 +15,11 @@ export function LegalDocumentPage() {
   const { documentId } = useParams<{ documentId: string }>()
   const { t } = useI18n()
   const doc = getPolicyDocument(documentId)
+  usePageMeta({
+    title: doc ? t(LEGAL_TITLE_KEYS[doc.id]) : '',
+    description: t('meta.legalDescription'),
+    path: doc ? `/legal/${doc.id}` : undefined,
+  })
 
   if (!doc) {
     return <Navigate to="/" replace />
