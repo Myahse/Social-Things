@@ -1,6 +1,7 @@
 package com.socialthings.tracker;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 public record TrackerInventoryItem(
@@ -15,4 +16,6 @@ public record TrackerInventoryItem(
         List<String> galleryUrls,
         int galleryCount,
         BigDecimal price,
-        int stock) {}
+        int stock,
+        /** When the row was added in the tracker; null if unknown. */
+        Instant createdAt) {}

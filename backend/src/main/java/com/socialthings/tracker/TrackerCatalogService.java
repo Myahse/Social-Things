@@ -117,7 +117,11 @@ public class TrackerCatalogService {
             Set<String> sizes = new LinkedHashSet<>();
             Set<String> images = new LinkedHashSet<>();
             BigDecimal price = first.price();
+            java.time.Instant createdAt = null;
             for (TrackerInventoryItem variant : variants) {
+                if (variant.createdAt() != null && (createdAt == null || variant.createdAt().isBefore(createdAt))) {
+                    createdAt = variant.createdAt();
+                }
                 colors.add(variant.color() == null || variant.color().isBlank() ? "Default" : variant.color());
                 sizes.add(variant.size() == null || variant.size().isBlank() ? "OS" : variant.size());
                 if (variant.imageUrl() != null && !variant.imageUrl().isBlank()) {
@@ -151,7 +155,8 @@ public class TrackerCatalogService {
                             List.copyOf(images),
                             price,
                             List.copyOf(colors),
-                            List.copyOf(sizes)));
+                            List.copyOf(sizes),
+                            createdAt));
         });
         return products;
     }

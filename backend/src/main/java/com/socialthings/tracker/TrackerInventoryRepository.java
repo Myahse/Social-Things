@@ -16,7 +16,7 @@ public class TrackerInventoryRepository {
 
     private static final String CATALOG_COLS =
             """
-            id, name, sku, category, size, color, price, stock,
+            id, name, sku, category, size, color, price, stock, created_at,
             CASE WHEN image_url LIKE 'http%' THEN image_url ELSE NULL END AS image_url,
             (image_url IS NOT NULL AND btrim(image_url) <> '') AS has_image,
             CASE
@@ -52,7 +52,7 @@ public class TrackerInventoryRepository {
                     .require()
                     .query(
                             """
-                            SELECT id, name, sku, category, size, color, price, stock,
+                            SELECT id, name, sku, category, size, color, price, stock, created_at,
                               CASE WHEN image_url LIKE 'http%' THEN image_url ELSE NULL END AS image_url,
                               (image_url IS NOT NULL AND btrim(image_url) <> '') AS has_image,
                               NULL AS gallery_urls,
@@ -175,6 +175,17 @@ public class TrackerInventoryRepository {
                 parseGalleryUrls(rs.getString("gallery_urls")),
                 rs.getInt("gallery_count"),
                 rs.getBigDecimal("price") != null ? rs.getBigDecimal("price") : BigDecimal.ZERO,
-                rs.getInt("stock"));
+                rs.getInt("stock"),
+                readInstant(rs, "created_at"));
+    }
+
+    /** created_at as an Instant, whatever its column type; null when missing or unreadable. */
+    private static java.time.Instant readInstant(java.sql.ResultSet rs, String column) {
+        try {
+            java.sql.Timestamp ts = rs.getTimestamp(column);
+            return ts == null ? null : ts.toInstant();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
