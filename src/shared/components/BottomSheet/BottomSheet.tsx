@@ -47,7 +47,7 @@ export function BottomSheet({ open, onClose, eyebrow, title, hint, closeLabel, c
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mx-auto mb-4 h-1.5 w-12 bg-ink" aria-hidden />
-        <div className="flex items-start justify-between gap-3 text-left">
+        <div className="flex items-start justify-between gap-3">
           <div>
             <p className="eyebrow-cut">{eyebrow}</p>
             <h2 id={titleId} className="mt-2 font-display text-xl tracking-[0.08em] uppercase">

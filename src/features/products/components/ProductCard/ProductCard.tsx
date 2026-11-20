@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ProductImageSlider } from '@/features/products/components/ProductImageSlider'
 import type { Product } from '@/features/products/types'
 import { productGallery } from '@/features/products/utils/merge-product-assets'
+import { useI18n } from '@/shared/i18n/i18n'
 
 interface ProductCardProps {
   product: Product
@@ -10,6 +11,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, compact = false }: ProductCardProps) {
   const navigate = useNavigate()
+  const { t } = useI18n()
   const images = productGallery(product)
   const href = `/product/${product.slug}`
 
@@ -48,7 +50,11 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
         <div className="flex items-center gap-2">
           <p className="shrink-0 font-display text-sm tracking-[0.12em] text-ink">
             {product.compareAtPrice != null && (
-              <s className="mr-1.5 text-muted">${product.compareAtPrice}</s>
+              <>
+                <span className="sr-only">{t('page.products.wasPrice')} </span>
+                <s className="mr-1.5 text-muted">${product.compareAtPrice}</s>
+                <span className="sr-only">, {t('page.products.nowPrice')} </span>
+              </>
             )}
             ${product.price}
           </p>

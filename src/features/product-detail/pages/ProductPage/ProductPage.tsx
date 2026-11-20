@@ -533,7 +533,11 @@ export function ProductPage() {
         <div className="mt-5 flex w-full flex-col items-stretch gap-4 sm:mt-6 sm:flex-row sm:items-center sm:justify-center sm:gap-6">
           <div className="flex items-center justify-center gap-3 self-center">
             {product.compareAtPrice != null && (
-              <s className="font-display text-base tracking-[0.12em] text-muted">${product.compareAtPrice}</s>
+              <>
+                <span className="sr-only">{t('page.products.wasPrice')}</span>
+                <s className="font-display text-base tracking-[0.12em] text-muted">${product.compareAtPrice}</s>
+                <span className="sr-only">{t('page.products.nowPrice')}</span>
+              </>
             )}
             <div className="slash-title slash-title-bolt text-3xl">${product.price}</div>
           </div>

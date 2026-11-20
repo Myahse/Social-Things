@@ -72,6 +72,8 @@ export type I18nKey =
   | 'page.products.filterBest'
   | 'page.products.filterOffers'
   | 'page.products.filterEmpty'
+  | 'page.products.wasPrice'
+  | 'page.products.nowPrice'
   | 'page.faq.eyebrow'
   | 'page.faq.title'
   | 'page.faq.subtitle'
@@ -299,6 +301,8 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.products.filterBest': 'Best-sellers',
     'page.products.filterOffers': 'Offers',
     'page.products.filterEmpty': 'Nothing here right now.',
+    'page.products.wasPrice': 'Was',
+    'page.products.nowPrice': 'now',
     'page.faq.eyebrow': 'Support',
     'page.faq.title': 'FAQ',
     'page.faq.subtitle': 'Answers about our brand, fit, and how to reach us.',
@@ -460,6 +464,8 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.products.filterBest': 'Meilleures ventes',
     'page.products.filterOffers': 'Offres',
     'page.products.filterEmpty': 'Rien pour le moment.',
+    'page.products.wasPrice': 'Avant',
+    'page.products.nowPrice': 'maintenant',
     'page.faq.eyebrow': 'Assistance',
     'page.faq.title': 'FAQ',
     'page.faq.subtitle': 'Réponses sur la marque, les tailles et comment nous joindre.',

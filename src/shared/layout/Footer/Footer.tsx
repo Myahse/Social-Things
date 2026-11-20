@@ -25,7 +25,7 @@ export function Footer({ footerRef }: { footerRef?: React.RefObject<HTMLElement 
         aria-hidden
       />
 
-      <div className="relative mx-auto flex min-h-[min(36rem,78svh)] w-full max-w-6xl flex-col items-center justify-center px-[var(--site-gutter)] py-16 text-center sm:px-6 md:min-h-screen">
+      <div className="relative mx-auto flex min-h-[min(36rem,78svh)] w-full max-w-6xl flex-col items-center justify-center px-[var(--site-gutter)] pt-16 pb-[calc(4rem+var(--mobile-bottom-nav-height))] text-center sm:px-6 md:min-h-screen md:pb-16">
         <SlamReveal variant="block" className="mb-12 flex items-center justify-center gap-3">
           <SocialBox href="https://instagram.com" label="Instagram">
             <InstagramIcon />
@@ -62,7 +62,9 @@ export function Footer({ footerRef }: { footerRef?: React.RefObject<HTMLElement 
           </a>
         </SlamReveal>
 
-        <ModelCredit />
+        <SlamReveal variant="block" delayMs={400} className="mt-10">
+          <ModelCredit />
+        </SlamReveal>
       </div>
     </footer>
   )
@@ -73,7 +75,7 @@ function ModelCredit() {
   const { t } = useI18n()
   const link = 'underline underline-offset-2 transition-colors hover:text-canvas'
   return (
-    <p className="mt-10 max-w-md text-xs text-canvas/60">
+    <p className="max-w-md text-xs text-canvas/70">
       {t('footer.credit3d')}{' '}
       <a
         className={link}
@@ -88,7 +90,12 @@ function ModelCredit() {
         kylelhb
       </a>
       ,{' '}
-      <a className={link} href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">
+      <a
+        className={`${link} whitespace-nowrap`}
+        href="https://creativecommons.org/licenses/by/4.0/"
+        target="_blank"
+        rel="noreferrer"
+      >
         CC BY 4.0
       </a>
     </p>
