@@ -56,13 +56,19 @@ async function cropToSubject(blob: Blob, aspect: number): Promise<ImageBitmap> {
   return createImageBitmap(out)
 }
 
-const INK = '#0a0a0a'
-const CANVAS = '#f2f2f2'
-const MUTED = '#666666'
+/** A theme value from the page (src/index.css @theme), with the current value as a fallback. */
+function themeVar(name: string, fallback: string) {
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  return v || fallback
+}
+let INK = '#0a0a0a'
+let CANVAS = '#f2f2f2'
+let MUTED = '#666666'
+let FONT = 'Youth, system-ui, sans-serif'
 
 /** A slanted black box with white text (the site's tag / title look). */
 function slashBox(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, size: number, padX: number, padY: number) {
-  ctx.font = `${size}px Youth, system-ui, sans-serif`
+  ctx.font = `${size}px ${FONT}`
   const w = ctx.measureText(text).width + padX * 2
   const h = size + padY * 2
   ctx.save()
@@ -98,6 +104,10 @@ export async function wornShareCard(o: WornShareCardInput): Promise<Blob> {
   const c = Object.assign(document.createElement('canvas'), { width: W, height: H })
   const ctx = c.getContext('2d')
   if (!ctx) throw new Error('canvas too large')
+  INK = themeVar('--color-ink', INK)
+  CANVAS = themeVar('--color-canvas', CANVAS)
+  MUTED = themeVar('--color-muted', MUTED)
+  FONT = themeVar('--font-display', FONT)
   const [front, back] = await Promise.all([cropToSubject(o.front, 0.8), cropToSubject(o.back, 0.8)])
   await document.fonts?.ready
 
@@ -143,10 +153,10 @@ export async function wornShareCard(o: WornShareCardInput): Promise<Blob> {
   slashBox(ctx, o.title.toUpperCase(), M + 8, y, 64, 28, 14)
   ctx.fillStyle = INK
   ctx.textBaseline = 'alphabetic'
-  ctx.font = '44px Youth, system-ui, sans-serif'
+  ctx.font = `44px ${FONT}`
   ctx.fillText(o.price, M, y + 170)
   ctx.fillStyle = MUTED
-  ctx.font = '26px Youth, system-ui, sans-serif'
+  ctx.font = `26px ${FONT}`
   ctx.fillText(o.sizes, M, y + 220, W - 2 * M)
 
   // The address, in a black bar at the bottom.
@@ -154,7 +164,7 @@ export async function wornShareCard(o: WornShareCardInput): Promise<Blob> {
   ctx.fillStyle = INK
   ctx.fillRect(M, H - M - barH, W - 2 * M, barH)
   ctx.fillStyle = '#ffffff'
-  ctx.font = '30px Youth, system-ui, sans-serif'
+  ctx.font = `30px ${FONT}`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText(o.link.replace(/^https?:\/\/(www\.)?/, ''), W / 2, H - M - barH / 2, W - 2 * M - 40)

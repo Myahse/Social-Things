@@ -417,7 +417,7 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'page.product.sizeHelper': 'Quelle taille pour moi ?',
     'page.product.sizeHelperHint': 'Votre taille et votre poids donnent une taille parmi celles de cette pièce.',
     'page.product.sizeHelperBuild': 'Morphologie',
-    'page.product.sizeHelperHeight': 'Taille (cm)',
+    'page.product.sizeHelperHeight': 'Hauteur (cm)',
     'page.product.sizeHelperWeight': 'Poids (kg)',
     'page.product.sizeHelperAdvice': 'Nous vous conseillons le',
     'page.product.sizeHelperClosest': 'la plus proche disponible',

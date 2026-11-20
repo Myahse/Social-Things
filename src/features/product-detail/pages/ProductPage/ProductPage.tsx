@@ -13,6 +13,12 @@ import {
   type WornSnapshotFn,
 } from '@/features/product-detail/components/AvatarTryOn'
 import { SizeHelper } from '@/features/product-detail/components/SizeHelper'
+import {
+  PILL_CLASS,
+  PRODUCT_LABEL_CLASS,
+  PRODUCT_MICRO_CLASS,
+  pillState,
+} from '@/features/product-detail/product-styles'
 import { hasChartSizes } from '@/features/product-detail/utils/sizing'
 import { SITE_URL } from '@/shared/config/site-url'
 import { useAuth } from '@/features/account/context/AuthContext'
@@ -22,8 +28,6 @@ import { useI18n, type I18nKey } from '@/shared/i18n/i18n'
 import { ProductImageSlider } from '@/features/products/components/ProductImageSlider'
 import { useProduct } from '@/features/products/hooks/useProduct'
 import { productGallery } from '@/features/products/utils/merge-product-assets'
-const PRODUCT_LABEL_CLASS = 'font-display text-sm tracking-[0.18em]'
-const PRODUCT_MICRO_CLASS = 'font-display text-xs tracking-[0.16em]'
 
 /**
  * The ring composition needs room on both axes: the options sit on the circle left of the
@@ -32,11 +36,6 @@ const PRODUCT_MICRO_CLASS = 'font-display text-xs tracking-[0.16em]'
  * left labels keep clear of the fixed side rail even with a long colour name.
  */
 const RING_LAYOUT_MEDIA = '(min-width: 1200px) and (min-height: 860px)'
-const PILL_CLASS = `rounded-full border px-3 py-2 ${PRODUCT_MICRO_CLASS} transition-colors`
-
-function pillState(active: boolean) {
-  return active ? 'border-ink bg-ink text-canvas' : 'border-line bg-canvas/70 text-ink hover:border-ink'
-}
 
 /** Men / Women / Duo, then that group's looks. */
 function AvatarPicker({
@@ -210,9 +209,29 @@ export function ProductPage() {
   const views: [ProductView, I18nKey][] = [
     ['photo', 'page.product.photo'],
     ...(mockups.length > 0 ? [['mockup', 'page.product.mockup'] as [ProductView, I18nKey]] : []),
-    ['3d', 'page.product.view3d'],
-    ['avatar', 'page.product.avatar'],
+    ...(can3D === false
+      ? []
+      : ([
+          ['3d', 'page.product.view3d'],
+          ['avatar', 'page.product.avatar'],
+        ] as [ProductView, I18nKey][])),
   ]
+
+  function chooseView(v: ProductView) {
+    setView(v)
+    if (v === 'avatar') setActiveSelector('avatar')
+    else if (activeSelector === 'avatar') setActiveSelector(null)
+  }
+
+  /** Arrow keys move between the view tabs (one tab stop for the group). */
+  function onTabKey(e: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+    const to = step ? (index + step + views.length) % views.length : e.key === 'Home' ? 0 : e.key === 'End' ? views.length - 1 : -1
+    if (to < 0) return
+    e.preventDefault()
+    chooseView(views[to][0])
+    document.getElementById(`product-tab-${views[to][0]}`)?.focus()
+  }
 
   /** Share this look: the mannequin front and back on the share card, to the system share sheet or a download. */
   async function shareWorn() {
@@ -279,7 +298,9 @@ export function ProductPage() {
             { label: t('page.product.size'), key: 'size' as const, angleDeg: 165 },
             { label: t('page.product.quantity'), key: 'quantity' as const, angleDeg: 135 },
           ] as const
-        ).map((item) => {
+        )
+          .filter((item) => item.key !== 'avatar' || can3D !== false)
+          .map((item) => {
           // Position labels on the ring using polar coordinates (percent of ring box).
           const r = 48 // percent radius
           const rad = (item.angleDeg * Math.PI) / 180
@@ -321,6 +342,14 @@ export function ProductPage() {
             </button>
           )
         })}
+        {sizeHelper && (
+          <div
+            className="pointer-events-auto absolute -translate-x-1/2"
+            style={{ ...ringPos(165, 48), marginTop: '1.25rem' }}
+          >
+            {sizeHelper}
+          </div>
+        )}
       </div>
       )}
 
@@ -331,21 +360,20 @@ export function ProductPage() {
         <h1 className="slash-title slash-title-ink text-[1.65rem] sm:text-4xl">{product.name}</h1>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{product.description}</p>
         {ringLayout && <div className={`mt-4 ${PRODUCT_LABEL_CLASS} text-muted`}>{selectorTitle}</div>}
-        {ringLayout && activeSelector === 'size' && sizeHelper && <div className="mt-2">{sizeHelper}</div>}
 
         {/* Photos / Mockup / 3D / Avatar */}
         <div className="mb-4 mt-4 flex flex-wrap justify-center gap-2" role="tablist" aria-label={t('page.product.views')}>
-          {views.map(([v, label]) => (
+          {views.map(([v, label], index) => (
             <button
               key={v}
+              id={`product-tab-${v}`}
               type="button"
               role="tab"
               aria-selected={view === v}
-              onClick={() => {
-                setView(v)
-                if (v === 'avatar') setActiveSelector('avatar')
-                else if (activeSelector === 'avatar') setActiveSelector(null)
-              }}
+              aria-controls="product-view-panel"
+              tabIndex={view === v ? 0 : -1}
+              onClick={() => chooseView(v)}
+              onKeyDown={(e) => onTabKey(e, index)}
               onPointerEnter={v === 'avatar' ? preloadAvatar : v === '3d' ? preloadTee : undefined}
               onFocus={v === 'avatar' ? preloadAvatar : v === '3d' ? preloadTee : undefined}
               className={`${PILL_CLASS} ${pillState(view === v)}`}
@@ -355,7 +383,12 @@ export function ProductPage() {
           ))}
         </div>
 
-        <div className="relative mx-auto w-[min(78vw,18rem)]">
+        <div
+          id="product-view-panel"
+          role="tabpanel"
+          aria-labelledby={`product-tab-${view}`}
+          className="relative mx-auto w-[min(78vw,18rem)]"
+        >
           {view === 'avatar' || view === '3d' ? (
             <>
               <div className="aspect-[3/4] w-full overflow-hidden rounded-2xl bg-canvas/40 backdrop-blur-sm">
@@ -390,7 +423,7 @@ export function ProductPage() {
                   type="button"
                   onClick={shareWorn}
                   disabled={sharing === 'busy'}
-                  className="btn-slam-outline mt-3 !px-4 !py-2 disabled:opacity-60"
+                  className="btn-slam btn-slam-outline mt-3 !px-4 !py-2.5 disabled:opacity-60"
                 >
                   <span>
                     {sharing === 'busy'

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useId, useState } from 'react'
 import { adviseSize, type Build } from '@/features/product-detail/utils/sizing'
+import { PILL_CLASS, PRODUCT_MICRO_CLASS, pillState } from '@/features/product-detail/product-styles'
 import { BottomSheet } from '@/shared/components/BottomSheet'
 import { useI18n } from '@/shared/i18n/i18n'
 
 const KEY = 'social-things:size-helper' // the visitor's answers, kept on this device only
 
-const PILL = 'rounded-full border px-3 py-2 font-display text-xs tracking-[0.16em] transition-colors'
 const FIELD =
   'min-h-12 w-full border-[3px] border-ink bg-canvas px-3 font-display text-sm tracking-[0.12em] text-ink placeholder:text-muted'
 
@@ -64,7 +64,7 @@ export function SizeHelper({ sizes, current, onPick }: { sizes: string[]; curren
         type="button"
         onClick={openHelper}
         aria-haspopup="dialog"
-        className="font-display text-xs tracking-[0.16em] text-muted underline underline-offset-4 transition-colors hover:text-ink"
+        className="text-sm text-muted underline-offset-4 transition-colors hover:text-ink hover:underline"
       >
         {t('page.product.sizeHelper')}
       </button>
@@ -89,7 +89,7 @@ export function SizeHelper({ sizes, current, onPick }: { sizes: string[]; curren
               type="button"
               onClick={() => setBuild(b)}
               aria-pressed={build === b}
-              className={`${PILL} ${build === b ? 'border-ink bg-ink text-canvas' : 'border-line bg-canvas text-ink hover:border-ink'}`}
+              className={`${PILL_CLASS} ${pillState(build === b)}`}
             >
               {t(label)}
             </button>
@@ -98,7 +98,7 @@ export function SizeHelper({ sizes, current, onPick }: { sizes: string[]; curren
 
         <div className="mt-4 grid grid-cols-2 gap-3 text-left">
           <div>
-            <label htmlFor={heightId} className="font-display text-xs tracking-[0.16em] text-muted">
+            <label htmlFor={heightId} className={`mb-2 block ${PRODUCT_MICRO_CLASS} text-muted`}>
               {t('page.product.sizeHelperHeight')}
             </label>
             <input
@@ -107,11 +107,11 @@ export function SizeHelper({ sizes, current, onPick }: { sizes: string[]; curren
               value={height}
               onChange={(e) => setHeight(e.target.value.replace(/\D/g, '').slice(0, 3))}
               placeholder="175"
-              className={`mt-1 ${FIELD}`}
+              className={FIELD}
             />
           </div>
           <div>
-            <label htmlFor={weightId} className="font-display text-xs tracking-[0.16em] text-muted">
+            <label htmlFor={weightId} className={`mb-2 block ${PRODUCT_MICRO_CLASS} text-muted`}>
               {t('page.product.sizeHelperWeight')}
             </label>
             <input
@@ -120,7 +120,7 @@ export function SizeHelper({ sizes, current, onPick }: { sizes: string[]; curren
               value={weight}
               onChange={(e) => setWeight(e.target.value.replace(/\D/g, '').slice(0, 3))}
               placeholder="70"
-              className={`mt-1 ${FIELD}`}
+              className={FIELD}
             />
           </div>
         </div>
@@ -151,7 +151,7 @@ export function SizeHelper({ sizes, current, onPick }: { sizes: string[]; curren
                     type="button"
                     onClick={() => pick(advice.larger!)}
                     disabled={current === offered(advice.larger)}
-                    className="btn-slam-outline !px-4 !py-2.5 disabled:opacity-60"
+                    className="btn-slam btn-slam-outline !px-4 !py-2.5 disabled:opacity-60"
                   >
                     <span>
                       {current === offered(advice.larger)

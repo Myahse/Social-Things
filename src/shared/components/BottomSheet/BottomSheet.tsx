@@ -55,7 +55,7 @@ export function BottomSheet({ open, onClose, eyebrow, title, hint, closeLabel, c
             </h2>
             {hint && <p className="mt-2 text-sm text-muted">{hint}</p>}
           </div>
-          <button type="button" className="btn-slam-outline !px-3 !py-2" onClick={onClose}>
+          <button type="button" className="btn-slam btn-slam-outline !px-3 !py-2" onClick={onClose}>
             <span>{closeLabel}</span>
           </button>
         </div>
