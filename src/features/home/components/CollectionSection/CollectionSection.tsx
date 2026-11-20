@@ -28,11 +28,15 @@ function CollectionHeader({
   title,
   hint,
   viewAll,
+  headingLevel = 'h2',
 }: {
   title: string
   hint: string
   viewAll: string
+  /** h1 on the Products page (its page title), h2 inside the home page. */
+  headingLevel?: 'h1' | 'h2'
 }) {
+  const Heading = headingLevel
   return (
     <div className="mb-[clamp(1.25rem,3vh,2.5rem)] flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
@@ -45,9 +49,9 @@ function CollectionHeader({
           <p className="eyebrow-cut">DROP</p>
         </SlamReveal>
         <SlamReveal variant="title" delayMs={140} className="mt-4">
-          <h2 className="slash-title slash-title-ink anim-glitch-idle text-[1.65rem] sm:text-4xl lg:text-5xl">
+          <Heading className="slash-title slash-title-ink anim-glitch-idle text-[1.65rem] sm:text-4xl lg:text-5xl">
             {title}
-          </h2>
+          </Heading>
         </SlamReveal>
         <SlamReveal variant="block" delayMs={220} className="mt-4 max-w-md">
           <p className="text-sm text-muted sm:text-base">{hint}</p>
@@ -129,6 +133,7 @@ export function CollectionSection({
           title={t('page.products.title')}
           hint={t('page.products.hint')}
           viewAll={t('page.cart.viewAll')}
+          headingLevel="h1"
         />
       </StaggerReveal>
 

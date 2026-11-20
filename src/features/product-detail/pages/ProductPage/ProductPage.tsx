@@ -52,6 +52,7 @@ function productJsonLd(product: Product) {
     image: [...new Set(images.map(abs))],
     brand: { '@type': 'Brand', name: SITE_NAME },
     ...(product.colors.length ? { color: product.colors.join(', ') } : {}),
+    ...(product.sizes.length ? { size: product.sizes.join(', ') } : {}),
     offers: {
       '@type': 'Offer',
       url: `${SITE_URL}/product/${product.slug}`,
@@ -157,10 +158,10 @@ function Dot({
 
 export function ProductPage() {
   const { slug } = useParams<{ slug: string }>()
-  const { product, loading } = useProduct(slug)
+  const { product, loading, error } = useProduct(slug)
   const { addItem } = useCart()
   const { isAuthenticated } = useAuth()
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const navigate = useNavigate()
 
   const colors = product?.colors ?? []
@@ -197,14 +198,18 @@ export function ProductPage() {
       ? {
           title: product.name,
           description: `${product.name} ${t('footer.by')} ${SITE_NAME} — ${product.description}. $${product.price}.${
-            product.sizes.length ? ` ${t('page.product.sizes')}: ${product.sizes.join(', ')}.` : ''
+            product.sizes.length
+              ? ` ${t('page.product.sizes')}${lang === 'fr' ? ' :' : ':'} ${product.sizes.join(', ')}.`
+              : ''
           }`,
           path: `/product/${product.slug}`,
           image: product.image || undefined,
           type: 'product',
           jsonLd: productJsonLd(product),
         }
-      : { title: loading ? '' : t('page.product.notFound'), description: t('meta.productsDescription'), noindex: !loading },
+      : error
+        ? { title: '', description: t('meta.productsDescription'), path: slug ? `/product/${slug}` : undefined }
+        : { title: loading ? '' : t('page.product.notFound'), description: t('meta.productsDescription'), noindex: !loading },
   )
 
   if (loading) {
@@ -213,6 +218,18 @@ export function ProductPage() {
         <section className="mx-auto flex min-h-[calc(100dvh-var(--header-height)-var(--mobile-bottom-nav-height))] w-full max-w-6xl items-center justify-center px-[var(--site-gutter)] md:min-h-[calc(100vh-var(--header-height))]">
           <p className="text-center text-muted">{t('page.product.loading')}</p>
         </section>
+      </div>
+    )
+  }
+
+  if (!product && error) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-20 text-center sm:px-6">
+        <h1 className="slash-title slash-title-ink text-3xl">{t('page.product.loadError')}</h1>
+        <p className="mt-4 text-sm text-muted">{t('page.product.loadErrorHint')}</p>
+        <button type="button" className="btn-slam mt-8" onClick={() => window.location.reload()}>
+          <span>{t('page.product.retry')}</span>
+        </button>
       </div>
     )
   }

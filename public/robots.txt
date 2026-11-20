@@ -1,7 +1,5 @@
+# Account, cart and order pages carry a noindex tag; they are not blocked here so crawlers can read it.
 User-agent: *
 Allow: /
-Disallow: /account
-Disallow: /cart
-Disallow: /order/
 
 Sitemap: https://www.socialthngs.com/sitemap.xml

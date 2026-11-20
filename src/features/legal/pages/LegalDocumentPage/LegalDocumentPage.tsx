@@ -34,7 +34,7 @@ export function LegalDocumentPage() {
         >
           ← {t('legal.back')}
         </Link>
-        <p className="font-display text-xs tracking-[0.22em] text-muted">{t(LEGAL_TITLE_KEYS[doc.id])}</p>
+        <h1 className="font-display text-xs tracking-[0.22em] text-muted">{t(LEGAL_TITLE_KEYS[doc.id])}</h1>
       </div>
       <iframe
         src={doc.htmlPath}

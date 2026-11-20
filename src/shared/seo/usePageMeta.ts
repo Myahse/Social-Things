@@ -100,6 +100,9 @@ export function usePageMeta(meta: PageMeta) {
     setMeta('property', 'og:type', type)
     setMeta('property', 'og:url', noindex ? null : url)
     setMeta('property', 'og:image', img)
+    // The size tags describe the default share image only (a product photo has its own size).
+    setMeta('property', 'og:image:width', image ? null : '1200')
+    setMeta('property', 'og:image:height', image ? null : '630')
     setMeta('name', 'twitter:image', img)
     setJsonLd(jsonLd ? (JSON.parse(jsonLd) as Record<string, unknown>) : null)
 
@@ -113,6 +116,8 @@ export function usePageMeta(meta: PageMeta) {
       setMeta('property', 'og:type', 'website')
       setMeta('property', 'og:url', null)
       setMeta('property', 'og:image', absolute(DEFAULT_IMAGE))
+      setMeta('property', 'og:image:width', '1200')
+      setMeta('property', 'og:image:height', '630')
       setMeta('name', 'twitter:image', absolute(DEFAULT_IMAGE))
       setJsonLd(null)
     }

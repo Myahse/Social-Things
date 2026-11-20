@@ -3,7 +3,7 @@ import {
   withProductAssets,
   withProductAssetsList,
 } from '@/features/products/utils/merge-product-assets'
-import { apiFetch } from '@/shared/api/client'
+import { ApiError, apiFetch } from '@/shared/api/client'
 import { isJavaApiEnabled } from '@/shared/api/config'
 import { endpoints } from '@/shared/api/endpoints'
 
@@ -57,7 +57,9 @@ export async function fetchProductBySlug(slug: string): Promise<Product | undefi
   try {
     const product = await apiFetch<Product>(endpoints.productBySlug(slug))
     return withProductAssets(product)
-  } catch {
-    return undefined
+  } catch (err) {
+    // Only a 404 means the product is gone; a server or network failure (e.g. the API waking up) is an error.
+    if (err instanceof ApiError && err.status === 404) return undefined
+    throw err
   }
 }

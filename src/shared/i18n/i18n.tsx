@@ -146,6 +146,9 @@ export type I18nKey =
   | 'meta.galleryDescription'
   | 'meta.aboutDescription'
   | 'meta.legalDescription'
+  | 'page.product.loadError'
+  | 'page.product.loadErrorHint'
+  | 'page.product.retry'
   | 'footer.credit3d'
   | 'footer.by'
   | 'legal.back'
@@ -284,6 +287,9 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'meta.galleryDescription': 'The SOCIAL THINGS lookbook: shots from the drop, by color.',
     'meta.aboutDescription': 'A brand built around community, craft, and the things we share.',
     'meta.legalDescription': 'SOCIAL THINGS policies: shipping, returns, privacy, terms and FAQ.',
+    'page.product.loadError': 'Couldn’t load this piece',
+    'page.product.loadErrorHint': 'Check your connection and try again.',
+    'page.product.retry': 'Try again',
     'footer.credit3d': '3D t-shirt model:',
     'footer.by': 'by',
     'page.cart.title': 'Cart',
@@ -452,6 +458,9 @@ const MESSAGES: Record<Language, Record<I18nKey, string>> = {
     'meta.galleryDescription': 'Le lookbook SOCIAL THINGS : les photos du drop, par couleur.',
     'meta.aboutDescription': 'Une marque construite autour de la communauté, du savoir-faire et de ce que nous partageons.',
     'meta.legalDescription': 'Politiques SOCIAL THINGS : livraison, retours, confidentialité, conditions et FAQ.',
+    'page.product.loadError': 'Impossible de charger cette pièce',
+    'page.product.loadErrorHint': 'Vérifiez votre connexion et réessayez.',
+    'page.product.retry': 'Réessayer',
     'footer.credit3d': 'Modèle 3D du t-shirt :',
     'footer.by': 'par',
     'page.cart.title': 'Panier',
